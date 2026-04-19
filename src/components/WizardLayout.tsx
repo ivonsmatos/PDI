@@ -65,7 +65,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir
       <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 transition-colors sticky top-0 z-40">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-400 bg-clip-text text-transparent tracking-tight">
-            PDI — O Seu Desenvolvimento Pleno
+            Meu PDI
           </h1>
           <div className="flex items-center gap-2">
             <button
@@ -86,41 +86,61 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir
       </header>
 
       <main className="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col">
-        {/* Stepper */}
-        <div className="mb-10 relative">
-          <div className="absolute top-5 left-0 w-full h-1.5 bg-gray-200 dark:bg-slate-700 -z-10 rounded-full transition-colors" />
-          <div
-            className="absolute top-5 left-0 h-1.5 bg-indigo-600 dark:bg-indigo-500 -z-10 transition-all duration-500 ease-in-out rounded-full shadow-[0_0_10px_rgba(79,70,229,0.5)]"
-            style={{ width: `${((stepAtual - 1) / (steps.length - 1)) * 100}%` }}
-          />
-          <div className="flex items-center justify-between">
-            {steps.map((step) => {
-              const isActive = stepAtual === step.num;
-              const isPast   = stepAtual > step.num;
-              return (
-                <div key={step.num} className="flex flex-col items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500
-                    ${isActive ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-lg ring-4 ring-indigo-100 dark:ring-indigo-900 scale-110' :
-                      isPast   ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-sm ring-2 ring-indigo-200 dark:ring-indigo-800'
-                               : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border border-gray-300 dark:border-slate-600'}`}
-                  >
-                    {isPast ? (
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : step.num}
-                  </div>
-                  <div className={`mt-3 text-xs md:text-sm font-semibold text-center transition-colors
-                    ${isActive ? 'text-indigo-700 dark:text-indigo-400' :
-                      isPast   ? 'text-slate-600 dark:text-slate-300'
-                               : 'text-gray-400 dark:text-slate-500'}`}
-                  >
-                    {step.title}
-                  </div>
+        {/* Stepper — 2 linhas de 3 */}
+        <div className="mb-10 space-y-3">
+          {([steps.slice(0, 3), steps.slice(3)] as const).map((row, rowIdx) => {
+            // progresso da linha: row 0 = steps 1-3, row 1 = steps 4-6
+            const rowStart  = rowIdx === 0 ? 1 : 4;
+            const pctLine   = rowIdx === 0
+              ? stepAtual <= 3 ? ((stepAtual - 1) / 2) * 100 : 100
+              : stepAtual < 4  ? 0 : ((stepAtual - 4) / 2) * 100;
+
+            return (
+              <div key={rowIdx} className="relative">
+                {/* trilha base */}
+                <div className="absolute top-5 left-[calc(1/6*100%)] right-[calc(1/6*100%)] h-1.5 bg-gray-200 dark:bg-slate-700 rounded-full -z-10" />
+                {/* trilha preenchida */}
+                <div
+                  className="absolute top-5 left-[calc(1/6*100%)] h-1.5 bg-indigo-600 dark:bg-indigo-500 rounded-full -z-10 transition-all duration-500 ease-in-out shadow-[0_0_8px_rgba(79,70,229,0.4)]"
+                  style={{ width: `calc(${pctLine}% * 4/6)` }}
+                />
+                <div className="flex items-center justify-between">
+                  {row.map((step) => {
+                    const isActive = stepAtual === step.num;
+                    const isPast   = stepAtual > step.num;
+                    return (
+                      <div key={step.num} className="flex flex-col items-center flex-1">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500
+                          ${isActive
+                            ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-lg ring-4 ring-indigo-100 dark:ring-indigo-900 scale-110'
+                            : isPast
+                              ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-sm ring-2 ring-indigo-200 dark:ring-indigo-800'
+                              : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border border-gray-300 dark:border-slate-600'
+                          }`}
+                        >
+                          {isPast ? (
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                            </svg>
+                          ) : step.num}
+                        </div>
+                        <div className={`mt-2 text-xs font-semibold text-center transition-colors leading-tight
+                          ${isActive
+                            ? 'text-indigo-700 dark:text-indigo-400'
+                            : isPast
+                              ? 'text-slate-600 dark:text-slate-300'
+                              : 'text-gray-400 dark:text-slate-500'
+                          }`}
+                        >
+                          {step.title}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
 
         {/* Toast de erro */}
