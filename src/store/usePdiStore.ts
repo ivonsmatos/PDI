@@ -3,8 +3,8 @@ import { persist } from 'zustand/middleware';
 
 export type HardSkill = {
   skill: string;
-  nivelAtual: number; // 1 a 5
-  nivelDesejado: number; // 1 a 5
+  nivelAtual: number;
+  nivelDesejado: number;
 };
 
 export type SoftSkill = {
@@ -30,6 +30,8 @@ export type PlanoAcaoItem = {
   prazoData: string;
   recursos: string;
 };
+
+export type PlanoStatus = 'pendente' | 'em_andamento' | 'concluido';
 
 export interface PdiFields {
   stepAtual: number;
@@ -58,17 +60,28 @@ export interface PdiCiclo extends Omit<PdiFields, 'stepAtual'> {
 
 export interface PdiState extends PdiFields {
   historico: PdiCiclo[];
-  
-  // Ações
+  wizardConcluido: boolean;
+  planoAcaoStatus: Record<string, PlanoStatus>;
+  trilhaProgresso: Record<string, boolean>;
+
+  // Ações wizard
   setStepAtual: (step: number) => void;
   nextStep: () => void;
   prevStep: () => void;
   updateUsuario: (dados: Partial<PdiFields['usuario']>) => void;
   updateCampoDeForcas: (dados: Partial<PdiFields['campoDeForcas']>) => void;
   setStoreItem: <K extends keyof PdiFields>(key: K, value: PdiFields[K]) => void;
-  
+
+  // Ações ciclo
   salvarCiclo: () => void;
   resetAtual: () => void;
+  setWizardConcluido: (v: boolean) => void;
+
+  // Ações plano de ação
+  setPlanoItemStatus: (id: string, status: PlanoStatus) => void;
+
+  // Ações trilha
+  toggleTrilhaItem: (key: string) => void;
 }
 
 const initialState: PdiFields = {
@@ -85,14 +98,20 @@ export const usePdiStore = create<PdiState>()(
     (set, get) => ({
       ...initialState,
       historico: [],
+      wizardConcluido: false,
+      planoAcaoStatus: {},
+      trilhaProgresso: {},
 
       setStepAtual: (step) => set({ stepAtual: step }),
       nextStep: () => set((state) => ({ stepAtual: Math.min(state.stepAtual + 1, 6) })),
       prevStep: () => set((state) => ({ stepAtual: Math.max(state.stepAtual - 1, 1) })),
       updateUsuario: (dados) => set((state) => ({ usuario: { ...state.usuario, ...dados } })),
-      updateCampoDeForcas: (dados) => set((state) => ({ campoDeForcas: { ...state.campoDeForcas, ...dados } })),
+      updateCampoDeForcas: (dados) =>
+        set((state) => ({ campoDeForcas: { ...state.campoDeForcas, ...dados } })),
       setStoreItem: (key, value) => set({ [key]: value }),
-      
+
+      setWizardConcluido: (v) => set({ wizardConcluido: v }),
+
       salvarCiclo: () => {
         const state = get();
         const novoCiclo: PdiCiclo = {
@@ -104,19 +123,33 @@ export const usePdiStore = create<PdiState>()(
           planoDeAcao: state.planoDeAcao,
           campoDeForcas: state.campoDeForcas,
         };
-        
         set({ historico: [...state.historico, novoCiclo] });
       },
-      
-      resetAtual: () => {
+
+      resetAtual: () =>
         set({
           ...initialState,
-          stepAtual: 1
-        });
-      }
+          stepAtual: 1,
+          wizardConcluido: false,
+          planoAcaoStatus: {},
+          trilhaProgresso: {},
+        }),
+
+      setPlanoItemStatus: (id, status) =>
+        set((state) => ({
+          planoAcaoStatus: { ...state.planoAcaoStatus, [id]: status },
+        })),
+
+      toggleTrilhaItem: (key) =>
+        set((state) => ({
+          trilhaProgresso: {
+            ...state.trilhaProgresso,
+            [key]: !state.trilhaProgresso[key],
+          },
+        })),
     }),
     {
-      name: 'pdi-storage', // key no localStorage
+      name: 'pdi-storage',
     }
   )
 );
