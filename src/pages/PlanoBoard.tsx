@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { usePdiStore, PlanoStatus } from '../store/usePdiStore';
+import { usePdiStore } from '../store/usePdiStore';
+import type { PlanoStatus } from '../store/usePdiStore';
 import { Clock, Loader2, CheckCircle2, ChevronDown } from 'lucide-react';
 
 const COLUNAS: { status: PlanoStatus; label: string; color: string; bg: string; icon: React.ReactNode }[] = [
@@ -53,8 +54,6 @@ export const PlanoBoard: React.FC = () => {
   const total = planoDeAcao.length;
   const conc  = planoDeAcao.filter(a => getStatus(a.id) === 'concluido').length;
   const pct   = total > 0 ? Math.round((conc / total) * 100) : 0;
-
-  const isVencida = (prazoData: string) => prazoData && new Date(prazoData) < new Date() && getStatus(prazoData) !== 'concluido';
 
   if (planoDeAcao.length === 0) {
     return (

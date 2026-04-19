@@ -90,7 +90,6 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir
         <div className="mb-10 space-y-3">
           {([steps.slice(0, 3), steps.slice(3)] as const).map((row, rowIdx) => {
             // progresso da linha: row 0 = steps 1-3, row 1 = steps 4-6
-            const rowStart  = rowIdx === 0 ? 1 : 4;
             const pctLine   = rowIdx === 0
               ? stepAtual <= 3 ? ((stepAtual - 1) / 2) * 100 : 100
               : stepAtual < 4  ? 0 : ((stepAtual - 4) / 2) * 100;
