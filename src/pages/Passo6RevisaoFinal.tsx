@@ -2,6 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
 import { DownloadCloud, Sparkles, AlertTriangle, Layers, Calendar, Rocket, RefreshCw, FileText } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { PdfReport } from '../components/PdfReport';
 
 // Mini dicionário de mentoria para Soft Skills fracas — cobrindo todos os 9 atributos
 const DICIONARIO_MENTORIA: Record<string, { titulo: string; sugestao: string }> = {
@@ -48,6 +49,7 @@ export const Passo6RevisaoFinal: React.FC = () => {
   const store = usePdiStore();
   const { objetivos, planoDeAcao, inventario, campoDeForcas, salvarCiclo, resetAtual } = store;
   const printRef = useRef<HTMLDivElement>(null);
+  const pdfReportRef = useRef<HTMLDivElement>(null);
 
   // 1. Termômetro de Saúde
   const scoreSaude = useMemo(() => {
@@ -110,34 +112,67 @@ export const Passo6RevisaoFinal: React.FC = () => {
   };
 
   const handleExportPDF = async () => {
-    if (!printRef.current) return;
+    if (!pdfReportRef.current) return;
     try {
       const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
         import('html2canvas'),
         import('jspdf'),
       ]);
-      const canvas = await html2canvas(printRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-      });
-      const imgData = canvas.toDataURL('image/png');
+
+      // dá 1 frame para recharts reagir caso ainda não tenha terminado de pintar
+      await new Promise((r) => setTimeout(r, 300));
+
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth - 20;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let yOffset = 10;
-      let remaining = imgHeight;
-      while (remaining > 0) {
-        pdf.addImage(imgData, 'PNG', 10, yOffset - (imgHeight - remaining), imgWidth, imgHeight);
-        remaining -= (pageHeight - 20);
-        if (remaining > 0) { pdf.addPage(); yOffset = 10; }
+      const pageWidth = pdf.internal.pageSize.getWidth();   // 210
+      const pageHeight = pdf.internal.pageSize.getHeight(); // 297
+      const margin = 10;
+      const usableWidth = pageWidth - margin * 2;
+      const usableHeight = pageHeight - margin * 2;
+
+      const sections = Array.from(pdfReportRef.current.querySelectorAll<HTMLElement>('[data-pdf-section]'));
+      let cursorY = margin;
+      let firstSectionOfPage = true;
+
+      for (const section of sections) {
+        const canvas = await html2canvas(section, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+        });
+        const imgData = canvas.toDataURL('image/png');
+        const imgW = usableWidth;
+        const imgH = (canvas.height * imgW) / canvas.width;
+
+        // se a seção sozinha é maior que uma página, aceita o corte — caso raro
+        if (imgH > usableHeight) {
+          if (!firstSectionOfPage) {
+            pdf.addPage();
+            cursorY = margin;
+          }
+          pdf.addImage(imgData, 'PNG', margin, cursorY, imgW, imgH);
+          pdf.addPage();
+          cursorY = margin;
+          firstSectionOfPage = true;
+          continue;
+        }
+
+        // se não couber na página atual, abre nova
+        if (cursorY + imgH > pageHeight - margin) {
+          pdf.addPage();
+          cursorY = margin;
+          firstSectionOfPage = true;
+        }
+
+        pdf.addImage(imgData, 'PNG', margin, cursorY, imgW, imgH);
+        cursorY += imgH + 4; // pequeno respiro entre seções
+        firstSectionOfPage = false;
       }
+
       pdf.save(`PDI_${store.usuario.nome || 'MeuPDI'}.pdf`);
     } catch (err) {
       console.error('Erro ao gerar PDF:', err);
-      window.print();
+      alert('Não foi possível gerar o PDF. Tente novamente.');
     }
   };
 
@@ -290,7 +325,30 @@ export const Passo6RevisaoFinal: React.FC = () => {
           <RefreshCw className="w-5 h-5" /> Salvar Ciclo
         </button>
       </div>
-      
+
+      {/* Relatório PDF off-screen: sempre montado para que o recharts pinte antes do clique */}
+      <div
+        aria-hidden
+        style={{
+          position: 'fixed',
+          left: '-10000px',
+          top: 0,
+          width: '760px',
+          pointerEvents: 'none',
+          opacity: 0,
+        }}
+      >
+        <PdfReport
+          ref={pdfReportRef}
+          usuario={store.usuario}
+          inventario={store.inventario}
+          objetivos={store.objetivos}
+          planoDeAcao={store.planoDeAcao}
+          campoDeForcas={store.campoDeForcas}
+          scoreSaude={scoreSaude}
+        />
+      </div>
+
     </div>
   );
 };
