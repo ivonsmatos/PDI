@@ -53,6 +53,8 @@ export interface PdiFields {
     nome: string;
     email: string;
     causa: string;
+    areaAtuacao: string;   // chave de matrizDeCompetencias, ex: 'tecnologia'
+    nivelCarreira: string; // 'estagiario' | 'junior' | 'pleno' | 'senior' | 'especialista' | 'gestor'
   };
   inventario: {
     hardSkills: HardSkill[];
@@ -111,7 +113,7 @@ export interface PdiState extends PdiFields {
 
 const initialState: PdiFields = {
   stepAtual: 1,
-  usuario: { nome: '', email: '', causa: '' },
+  usuario: { nome: '', email: '', causa: '', areaAtuacao: '', nivelCarreira: '' },
   inventario: { hardSkills: [], softSkills: [] },
   objetivos: [],
   planoDeAcao: [],

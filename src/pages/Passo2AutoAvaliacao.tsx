@@ -15,22 +15,37 @@ const atributosEmpregabilidade = [
 ];
 
 const areaOptions = [
-  { value: 'tecnologia', label: 'Tecnologia' },
-  { value: 'administracao', label: 'Administração' },
-  { value: 'gestao', label: 'Gestão' },
-  { value: 'marketing', label: 'Marketing' },
-  { value: 'vendas', label: 'Vendas' },
-  { value: 'recursos_humanos', label: 'Recursos Humanos' },
-  { value: 'financas', label: 'Finanças' },
-  { value: 'logistica_supply_chain', label: 'Logística & Supply Chain' },
-  { value: 'design', label: 'Design' },
-  { value: 'saude', label: 'Saúde' },
-  { value: 'educacao', label: 'Educação' },
-  { value: 'direito', label: 'Direito' },
-  { value: 'engenharia', label: 'Engenharia' },
-  { value: 'customer_success', label: 'Customer Success' },
-  { value: 'gestao_de_produto', label: 'Gestão de Produto' },
-  { value: 'ciencia_de_dados', label: 'Ciência de Dados' }
+  // Tecnologia
+  { value: 'tecnologia',               label: '💻 Tecnologia / Desenvolvimento' },
+  { value: 'devops_infraestrutura',     label: '⚙️ DevOps & Infraestrutura' },
+  { value: 'seguranca_informacao',      label: '🔒 Segurança da Informação' },
+  { value: 'qualidade_qa',             label: '🧪 Qualidade / QA' },
+  { value: 'ciencia_de_dados',         label: '📊 Ciência de Dados / BI' },
+  { value: 'gestao_de_produto',        label: '🗺️ Gestão de Produto' },
+  { value: 'inovacao_transformacao_digital', label: '🚀 Inovação & Transformação Digital' },
+  // Negócios
+  { value: 'administracao',            label: '🏢 Administração' },
+  { value: 'gestao',                   label: '👥 Gestão & Liderança' },
+  { value: 'financas',                 label: '💰 Finanças' },
+  { value: 'contabilidade',            label: '📒 Contabilidade' },
+  { value: 'compras_procurement',      label: '🛒 Compras & Procurement' },
+  { value: 'logistica_supply_chain',   label: '🚚 Logística & Supply Chain' },
+  // Pessoas & Marketing
+  { value: 'recursos_humanos',         label: '🤝 Recursos Humanos' },
+  { value: 'marketing',                label: '📣 Marketing' },
+  { value: 'vendas',                   label: '🎯 Vendas' },
+  { value: 'customer_success',         label: '⭐ Customer Success' },
+  { value: 'comunicacao_relacoes_publicas', label: '📡 Comunicação & Relações Públicas' },
+  // Design
+  { value: 'design',                   label: '🎨 Design / UX-UI' },
+  // Setores Especializados
+  { value: 'saude',                    label: '🏥 Saúde' },
+  { value: 'educacao',                 label: '🎓 Educação' },
+  { value: 'direito',                  label: '⚖️ Direito' },
+  { value: 'engenharia',               label: '🏗️ Engenharia' },
+  { value: 'sustentabilidade_esg',     label: '🌱 Sustentabilidade & ESG' },
+  { value: 'agronegocio',              label: '🌾 Agronegócio' },
+  { value: 'varejo',                   label: '🛍️ Varejo & E-commerce' },
 ];
 
 const nivelOptions = [
@@ -43,12 +58,24 @@ const nivelOptions = [
 ];
 
 export const Passo2AutoAvaliacao: React.FC = () => {
-  const { inventario, setStoreItem } = usePdiStore();
+  const { inventario, setStoreItem, usuario, updateUsuario } = usePdiStore();
   const [activeTab, setActiveTab] = useState<'hard' | 'soft'>('soft');
-  
-  // States para os seletores de área e nível
-  const [area, setArea] = useState<keyof typeof matrizDeCompetencias | ''>('');
-  const [nivel, setNivel] = useState<string>('');
+
+  // Inicia com o valor já salvo no store (persiste entre sessões)
+  const [area, setArea] = useState<keyof typeof matrizDeCompetencias | ''>(
+    (usuario.areaAtuacao as keyof typeof matrizDeCompetencias) || ''
+  );
+  const [nivel, setNivel] = useState<string>(usuario.nivelCarreira || '');
+
+  const handleAreaChange = (val: string) => {
+    setArea(val as keyof typeof matrizDeCompetencias);
+    updateUsuario({ areaAtuacao: val });
+  };
+
+  const handleNivelChange = (val: string) => {
+    setNivel(val);
+    updateUsuario({ nivelCarreira: val });
+  };
 
   const handleSoftSkillToggle = (atributo: string, avaliacao: 'Forte' | 'Melhoria') => {
     let newSofts = [...inventario.softSkills];
@@ -197,21 +224,21 @@ export const Passo2AutoAvaliacao: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Qual é a sua Área?</label>
-                <select 
+                <select
                   value={area}
-                  onChange={(e) => setArea(e.target.value as any)}
+                  onChange={(e) => handleAreaChange(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                 >
                   <option value="" disabled>Selecione a área...</option>
                   {areaOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Qual nível deseja analisar?</label>
-                <select 
+                <select
                   value={nivel}
-                  onChange={(e) => setNivel(e.target.value)}
+                  onChange={(e) => handleNivelChange(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                 >
                   <option value="" disabled>Selecione o nível...</option>

@@ -295,7 +295,7 @@ export const Evolucao: React.FC = () => {
                   <YAxis domain={[0, 100]} tick={{ fill: '#94a3b8', fontSize: 10 }} />
                   <Tooltip
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    formatter={(v: number) => [`${v}%`, 'Score']}
+                    formatter={(v) => [`${v}%`, 'Score']}
                   />
                   <Line
                     type="monotone" dataKey="score" name="Saúde"
