@@ -23,7 +23,7 @@ export function useFirebaseSync() {
 
     const uid = user.uid;
 
-    const unsub = usePdiStore.subscribe((state, prev) => {
+    const unsub = usePdiStore.subscribe((state, _prev) => {
       // ── Sincroniza o PDI atual (debounced) ──────────────────────────────────
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {

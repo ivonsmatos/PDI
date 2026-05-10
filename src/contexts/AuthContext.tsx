@@ -80,8 +80,9 @@ async function hydrateStore(uid: string) {
       if (typeof pdiAtual.isDarkMode === 'boolean')       store.setIsDarkMode(pdiAtual.isDarkMode);
     }
 
-    if (diario.length > 0)  store.setStoreItem('diario', diario);
-    if (ciclos.length > 0)  store.setStoreItem('historico', ciclos);
+    // diario e historico vivem em PdiState (não PdiFields) → setState direto
+    if (diario.length > 0)  usePdiStore.setState({ diario });
+    if (ciclos.length > 0)  usePdiStore.setState({ historico: ciclos });
   } catch (err) {
     console.warn('[PDI] Falha ao carregar dados do Firestore — usando cache local', err);
   }
