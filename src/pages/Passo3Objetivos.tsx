@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
-import type { ObjetivoCategoria } from '../store/usePdiStore';
-import { Plus, Trash2, Clock } from 'lucide-react';
+import type { ObjetivoCategoria, Objetivo } from '../store/usePdiStore';
+import { Plus, Trash2, Clock, Info } from 'lucide-react';
 
 const prazoLabels = {
   curto: { label: 'Curto Prazo', sub: 'até 3 meses', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
@@ -15,6 +15,96 @@ const categoriaLabels: Record<string, { emoji: string; label: string; color: str
   pessoal:     { emoji: '🧘', label: 'Pessoal',     color: 'bg-rose-100 text-rose-700' },
 };
 
+// ── SMART Validator ───────────────────────────────────────────────────────────
+const MEASURABLE_KEYWORDS = [
+  /\d/,                           // contém número
+  /(%|por cento|porcento)/i,
+  /(certificação|certificado|cert)/i,
+  /(nível|level)/i,
+  /(aprovação|aprovado|aprovada)/i,
+  /(cargo|promoção|promovid)/i,
+  /(nota|pontuação|score)/i,
+];
+
+function smartScore(descricao: string, categoria: string, prazo: string, justificativa: string) {
+  const criteria: { label: string; ok: boolean; tip: string }[] = [
+    {
+      label: 'Específico',
+      ok: descricao.trim().length >= 25,
+      tip: 'Descreva com mais detalhes o que exatamente você quer alcançar (mín. 25 caracteres).',
+    },
+    {
+      label: 'Mensurável',
+      ok: MEASURABLE_KEYWORDS.some(r => r.test(descricao)),
+      tip: 'Inclua um número, percentual, certificado ou conquista verificável na descrição.',
+    },
+    {
+      label: 'Relevante',
+      ok: !!categoria && justificativa.trim().length >= 15,
+      tip: 'Selecione a categoria e explique por que este objetivo importa (mín. 15 caracteres).',
+    },
+    {
+      label: 'Temporal',
+      ok: !!prazo,
+      tip: 'Defina um horizonte de tempo (curto, médio ou longo prazo).',
+    },
+  ];
+  const pts = criteria.filter(c => c.ok).length;
+  return { criteria, pts };
+}
+
+function SmartBadge({ pts }: { pts: number }) {
+  const colors = [
+    'bg-rose-100 text-rose-700',
+    'bg-rose-100 text-rose-700',
+    'bg-amber-100 text-amber-700',
+    'bg-amber-100 text-amber-700',
+    'bg-emerald-100 text-emerald-700',
+  ];
+  const labels = ['Muito vago', 'Vago', 'Razoável', 'Bom', 'SMART ✓'];
+  return (
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${colors[pts]}`}>
+      {labels[pts]} ({pts}/4)
+    </span>
+  );
+}
+
+function SmartPanel({ descricao, categoria, prazo, justificativa }: {
+  descricao: string; categoria: string; prazo: string; justificativa: string;
+}) {
+  const { criteria } = useMemo(
+    () => smartScore(descricao, categoria, prazo, justificativa),
+    [descricao, categoria, prazo, justificativa]
+  );
+  return (
+    <div className="mt-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-xl p-3 space-y-1.5">
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Critérios SMART</p>
+      {criteria.map(c => (
+        <div key={c.label} className="flex items-start gap-2">
+          <span className={`text-sm mt-0.5 shrink-0 ${c.ok ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-600'}`}>
+            {c.ok ? '✓' : '○'}
+          </span>
+          <div>
+            <span className={`text-xs font-semibold ${c.ok ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
+              {c.label}
+            </span>
+            {!c.ok && <p className="text-[10px] text-slate-400 dark:text-slate-500">{c.tip}</p>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SmartCardBadge({ obj }: { obj: Objetivo }) {
+  const { pts } = useMemo(
+    () => smartScore(obj.descricao, obj.categoria, obj.prazo, obj.justificativa),
+    [obj]
+  );
+  return <SmartBadge pts={pts} />;
+}
+
+// ── Componente principal ──────────────────────────────────────────────────────
 export const Passo3Objetivos: React.FC = () => {
   const { objetivos, setStoreItem } = usePdiStore();
   const [novaDescricao, setNovaDescricao] = useState('');
@@ -22,6 +112,12 @@ export const Passo3Objetivos: React.FC = () => {
   const [novoPrazo, setNovoPrazo] = useState<'curto' | 'medio' | 'longo' | ''>('');
   const [novaJustificativa, setNovaJustificativa] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showSmartPanel, setShowSmartPanel] = useState(false);
+
+  const { pts: currentPts } = useMemo(
+    () => smartScore(novaDescricao, novaCategoria, novoPrazo, novaJustificativa),
+    [novaDescricao, novaCategoria, novoPrazo, novaJustificativa]
+  );
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -53,6 +149,7 @@ export const Passo3Objetivos: React.FC = () => {
     setNovoPrazo('');
     setNovaJustificativa('');
     setErrors({});
+    setShowSmartPanel(false);
   };
 
   const removeObjetivo = (id: string) => {
@@ -65,12 +162,25 @@ export const Passo3Objetivos: React.FC = () => {
         Estabelecimento de Objetivos
       </h2>
       <p className="text-gray-600 dark:text-slate-400 mb-8">
-        Os objetivos devem ser poucos (máx. 4), realísticos e desafiadores. Defina prazo e justificativa para cada um.
+        Os objetivos devem ser poucos (máx. 4), realísticos e desafiadores. Use os critérios SMART para garantir qualidade.
       </p>
 
       {/* Formulário */}
       <div className="bg-indigo-50/60 dark:bg-indigo-900/20 p-6 rounded-2xl border border-indigo-100 dark:border-indigo-800 mb-8 shadow-sm space-y-4">
-        <h3 className="text-xs font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-widest mb-2">Novo Objetivo</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-widest">Novo Objetivo</h3>
+          <div className="flex items-center gap-2">
+            {novaDescricao && <SmartBadge pts={currentPts} />}
+            <button
+              type="button"
+              onClick={() => setShowSmartPanel(!showSmartPanel)}
+              className="text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors"
+              title="Ver critérios SMART"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
 
         {/* Linha 1: Categoria + Prazo */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -113,12 +223,14 @@ export const Passo3Objetivos: React.FC = () => {
           </div>
         </div>
 
-        {/* Linha 2: Descrição */}
+        {/* Descrição */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">O que você quer alcançar?</label>
+          <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">
+            O que você quer alcançar?
+          </label>
           <input
             type="text"
-            placeholder="Ex: Obter a certificação AWS Solutions Architect"
+            placeholder="Ex: Obter a certificação AWS Solutions Architect até junho"
             value={novaDescricao}
             onChange={e => setNovaDescricao(e.target.value)}
             className={`w-full px-4 py-3 rounded-xl border bg-white dark:bg-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.descricao ? 'border-red-400' : 'border-gray-200 dark:border-slate-600'}`}
@@ -126,17 +238,29 @@ export const Passo3Objetivos: React.FC = () => {
           {errors.descricao && <p className="text-xs text-red-500 mt-1">{errors.descricao}</p>}
         </div>
 
-        {/* Linha 3: Justificativa */}
+        {/* Justificativa */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Por que este objetivo é importante? <span className="font-normal text-gray-400">(opcional)</span></label>
+          <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">
+            Por que este objetivo é importante? <span className="font-normal text-gray-400">(recomendado para SMART)</span>
+          </label>
           <textarea
             rows={2}
-            placeholder="Ex: É necessário para ser promovido ao cargo de Arquiteto de Soluções"
+            placeholder="Ex: É necessário para ser promovido ao cargo de Arquiteto de Soluções até o final do ano"
             value={novaJustificativa}
             onChange={e => setNovaJustificativa(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
           />
         </div>
+
+        {/* Painel SMART */}
+        {showSmartPanel && (
+          <SmartPanel
+            descricao={novaDescricao}
+            categoria={novaCategoria}
+            prazo={novoPrazo}
+            justificativa={novaJustificativa}
+          />
+        )}
 
         <div className="flex justify-between items-center pt-1">
           <span className="text-xs text-gray-400 dark:text-slate-500">{objetivos.length}/4 objetivos criados</span>
@@ -175,6 +299,8 @@ export const Passo3Objetivos: React.FC = () => {
                         <Clock className="w-3 h-3 inline mr-1" />{prazoInfo.label}
                       </span>
                     )}
+                    {/* Badge SMART */}
+                    <SmartCardBadge obj={obj} />
                   </div>
                   <h4 className="font-semibold text-base text-gray-800 dark:text-slate-100">{obj.descricao}</h4>
                   {obj.justificativa && (

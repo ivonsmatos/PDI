@@ -33,6 +33,20 @@ export type PlanoAcaoItem = {
 
 export type PlanoStatus = 'pendente' | 'em_andamento' | 'concluido';
 
+export type DiarioEntry = {
+  id: string;
+  data: string;       // ISO string
+  objetivoId?: string;
+  texto: string;
+};
+
+export type RetrospectivaData = {
+  funcionou: string;
+  naoFuncionou: string;
+  aprendizagem: string;
+  nota: number; // 1-5
+};
+
 export interface PdiFields {
   stepAtual: number;
   usuario: {
@@ -56,6 +70,8 @@ export interface PdiFields {
 export interface PdiCiclo extends Omit<PdiFields, 'stepAtual'> {
   dataSalvamento: string;
   idCiclo: string;
+  scoreSaude?: number;
+  retrospectiva?: RetrospectivaData;
 }
 
 export interface PdiState extends PdiFields {
@@ -63,6 +79,8 @@ export interface PdiState extends PdiFields {
   wizardConcluido: boolean;
   planoAcaoStatus: Record<string, PlanoStatus>;
   trilhaProgresso: Record<string, boolean>;
+  diario: DiarioEntry[];
+  isDarkMode: boolean;
 
   // Ações wizard
   setStepAtual: (step: number) => void;
@@ -73,7 +91,7 @@ export interface PdiState extends PdiFields {
   setStoreItem: <K extends keyof PdiFields>(key: K, value: PdiFields[K]) => void;
 
   // Ações ciclo
-  salvarCiclo: () => void;
+  salvarCiclo: (retro?: RetrospectivaData) => void;
   resetAtual: () => void;
   setWizardConcluido: (v: boolean) => void;
 
@@ -82,6 +100,13 @@ export interface PdiState extends PdiFields {
 
   // Ações trilha
   toggleTrilhaItem: (key: string) => void;
+
+  // Ações diário
+  addDiarioEntry: (entry: Omit<DiarioEntry, 'id'>) => void;
+  removeDiarioEntry: (id: string) => void;
+
+  // Dark mode
+  setIsDarkMode: (v: boolean) => void;
 }
 
 const initialState: PdiFields = {
@@ -93,6 +118,18 @@ const initialState: PdiFields = {
   campoDeForcas: { impulsionadoras: [], restritivas: [], aliancas: '' },
 };
 
+/** Calcula health score dado o estado atual — mesma lógica do Dashboard e Passo6 */
+function computeScore(state: PdiFields): number {
+  if (state.objetivos.length === 0) return 0;
+  let score = 100;
+  const objetivosComAcao = new Set(state.planoDeAcao.map(p => p.objetivoId));
+  score -= (state.objetivos.length - objetivosComAcao.size) * 20;
+  score -= state.planoDeAcao.filter(a => !a.recursos?.trim()).length * 10;
+  if ((state.campoDeForcas.restritivas ?? []).length === 0) score -= 15;
+  if ((state.campoDeForcas.aliancas ?? '').trim().length < 10) score -= 10;
+  return Math.max(0, Math.min(100, score));
+}
+
 export const usePdiStore = create<PdiState>()(
   persist(
     (set, get) => ({
@@ -101,6 +138,8 @@ export const usePdiStore = create<PdiState>()(
       wizardConcluido: false,
       planoAcaoStatus: {},
       trilhaProgresso: {},
+      diario: [],
+      isDarkMode: false,
 
       setStepAtual: (step) => set({ stepAtual: step }),
       nextStep: () => set((state) => ({ stepAtual: Math.min(state.stepAtual + 1, 6) })),
@@ -112,7 +151,7 @@ export const usePdiStore = create<PdiState>()(
 
       setWizardConcluido: (v) => set({ wizardConcluido: v }),
 
-      salvarCiclo: () => {
+      salvarCiclo: (retro) => {
         const state = get();
         const novoCiclo: PdiCiclo = {
           idCiclo: Date.now().toString(),
@@ -122,6 +161,8 @@ export const usePdiStore = create<PdiState>()(
           objetivos: state.objetivos,
           planoDeAcao: state.planoDeAcao,
           campoDeForcas: state.campoDeForcas,
+          scoreSaude: computeScore(state),
+          retrospectiva: retro,
         };
         set({ historico: [...state.historico, novoCiclo] });
       },
@@ -133,6 +174,7 @@ export const usePdiStore = create<PdiState>()(
           wizardConcluido: false,
           planoAcaoStatus: {},
           trilhaProgresso: {},
+          // diario é mantido entre ciclos — o usuário não perde o histórico pessoal
         }),
 
       setPlanoItemStatus: (id, status) =>
@@ -147,6 +189,21 @@ export const usePdiStore = create<PdiState>()(
             [key]: !state.trilhaProgresso[key],
           },
         })),
+
+      addDiarioEntry: (entry) =>
+        set((state) => ({
+          diario: [
+            { ...entry, id: Date.now().toString() },
+            ...state.diario,
+          ],
+        })),
+
+      removeDiarioEntry: (id) =>
+        set((state) => ({
+          diario: state.diario.filter(e => e.id !== id),
+        })),
+
+      setIsDarkMode: (v) => set({ isDarkMode: v }),
     }),
     {
       name: 'pdi-storage',

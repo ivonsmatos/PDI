@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { usePdiStore } from '../store/usePdiStore';
 import { HistoricoModal } from '../components/HistoricoModal';
 import {
   LayoutDashboard, Map, CheckSquare, TrendingUp,
   Moon, Sun, History, RefreshCw, Menu, X,
+  BookOpen, Settings,
 } from 'lucide-react';
 
 const navItems = [
@@ -12,20 +13,24 @@ const navItems = [
   { to: '/trilha',   icon: <Map className="w-5 h-5" />,             label: 'Trilha'     },
   { to: '/plano',    icon: <CheckSquare className="w-5 h-5" />,     label: 'Plano'      },
   { to: '/evolucao', icon: <TrendingUp className="w-5 h-5" />,      label: 'Evolução'   },
+  { to: '/diario',   icon: <BookOpen className="w-5 h-5" />,        label: 'Diário'     },
 ];
 
+// bottom nav mostra só os 4 principais para não lotar
+const bottomNavItems = navItems.slice(0, 4);
+
 export const AppLayout: React.FC = () => {
-  const { usuario, wizardConcluido, salvarCiclo, resetAtual } = usePdiStore();
+  const { usuario, wizardConcluido, salvarCiclo, resetAtual, isDarkMode, setIsDarkMode } = usePdiStore();
   const navigate = useNavigate();
-  const [isDark, setIsDark] = useState(false);
   const [showHistorico, setShowHistorico] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Sincroniza dark mode do store com o DOM
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
+    document.documentElement.classList.toggle('dark', isDarkMode);
+  }, [isDarkMode]);
 
-  // Se o wizard não foi concluído, manda pro wizard
+  // Se o wizard não foi concluído, redireciona
   useEffect(() => {
     if (!wizardConcluido) navigate('/wizard', { replace: true });
   }, [wizardConcluido, navigate]);
@@ -75,10 +80,11 @@ export const AppLayout: React.FC = () => {
               <History className="w-4 h-4" />
             </button>
             <button
-              onClick={() => setIsDark(!isDark)}
+              onClick={() => setIsDarkMode(!isDarkMode)}
               className="p-2 rounded-full w-9 h-9 flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+              title={isDarkMode ? 'Modo claro' : 'Modo escuro'}
             >
-              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
           </div>
         </div>
@@ -107,6 +113,23 @@ export const AppLayout: React.FC = () => {
               {item.label}
             </NavLink>
           ))}
+
+          {/* Divisor + Configurações */}
+          <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+            <NavLink
+              to="/config"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`
+              }
+            >
+              <Settings className="w-5 h-5" /> Configurações
+            </NavLink>
+          </div>
+
           <div className="mt-auto pb-6 px-3">
             <button
               onClick={handleNovoCiclo}
@@ -117,7 +140,7 @@ export const AppLayout: React.FC = () => {
           </div>
         </aside>
 
-        {/* Mobile menu */}
+        {/* Mobile drawer */}
         {menuOpen && (
           <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setMenuOpen(false)}>
             <nav
@@ -142,6 +165,21 @@ export const AppLayout: React.FC = () => {
                   {item.label}
                 </NavLink>
               ))}
+              <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                <NavLink
+                  to="/config"
+                  onClick={() => setMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                      isActive
+                        ? 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`
+                  }
+                >
+                  <Settings className="w-5 h-5" /> Configurações
+                </NavLink>
+              </div>
             </nav>
           </div>
         )}
@@ -152,9 +190,9 @@ export const AppLayout: React.FC = () => {
         </main>
       </div>
 
-      {/* Bottom nav — mobile */}
+      {/* Bottom nav — mobile (4 itens principais) */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex">
-        {navItems.map((item) => (
+        {bottomNavItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -171,6 +209,20 @@ export const AppLayout: React.FC = () => {
             {item.label}
           </NavLink>
         ))}
+        {/* Config no bottom nav como ícone */}
+        <NavLink
+          to="/config"
+          className={({ isActive }) =>
+            `flex-1 flex flex-col items-center justify-center py-3 text-[10px] font-semibold gap-1 transition-colors ${
+              isActive
+                ? 'text-indigo-600 dark:text-indigo-400'
+                : 'text-slate-400 dark:text-slate-500'
+            }`
+          }
+        >
+          <Settings className="w-5 h-5" />
+          Config.
+        </NavLink>
       </nav>
     </div>
   );

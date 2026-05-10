@@ -22,8 +22,7 @@ function validateStep(
 }
 
 export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir }) => {
-  const { stepAtual, nextStep, prevStep, usuario, objetivos } = usePdiStore();
-  const [isDarkMode, setIsDarkMode]     = useState(false);
+  const { stepAtual, nextStep, prevStep, usuario, objetivos, isDarkMode, setIsDarkMode } = usePdiStore();
   const [showHistorico, setShowHistorico] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
