@@ -4,7 +4,7 @@ import { usePdiStore } from '../store/usePdiStore';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis,
-  CartesianGrid, Legend, LineChart, Line,
+  CartesianGrid, Legend, LineChart, Line, Cell,
 } from 'recharts';
 import { TrendingUp, Calendar, Target, Layers, Brain } from 'lucide-react';
 
@@ -189,7 +189,7 @@ export const Evolucao: React.FC = () => {
                       <Tooltip contentStyle={{ borderRadius: '12px', border: 'none' }} />
                       <Bar dataKey="quantidade" name="Qtd." radius={[0, 6, 6, 0]}>
                         {softData.map((entry, i) => (
-                          <rect key={i} fill={entry.fill} />
+                          <Cell key={i} fill={entry.fill} />
                         ))}
                       </Bar>
                     </BarChart>
