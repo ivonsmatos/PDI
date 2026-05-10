@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App';
+import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Trilha } from './pages/Trilha';
 import { PlanoBoard } from './pages/PlanoBoard';
@@ -9,6 +10,10 @@ import { Config } from './pages/Config';
 import { AppLayout } from './layouts/AppLayout';
 
 const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <Login />,
+  },
   {
     path: '/wizard',
     element: <App />,

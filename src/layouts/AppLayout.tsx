@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { usePdiStore } from '../store/usePdiStore';
+import { useAuth } from '../contexts/AuthContext';
+import { useFirebaseSync } from '../hooks/useFirebaseSync';
 import { HistoricoModal } from '../components/HistoricoModal';
 import {
   LayoutDashboard, Map, CheckSquare, TrendingUp,
   Moon, Sun, History, RefreshCw, Menu, X,
-  BookOpen, Settings,
+  BookOpen, Settings, LogOut,
 } from 'lucide-react';
 
 const navItems = [
@@ -21,19 +23,32 @@ const bottomNavItems = navItems.slice(0, 4);
 
 export const AppLayout: React.FC = () => {
   const { usuario, wizardConcluido, salvarCiclo, resetAtual, isDarkMode, setIsDarkMode } = usePdiStore();
+  const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [showHistorico, setShowHistorico] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Ativa sincronização automática com Firestore
+  useFirebaseSync();
 
   // Sincroniza dark mode do store com o DOM
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, [isDarkMode]);
 
+  // Auth guard — redireciona para /login se não autenticado
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/login', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
   // Se o wizard não foi concluído, redireciona
   useEffect(() => {
-    if (!wizardConcluido) navigate('/wizard', { replace: true });
-  }, [wizardConcluido, navigate]);
+    if (!loading && user && !wizardConcluido) {
+      navigate('/wizard', { replace: true });
+    }
+  }, [wizardConcluido, loading, user, navigate]);
 
   const handleNovoCiclo = () => {
     if (confirm('Deseja salvar o ciclo atual e iniciar uma nova revisão do PDI?')) {
@@ -43,7 +58,28 @@ export const AppLayout: React.FC = () => {
     }
   };
 
-  const firstName = usuario.nome?.split(' ')[0] || 'Você';
+  const handleLogout = async () => {
+    if (confirm('Deseja sair da sua conta?')) {
+      await logout();
+      navigate('/login', { replace: true });
+    }
+  };
+
+  // Avatar: usa foto do Google ou inicial do nome
+  const photoURL = user?.photoURL;
+  const firstName = usuario.nome?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Você';
+  const initial = firstName.charAt(0).toUpperCase();
+
+  // Enquanto carrega auth, mostra spinner
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300 font-sans">
@@ -85,6 +121,25 @@ export const AppLayout: React.FC = () => {
               title={isDarkMode ? 'Modo claro' : 'Modo escuro'}
             >
               {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            {/* Avatar / logout */}
+            <button
+              onClick={handleLogout}
+              title="Sair"
+              className="flex items-center gap-1.5 ml-1 rounded-full hover:opacity-80 transition-opacity"
+            >
+              {photoURL ? (
+                <img
+                  src={photoURL}
+                  alt={firstName}
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-200 dark:ring-indigo-700"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-400 flex items-center justify-center text-white text-xs font-bold ring-2 ring-indigo-200 dark:ring-indigo-700">
+                  {initial}
+                </div>
+              )}
             </button>
           </div>
         </div>
@@ -130,12 +185,18 @@ export const AppLayout: React.FC = () => {
             </NavLink>
           </div>
 
-          <div className="mt-auto pb-6 px-3">
+          <div className="mt-auto pb-6 px-3 flex flex-col gap-2">
             <button
               onClick={handleNovoCiclo}
               className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <RefreshCw className="w-4 h-4" /> Novo Ciclo
+            </button>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            >
+              <LogOut className="w-4 h-4" /> Sair
             </button>
           </div>
         </aside>
@@ -179,6 +240,14 @@ export const AppLayout: React.FC = () => {
                 >
                   <Settings className="w-5 h-5" /> Configurações
                 </NavLink>
+              </div>
+              <div className="mt-auto pb-6">
+                <button
+                  onClick={() => { setMenuOpen(false); handleLogout(); }}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" /> Sair
+                </button>
               </div>
             </nav>
           </div>
