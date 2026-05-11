@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Loader2, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Mail, Lock, User, Eye, EyeOff, Gift, Shield } from 'lucide-react';
 
 // SVG inline do Google (lucide-react não inclui ícone do Google)
 const GoogleIcon = () => (
@@ -24,6 +24,7 @@ export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
+  const [lgpdConsent, setLgpdConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -39,7 +40,8 @@ export const Login: React.FC = () => {
         await login(email, password);
         navigate('/', { replace: true });
       } else if (mode === 'signup') {
-        if (!nome.trim()) { setError('Digite seu nome.'); return; }
+        if (!nome.trim()) { setError('Digite seu nome.'); setLoading(false); return; }
+        if (!lgpdConsent) { setError('Você precisa aceitar a Política de Privacidade para criar uma conta.'); setLoading(false); return; }
         await signup(nome.trim(), email, password);
         navigate('/', { replace: true });
       } else {
@@ -73,9 +75,10 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 py-8">
       <div className="w-full max-w-md">
-        {/* Logo */}
+
+        {/* Logo + badges */}
         <div className="text-center mb-8">
           <span className="text-4xl font-black bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent tracking-tight">
             Meu PDI
@@ -83,6 +86,15 @@ export const Login: React.FC = () => {
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
             Seu plano de desenvolvimento inteligente
           </p>
+          {/* Badges */}
+          <div className="mt-3 flex items-center justify-center gap-3 flex-wrap">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800">
+              <Gift className="w-3.5 h-3.5" /> 100% Gratuito, sempre
+            </span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800">
+              <Shield className="w-3.5 h-3.5" /> Dados protegidos — LGPD
+            </span>
+          </div>
         </div>
 
         {/* Card */}
@@ -182,6 +194,39 @@ export const Login: React.FC = () => {
               </div>
             )}
 
+            {/* Checkbox LGPD — só no signup */}
+            {mode === 'signup' && (
+              <label className="flex items-start gap-2.5 cursor-pointer group">
+                <div className="relative mt-0.5 shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={lgpdConsent}
+                    onChange={e => setLgpdConsent(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${lgpdConsent ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 dark:border-slate-500 bg-white dark:bg-slate-700'}`}>
+                    {lgpdConsent && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 10">
+                        <path stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M1.5 5l2.5 2.5 4.5-4.5"/>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <span className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Li e concordo com a{' '}
+                  <Link
+                    to="/privacidade"
+                    target="_blank"
+                    className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                  >
+                    Política de Privacidade
+                  </Link>
+                  . Seus dados são usados apenas para salvar seu PDI —{' '}
+                  <strong className="text-slate-600 dark:text-slate-300">nunca para marketing</strong>.
+                </span>
+              </label>
+            )}
+
             {/* Erro / Sucesso */}
             {error && (
               <div className="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 text-sm text-red-600 dark:text-red-400">
@@ -215,7 +260,7 @@ export const Login: React.FC = () => {
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {mode === 'login' && 'Entrar'}
-              {mode === 'signup' && 'Criar conta'}
+              {mode === 'signup' && 'Criar conta grátis'}
               {mode === 'reset' && 'Enviar e-mail'}
             </button>
           </form>
@@ -229,7 +274,7 @@ export const Login: React.FC = () => {
                   onClick={() => { setMode('signup'); reset(); }}
                   className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
                 >
-                  Criar agora
+                  Criar agora — é grátis
                 </button>
               </>
             )}
@@ -255,9 +300,22 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500">
-          Seus dados ficam seguros e sincronizados em todos os dispositivos.
-        </p>
+        {/* Rodapé com privacidade */}
+        <div className="mt-5 text-center space-y-1">
+          <p className="text-xs text-slate-400 dark:text-slate-500">
+            Seus dados são salvos com segurança e nunca compartilhados.
+          </p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">
+            <Link to="/privacidade" className="text-indigo-500 hover:underline">
+              Política de Privacidade e LGPD
+            </Link>
+            {' · '}
+            <Link to="/privacidade#como-usar" className="text-indigo-500 hover:underline">
+              Como usar
+            </Link>
+          </p>
+        </div>
+
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App';
 import { Login } from './pages/Login';
+import { Privacidade } from './pages/Privacidade';
 import { Dashboard } from './pages/Dashboard';
 import { Trilha } from './pages/Trilha';
 import { PlanoBoard } from './pages/PlanoBoard';
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/privacidade',
+    element: <Privacidade />,
   },
   {
     path: '/wizard',
