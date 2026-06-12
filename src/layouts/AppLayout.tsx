@@ -6,32 +6,62 @@ import { useFirebaseSync } from '../hooks/useFirebaseSync';
 import { HistoricoModal } from '../components/HistoricoModal';
 import { ToastContainer } from '../components/ToastContainer';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { CheckinSemanal } from '../components/CheckinSemanal';
+import { useNotificacoesPrazo } from '../hooks/useNotificacoesPrazo';
 import {
   LayoutDashboard, Map, CheckSquare, TrendingUp,
   Moon, Sun, History, RefreshCw, Menu, X,
-  BookOpen, Settings, LogOut,
+  BookOpen, Settings, LogOut, Share2, GitCompareArrows, FileText,
 } from 'lucide-react';
+import { encodeProfile } from '../pages/PerfilPublico';
+import type { PublicProfileData } from '../pages/PerfilPublico';
+
+const AREA_LABELS: Record<string, string> = {
+  tecnologia: '💻 Tecnologia / Desenvolvimento',
+  devops_infraestrutura: '⚙️ DevOps & Infraestrutura',
+  seguranca_informacao: '🔒 Segurança da Informação',
+  qualidade_qa: '🧪 Qualidade / QA',
+  ciencia_de_dados: '📊 Ciência de Dados / BI',
+  gestao_de_produto: '🗺️ Gestão de Produto',
+  recursos_humanos: '🤝 Recursos Humanos',
+  marketing: '📣 Marketing',
+  vendas: '🎯 Vendas',
+  gestao: '👥 Gestão & Liderança',
+  financas: '💰 Finanças',
+  design: '🎨 Design / UX-UI',
+};
+
+const NIVEL_LABELS: Record<string, string> = {
+  estagiario: 'Estagiário', junior: 'Júnior', pleno: 'Pleno',
+  senior: 'Sênior', especialista: 'Especialista', gestor: 'Gestor',
+};
 
 const navItems = [
-  { to: '/',         icon: <LayoutDashboard className="w-5 h-5" />, label: 'Dashboard'  },
-  { to: '/trilha',   icon: <Map className="w-5 h-5" />,             label: 'Trilha'     },
-  { to: '/plano',    icon: <CheckSquare className="w-5 h-5" />,     label: 'Plano'      },
-  { to: '/evolucao', icon: <TrendingUp className="w-5 h-5" />,      label: 'Evolução'   },
-  { to: '/diario',   icon: <BookOpen className="w-5 h-5" />,        label: 'Diário'     },
+  { to: '/',           icon: <LayoutDashboard className="w-5 h-5" />,     label: 'Dashboard'   },
+  { to: '/trilha',     icon: <Map className="w-5 h-5" />,                  label: 'Trilha'      },
+  { to: '/plano',      icon: <CheckSquare className="w-5 h-5" />,          label: 'Plano'       },
+  { to: '/evolucao',   icon: <TrendingUp className="w-5 h-5" />,           label: 'Evolução'    },
+  { to: '/diario',     icon: <BookOpen className="w-5 h-5" />,             label: 'Diário'      },
+  { to: '/comparador', icon: <GitCompareArrows className="w-5 h-5" />,     label: 'Comparador'  },
+  { to: '/curriculo',  icon: <FileText className="w-5 h-5" />,             label: 'Currículo'   },
 ];
 
 // bottom nav mostra só os 4 principais para não lotar
 const bottomNavItems = navItems.slice(0, 4);
 
 export const AppLayout: React.FC = () => {
-  const { usuario, wizardConcluido, salvarCiclo, resetAtual, isDarkMode, setIsDarkMode } = usePdiStore();
+  const { usuario, wizardConcluido, salvarCiclo, resetAtual, isDarkMode, setIsDarkMode,
+    inventario, objetivos, planoAcaoStatus, historico } = usePdiStore();
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [showHistorico, setShowHistorico] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [shareToast, setShareToast] = useState<'copied' | 'shared' | null>(null);
 
   // Ativa sincronização automática com Firestore
   useFirebaseSync();
+  // Notificações push de prazo
+  useNotificacoesPrazo();
 
   // Sincroniza dark mode do store com o DOM
   useEffect(() => {
@@ -67,6 +97,32 @@ export const AppLayout: React.FC = () => {
     }
   };
 
+  const handleShare = async () => {
+    const acoesConcluidasCount = Object.values(planoAcaoStatus).filter(v => v === 'concluido').length;
+    const profileData: PublicProfileData = {
+      nome: usuario.nome || 'Profissional',
+      area: AREA_LABELS[usuario.areaAtuacao] || usuario.areaAtuacao,
+      nivel: NIVEL_LABELS[usuario.nivelCarreira] || usuario.nivelCarreira,
+      hardSkills: inventario.hardSkills,
+      softFortes: inventario.softSkills.filter(s => s.pontoForteOuMelhoria === 'Forte').map(s => s.atributo),
+      softMelhoria: inventario.softSkills.filter(s => s.pontoForteOuMelhoria === 'Melhoria').map(s => s.atributo),
+      objetivosCount: objetivos.length,
+      acoesConcluidasCount,
+      ciclosCount: historico.length,
+      dataGeracao: new Date().toISOString(),
+    };
+    const encoded = encodeProfile(profileData);
+    const url = `${window.location.origin}/p/${encoded}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: `PDI de ${usuario.nome}`, url }); setShareToast('shared'); }
+      catch { /* cancelado */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      setShareToast('copied');
+    }
+    setTimeout(() => setShareToast(null), 3000);
+  };
+
   // Avatar: usa foto do Google ou inicial do nome
   const photoURL = user?.photoURL;
   const firstName = usuario.nome?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Você';
@@ -86,6 +142,7 @@ export const AppLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300 font-sans">
       <HistoricoModal open={showHistorico} onClose={() => setShowHistorico(false)} />
+      <CheckinSemanal />
 
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
@@ -104,6 +161,18 @@ export const AppLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            {shareToast && (
+              <span className="hidden sm:block text-xs font-semibold text-emerald-600 dark:text-emerald-400 animate-pulse">
+                {shareToast === 'copied' ? '✓ Link copiado!' : '✓ Compartilhado!'}
+              </span>
+            )}
+            <button
+              onClick={handleShare}
+              className="p-2 rounded-full w-9 h-9 flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-800 hover:text-indigo-600 transition-colors"
+              title="Compartilhar perfil público"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
             <button
               onClick={handleNovoCiclo}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors border border-indigo-100 dark:border-indigo-800"
