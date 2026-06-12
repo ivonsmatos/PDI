@@ -109,6 +109,9 @@ export interface PdiState extends PdiFields {
 
   // Dark mode
   setIsDarkMode: (v: boolean) => void;
+
+  // Histórico (não é keyof PdiFields — precisa de método dedicado)
+  setHistorico: (ciclos: PdiCiclo[]) => void;
 }
 
 const initialState: PdiFields = {
@@ -206,6 +209,8 @@ export const usePdiStore = create<PdiState>()(
         })),
 
       setIsDarkMode: (v) => set({ isDarkMode: v }),
+
+      setHistorico: (ciclos) => set({ historico: ciclos }),
     }),
     {
       name: 'pdi-storage',

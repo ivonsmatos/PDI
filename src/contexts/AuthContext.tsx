@@ -12,6 +12,7 @@ import {
 import { auth, googleProvider } from '../lib/firebase';
 import { loadPdiAtual, loadDiario, loadCiclos } from '../lib/firestore';
 import { usePdiStore } from '../store/usePdiStore';
+import { useToastStore } from '../store/useToastStore';
 
 // ── Tradução de erros Firebase → PT-BR ───────────────────────────────────────
 function translateError(code: string): string {
@@ -48,16 +49,26 @@ export function useAuth() {
   return ctx;
 }
 
+// ── Timeout helper ────────────────────────────────────────────────────────────
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), ms)
+    ),
+  ]);
+}
+
 // ── Carrega dados do Firestore e hidrata o store ──────────────────────────────
 async function hydrateStore(uid: string) {
   const store = usePdiStore.getState();
+  const { addToast } = useToastStore.getState();
 
   try {
-    const [pdiAtual, diario, ciclos] = await Promise.all([
-      loadPdiAtual(uid),
-      loadDiario(uid),
-      loadCiclos(uid),
-    ]);
+    const [pdiAtual, diario, ciclos] = await withTimeout(
+      Promise.all([loadPdiAtual(uid), loadDiario(uid), loadCiclos(uid)]),
+      12000
+    );
 
     if (pdiAtual) {
       if (pdiAtual.usuario)         store.updateUsuario(pdiAtual.usuario as Parameters<typeof store.updateUsuario>[0]);
@@ -85,6 +96,7 @@ async function hydrateStore(uid: string) {
     if (ciclos.length > 0)  usePdiStore.setState({ historico: ciclos });
   } catch (err) {
     console.warn('[PDI] Falha ao carregar dados do Firestore — usando cache local', err);
+    addToast('Sincronização lenta. Usando dados locais.', 'warning');
   }
 }
 
@@ -136,8 +148,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
-    await signOut(auth);
-    usePdiStore.getState().resetAtual();
+    try {
+      await signOut(auth);
+    } finally {
+      usePdiStore.getState().resetAtual();
+    }
   };
 
   const resetPassword = async (email: string) => {

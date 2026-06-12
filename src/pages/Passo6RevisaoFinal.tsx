@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
 import type { RetrospectivaData } from '../store/usePdiStore';
+import { computeHealthScore } from '../lib/healthScore';
 import { DownloadCloud, Sparkles, AlertTriangle, Layers, Calendar, Rocket, RefreshCw, FileText, Star, X } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -166,29 +167,26 @@ export const Passo6RevisaoFinal: React.FC = () => {
   const printRef = useRef<HTMLDivElement>(null);
   const [showRetroModal, setShowRetroModal] = useState(false);
 
-  // Score de saúde
-  const scoreSaude = useMemo(() => {
-    let score = 100;
-    if (objetivos.length === 0) return 0;
-    const objetivosComAcao = new Set(planoDeAcao.map(p => p.objetivoId));
-    score -= (objetivos.length - objetivosComAcao.size) * 20;
-    score -= planoDeAcao.filter(a => !a.recursos || a.recursos.trim().length <= 5).length * 10;
-    if ((campoDeForcas.restritivas ?? []).length === 0) score -= 15;
-    if ((campoDeForcas.aliancas ?? '').trim().length < 10) score -= 10;
-    return Math.max(0, Math.min(100, score));
-  }, [objetivos, planoDeAcao, campoDeForcas]);
+  // Score de saúde via lib centralizada
+  const scoreSaude = useMemo(
+    () => computeHealthScore({ objetivos, planoDeAcao, campoDeForcas }).score,
+    [objetivos, planoDeAcao, campoDeForcas]
+  );
 
   const textColorSaude = scoreSaude > 80 ? 'text-emerald-500' : scoreSaude > 50 ? 'text-amber-500' : 'text-rose-500';
 
-  const dataRadar = useMemo(() =>
-    inventario.hardSkills.map(skill => ({
-      subject: skill.skill.slice(0, 15) + (skill.skill.length > 15 ? '...' : ''),
+  // Limita o radar a 8 skills para legibilidade (ordena por maior gap)
+  const dataRadar = useMemo(() => {
+    const sorted = [...inventario.hardSkills]
+      .sort((a, b) => (b.nivelDesejado - b.nivelAtual) - (a.nivelDesejado - a.nivelAtual))
+      .slice(0, 8);
+    return sorted.map(skill => ({
+      subject: skill.skill.length > 13 ? skill.skill.slice(0, 12) + '…' : skill.skill,
       atual: skill.nivelAtual,
       meta: skill.nivelDesejado,
       fullMark: 5,
-    })),
-    [inventario.hardSkills]
-  );
+    }));
+  }, [inventario.hardSkills]);
 
   const mentors = useMemo(() =>
     inventario.softSkills.filter(s => s.pontoForteOuMelhoria === 'Melhoria').slice(0, 3),

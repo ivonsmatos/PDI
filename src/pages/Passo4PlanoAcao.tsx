@@ -19,8 +19,11 @@ export const Passo4PlanoAcao: React.FC = () => {
   }, [objetivos, objetivoSelecionado]);
 
 
+  const hoje = new Date().toISOString().split('T')[0];
+
   const addAcao = () => {
     if (!objetivoSelecionado || !novaAcao || !novoPrazo) return;
+    if (novoPrazo < hoje) return; // data no passado — bloqueado pelo input min também
 
     const newAcao: PlanoAcaoItem = {
       id: Date.now().toString(),
@@ -91,9 +94,10 @@ export const Passo4PlanoAcao: React.FC = () => {
             
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">Até quando? (Deadline)</label>
-              <input 
-                type="date" 
+              <input
+                type="date"
                 value={novoPrazo}
+                min={hoje}
                 onChange={e => setNovoPrazo(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700"
               />

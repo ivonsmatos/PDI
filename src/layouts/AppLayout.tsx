@@ -4,6 +4,8 @@ import { usePdiStore } from '../store/usePdiStore';
 import { useAuth } from '../contexts/AuthContext';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
 import { HistoricoModal } from '../components/HistoricoModal';
+import { ToastContainer } from '../components/ToastContainer';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import {
   LayoutDashboard, Map, CheckSquare, TrendingUp,
   Moon, Sun, History, RefreshCw, Menu, X,
@@ -255,9 +257,13 @@ export const AppLayout: React.FC = () => {
 
         {/* Main content */}
         <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 min-w-0">
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
+
+      <ToastContainer />
 
       {/* Bottom nav — mobile (4 itens principais) */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex">

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePdiStore } from '../store/usePdiStore';
 import type { PlanoStatus } from '../store/usePdiStore';
+import { computeHealthScore } from '../lib/healthScore';
+import { STATUS_LABEL, STATUS_COLOR } from '../lib/constants';
 import {
   Map, CheckSquare, TrendingUp, Target,
   Rocket, AlertTriangle, Calendar, ArrowRight, CheckCircle2,
@@ -21,22 +23,11 @@ function getGreeting(): string {
   return 'Boa noite';
 }
 
-const NEXT_STATUS: Record<PlanoStatus, PlanoStatus> = {
+
+const NEXT_STATUS_MAP: Record<PlanoStatus, PlanoStatus> = {
   pendente: 'em_andamento',
   em_andamento: 'concluido',
   concluido: 'pendente',
-};
-
-const STATUS_LABEL: Record<PlanoStatus, string> = {
-  pendente: 'Pendente',
-  em_andamento: 'Em andamento',
-  concluido: 'Concluído',
-};
-
-const STATUS_COLOR: Record<PlanoStatus, string> = {
-  pendente: 'text-slate-400 dark:text-slate-500',
-  em_andamento: 'text-amber-500',
-  concluido: 'text-emerald-500',
 };
 
 export const Dashboard: React.FC = () => {
@@ -72,39 +63,21 @@ export const Dashboard: React.FC = () => {
   const trilhaConc = Object.values(trilhaProgresso).filter(Boolean).length;
   const pctTrilha = totalTrilha > 0 ? Math.round((trilhaConc / totalTrilha) * 100) : 0;
 
-  // Score de saúde + penalidades detalhadas
-  const scoreInfo = useMemo(() => {
-    if (objetivos.length === 0) return { score: 0, penalidades: [] };
-    let score = 100;
-    const penalidades: { label: string; pts: number }[] = [];
+  // Score de saúde via lib centralizada
+  const scoreInfo = useMemo(
+    () => computeHealthScore({ objetivos, planoDeAcao, campoDeForcas }),
+    [objetivos, planoDeAcao, campoDeForcas]
+  );
 
-    const objetivosComAcao = new Set(planoDeAcao.map(p => p.objetivoId));
-    const semAcao = objetivos.length - objetivosComAcao.size;
-    if (semAcao > 0) {
-      const pts = semAcao * 20;
-      score -= pts;
-      penalidades.push({ label: `${semAcao} objetivo(s) sem ação vinculada`, pts });
-    }
-
-    const semRecurso = planoDeAcao.filter(a => !a.recursos?.trim()).length;
-    if (semRecurso > 0) {
-      const pts = semRecurso * 10;
-      score -= pts;
-      penalidades.push({ label: `${semRecurso} ação(ões) sem recurso definido`, pts });
-    }
-
-    if ((campoDeForcas.restritivas ?? []).length === 0) {
-      score -= 15;
-      penalidades.push({ label: 'Nenhuma força restritiva mapeada (Passo 5)', pts: 15 });
-    }
-
-    if ((campoDeForcas.aliancas ?? '').trim().length < 10) {
-      score -= 10;
-      penalidades.push({ label: 'Alianças não descritas (Passo 5)', pts: 10 });
-    }
-
-    return { score: Math.max(0, Math.min(100, score)), penalidades };
-  }, [objetivos, planoDeAcao, campoDeForcas]);
+  // Banner de plano incompleto
+  const itensIncompletos = useMemo(() => {
+    const itens: string[] = [];
+    if (inventario.hardSkills.length === 0) itens.push('Hard skills não avaliadas');
+    if (inventario.softSkills.length === 0)  itens.push('Soft skills não avaliadas');
+    if (objetivos.length === 0)              itens.push('Nenhum objetivo definido');
+    if (planoDeAcao.length === 0)            itens.push('Plano de ação vazio');
+    return itens;
+  }, [inventario, objetivos, planoDeAcao]);
 
   const { score: scoreSaude, penalidades } = scoreInfo;
 
@@ -137,6 +110,31 @@ export const Dashboard: React.FC = () => {
           Aqui está um resumo do seu desenvolvimento hoje.
         </p>
       </motion.div>
+
+      {/* Banner de plano incompleto */}
+      {itensIncompletos.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 flex items-start gap-3 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800"
+        >
+          <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-amber-800 dark:text-amber-300 mb-1">
+              Seu PDI ainda não está completo
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-400">
+              {itensIncompletos.join(' · ')}
+            </p>
+          </div>
+          <Link
+            to="/wizard"
+            className="shrink-0 text-xs font-bold text-amber-700 dark:text-amber-300 hover:underline whitespace-nowrap"
+          >
+            Completar →
+          </Link>
+        </motion.div>
+      )}
 
       {/* Cards de métricas — agora 5 (com vencidas) */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
@@ -339,7 +337,7 @@ export const Dashboard: React.FC = () => {
                 >
                   {/* Botão de avançar status */}
                   <button
-                    onClick={() => setPlanoItemStatus(acao.id, NEXT_STATUS[status])}
+                    onClick={() => setPlanoItemStatus(acao.id, NEXT_STATUS_MAP[status])}
                     title={`Atual: ${STATUS_LABEL[status]} — clique para avançar`}
                     className="shrink-0 hover:scale-110 transition-transform"
                   >
