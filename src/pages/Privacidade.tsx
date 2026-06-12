@@ -107,7 +107,6 @@ export const Privacidade: React.FC = () => {
         {/* Contato */}
         <Section icon={<Mail className="w-5 h-5 text-slate-500" />} title="Contato e encarregado de dados (DPO)">
           <p>
-            Responsável pelo tratamento de dados: <strong>Ivon Matos</strong><br />
             E-mail:{' '}
             <a href="mailto:contato@meupdi.app.br" className="text-indigo-600 dark:text-indigo-400 hover:underline">
               contato@meupdi.app.br
