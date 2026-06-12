@@ -112,6 +112,10 @@ export interface PdiState extends PdiFields {
 
   // Histórico (não é keyof PdiFields — precisa de método dedicado)
   setHistorico: (ciclos: PdiCiclo[]) => void;
+
+  // Gamificação
+  conquistasVistas: string[];
+  marcarConquistaVista: (id: string) => void;
 }
 
 const initialState: PdiFields = {
@@ -151,6 +155,7 @@ export const usePdiStore = create<PdiState>()(
       trilhaProgresso: {},
       diario: [],
       isDarkMode: prefersDark,
+      conquistasVistas: [],
 
       setStepAtual: (step) => set({ stepAtual: step }),
       nextStep: () => set((state) => ({ stepAtual: Math.min(state.stepAtual + 1, 6) })),
@@ -217,6 +222,13 @@ export const usePdiStore = create<PdiState>()(
       setIsDarkMode: (v) => set({ isDarkMode: v }),
 
       setHistorico: (ciclos) => set({ historico: ciclos }),
+
+      marcarConquistaVista: (id) =>
+        set((state) => ({
+          conquistasVistas: state.conquistasVistas.includes(id)
+            ? state.conquistasVistas
+            : [...state.conquistasVistas, id],
+        })),
     }),
     {
       name: 'pdi-storage',

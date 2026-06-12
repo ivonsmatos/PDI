@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, Zap } from 'lucide-react';
+import { TemplateSelector } from '../components/TemplateSelector';
 
 export const Passo1Causa: React.FC = () => {
   const { usuario, updateUsuario } = usePdiStore();
+  const [showTemplate, setShowTemplate] = useState(false);
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-        A Base: Qual é a sua Causa?
-      </h2>
+      <TemplateSelector open={showTemplate} onClose={() => setShowTemplate(false)} />
+
+      <div className="flex items-start justify-between gap-4 mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">
+          A Base: Qual é a sua Causa?
+        </h2>
+        <button
+          onClick={() => setShowTemplate(true)}
+          className="shrink-0 flex items-center gap-1.5 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold transition-colors"
+        >
+          <Zap className="w-3.5 h-3.5" /> Template por profissão
+        </button>
+      </div>
       
       <p className="text-gray-600 mb-8 leading-relaxed">
         Bem-vindo ao terceiro tempo do seu desenvolvimento profissional. 

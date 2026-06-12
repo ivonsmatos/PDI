@@ -13,6 +13,9 @@ const PlanoBoard  = lazy(() => import('./pages/PlanoBoard').then(m => ({ default
 const Evolucao    = lazy(() => import('./pages/Evolucao').then(m => ({ default: m.Evolucao })));
 const Diario      = lazy(() => import('./pages/Diario').then(m => ({ default: m.Diario })));
 const Config      = lazy(() => import('./pages/Config').then(m => ({ default: m.Config })));
+const Comparador  = lazy(() => import('./pages/Comparador').then(m => ({ default: m.Comparador })));
+const Curriculo   = lazy(() => import('./pages/Curriculo').then(m => ({ default: m.Curriculo })));
+const PerfilPublico = lazy(() => import('./pages/PerfilPublico').then(m => ({ default: m.PerfilPublico })));
 
 const PageLoader = () => (
   <div className="min-h-[50vh] flex items-center justify-center">
@@ -34,6 +37,10 @@ const router = createBrowserRouter([
     element: lazyPage(<Privacidade />),
   },
   {
+    path: '/p/:encoded',
+    element: lazyPage(<PerfilPublico />),
+  },
+  {
     path: '/wizard',
     element: lazyPage(<App />),
   },
@@ -41,12 +48,14 @@ const router = createBrowserRouter([
     path: '/',
     element: <AppLayout />,
     children: [
-      { index: true,      element: lazyPage(<Dashboard />)  },
-      { path: 'trilha',   element: lazyPage(<Trilha />)     },
-      { path: 'plano',    element: lazyPage(<PlanoBoard />) },
-      { path: 'evolucao', element: lazyPage(<Evolucao />)   },
-      { path: 'diario',   element: lazyPage(<Diario />)     },
-      { path: 'config',   element: lazyPage(<Config />)     },
+      { index: true,         element: lazyPage(<Dashboard />)   },
+      { path: 'trilha',      element: lazyPage(<Trilha />)      },
+      { path: 'plano',       element: lazyPage(<PlanoBoard />)  },
+      { path: 'evolucao',    element: lazyPage(<Evolucao />)    },
+      { path: 'diario',      element: lazyPage(<Diario />)      },
+      { path: 'comparador',  element: lazyPage(<Comparador />)  },
+      { path: 'curriculo',   element: lazyPage(<Curriculo />)   },
+      { path: 'config',      element: lazyPage(<Config />)      },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },
