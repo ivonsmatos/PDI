@@ -1,13 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePdiStore } from '../store/usePdiStore';
-import { Plus, Trash2, BookOpen, Calendar, Target } from 'lucide-react';
+import { Plus, Trash2, BookOpen, Calendar, Target, Search, X } from 'lucide-react';
+
+const PERIODOS = [
+  { value: '',   label: 'Sempre' },
+  { value: '7',  label: '7 dias' },
+  { value: '30', label: '30 dias' },
+  { value: '90', label: '90 dias' },
+];
 
 export const Diario: React.FC = () => {
   const { diario, objetivos, addDiarioEntry, removeDiarioEntry } = usePdiStore();
   const [texto, setTexto] = useState('');
   const [objetivoId, setObjetivoId] = useState('');
   const [filtroObj, setFiltroObj] = useState('');
+  const [busca, setBusca] = useState('');
+  const [periodo, setPeriodo] = useState('');
 
   const handleAdd = () => {
     const t = texto.trim();
@@ -21,12 +30,24 @@ export const Diario: React.FC = () => {
     setObjetivoId('');
   };
 
-  const entriesFiltradas = useMemo(() =>
-    filtroObj
-      ? diario.filter(e => e.objetivoId === filtroObj)
-      : diario,
-    [diario, filtroObj]
-  );
+  const entriesFiltradas = useMemo(() => {
+    let result = diario;
+
+    if (filtroObj) result = result.filter(e => e.objetivoId === filtroObj);
+
+    if (periodo) {
+      const limite = new Date();
+      limite.setDate(limite.getDate() - Number(periodo));
+      result = result.filter(e => new Date(e.data) >= limite);
+    }
+
+    if (busca.trim()) {
+      const q = busca.trim().toLowerCase();
+      result = result.filter(e => e.texto.toLowerCase().includes(q));
+    }
+
+    return result;
+  }, [diario, filtroObj, periodo, busca]);
 
   const formatDate = (iso: string) => {
     const d = new Date(iso);
@@ -94,6 +115,45 @@ export const Diario: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* Busca textual + período */}
+      {diario.length > 0 && (
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              value={busca}
+              onChange={e => setBusca(e.target.value)}
+              placeholder="Buscar nas entradas..."
+              className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+            />
+            {busca && (
+              <button
+                onClick={() => setBusca('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <div className="flex gap-1.5">
+            {PERIODOS.map(p => (
+              <button
+                key={p.value}
+                onClick={() => setPeriodo(p.value)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  periodo === p.value
+                    ? 'bg-violet-600 text-white'
+                    : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Filtro por objetivo */}
       {objetivos.length > 0 && diario.length > 0 && (
         <div className="flex gap-2 flex-wrap mb-5">
@@ -122,9 +182,19 @@ export const Diario: React.FC = () => {
       {/* Entradas */}
       {entriesFiltradas.length === 0 ? (
         <div className="text-center py-16 text-slate-400 dark:text-slate-600">
-          <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-30" />
-          <p className="text-sm font-medium">Nenhuma entrada ainda.</p>
-          <p className="text-xs mt-1">Comece registrando uma reflexão acima.</p>
+          {diario.length > 0 ? (
+            <>
+              <Search className="w-10 h-10 mx-auto mb-3 opacity-30" />
+              <p className="text-sm font-medium">Nenhuma entrada encontrada.</p>
+              <p className="text-xs mt-1">Tente ajustar a busca ou o período.</p>
+            </>
+          ) : (
+            <>
+              <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-30" />
+              <p className="text-sm font-medium">Nenhuma entrada ainda.</p>
+              <p className="text-xs mt-1">Comece registrando uma reflexão acima.</p>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-4">

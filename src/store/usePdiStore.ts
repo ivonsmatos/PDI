@@ -135,6 +135,12 @@ function computeScore(state: PdiFields): number {
   return Math.max(0, Math.min(100, score));
 }
 
+// No primeiro acesso, segue a preferência do sistema; depois o persist mantém a escolha do usuário
+const prefersDark =
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-color-scheme: dark)').matches;
+
 export const usePdiStore = create<PdiState>()(
   persist(
     (set, get) => ({
@@ -144,7 +150,7 @@ export const usePdiStore = create<PdiState>()(
       planoAcaoStatus: {},
       trilhaProgresso: {},
       diario: [],
-      isDarkMode: false,
+      isDarkMode: prefersDark,
 
       setStepAtual: (step) => set({ stepAtual: step }),
       nextStep: () => set((state) => ({ stepAtual: Math.min(state.stepAtual + 1, 6) })),
