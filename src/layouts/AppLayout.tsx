@@ -37,13 +37,13 @@ const NIVEL_LABELS: Record<string, string> = {
 };
 
 const navItems = [
-  { to: '/',           icon: <LayoutDashboard className="w-5 h-5" />,     label: 'Dashboard'   },
-  { to: '/trilha',     icon: <Map className="w-5 h-5" />,                  label: 'Trilha'      },
-  { to: '/plano',      icon: <CheckSquare className="w-5 h-5" />,          label: 'Plano'       },
-  { to: '/evolucao',   icon: <TrendingUp className="w-5 h-5" />,           label: 'Evolução'    },
-  { to: '/diario',     icon: <BookOpen className="w-5 h-5" />,             label: 'Diário'      },
-  { to: '/comparador', icon: <GitCompareArrows className="w-5 h-5" />,     label: 'Comparador'  },
-  { to: '/curriculo',  icon: <FileText className="w-5 h-5" />,             label: 'Currículo'   },
+  { to: '/app',            icon: <LayoutDashboard className="w-5 h-5" />,  label: 'Dashboard'   },
+  { to: '/app/trilha',     icon: <Map className="w-5 h-5" />,               label: 'Trilha'      },
+  { to: '/app/plano',      icon: <CheckSquare className="w-5 h-5" />,       label: 'Plano'       },
+  { to: '/app/evolucao',   icon: <TrendingUp className="w-5 h-5" />,        label: 'Evolução'    },
+  { to: '/app/diario',     icon: <BookOpen className="w-5 h-5" />,          label: 'Diário'      },
+  { to: '/app/comparador', icon: <GitCompareArrows className="w-5 h-5" />,  label: 'Comparador'  },
+  { to: '/app/curriculo',  icon: <FileText className="w-5 h-5" />,          label: 'Currículo'   },
 ];
 
 // bottom nav mostra só os 4 principais para não lotar
@@ -226,7 +226,7 @@ export const AppLayout: React.FC = () => {
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
+              end={item.to === '/app'}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
@@ -243,7 +243,7 @@ export const AppLayout: React.FC = () => {
           {/* Divisor + Configurações */}
           <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
             <NavLink
-              to="/config"
+              to="/app/config"
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
@@ -283,7 +283,7 @@ export const AppLayout: React.FC = () => {
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  end={item.to === '/'}
+                  end={item.to === '/app'}
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
@@ -299,7 +299,7 @@ export const AppLayout: React.FC = () => {
               ))}
               <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
                 <NavLink
-                  to="/config"
+                  to="/app/config"
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
@@ -340,7 +340,7 @@ export const AppLayout: React.FC = () => {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/'}
+            end={item.to === '/app'}
             className={({ isActive }) =>
               `flex-1 flex flex-col items-center justify-center py-3 text-[10px] font-semibold gap-1 transition-colors ${
                 isActive

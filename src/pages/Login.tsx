@@ -38,12 +38,12 @@ export const Login: React.FC = () => {
     try {
       if (mode === 'login') {
         await login(email, password);
-        navigate('/', { replace: true });
+        navigate('/app', { replace: true });
       } else if (mode === 'signup') {
         if (!nome.trim()) { setError('Digite seu nome.'); setLoading(false); return; }
         if (!lgpdConsent) { setError('Você precisa aceitar a Política de Privacidade para criar uma conta.'); setLoading(false); return; }
         await signup(nome.trim(), email, password);
-        navigate('/', { replace: true });
+        navigate('/app', { replace: true });
       } else {
         await resetPassword(email);
         setSuccess('E-mail de recuperação enviado! Verifique sua caixa de entrada.');
@@ -60,7 +60,7 @@ export const Login: React.FC = () => {
     reset();
     try {
       await loginWithGoogle();
-      navigate('/', { replace: true });
+      navigate('/app', { replace: true });
     } catch (err: unknown) {
       setError((err as Error).message);
     } finally {
@@ -77,6 +77,13 @@ export const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 px-4 py-8">
       <div className="w-full max-w-md">
+
+        {/* Voltar para LP */}
+        <div className="mb-4">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-indigo-600 transition-colors">
+            ← Conheça o Meu PDI
+          </Link>
+        </div>
 
         {/* Logo + badges */}
         <div className="text-center mb-8">
