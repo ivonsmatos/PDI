@@ -120,24 +120,32 @@ export const LandingPage: React.FC = () => {
           <span className="text-xl font-black bg-gradient-to-r from-indigo-500 to-blue-400 bg-clip-text text-transparent">
             Meu PDI
           </span>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
-            <a href="#funcionalidades" className="hover:text-white transition-colors">Funcionalidades</a>
-            <a href="#para-rh" className="hover:text-white transition-colors">Para RH</a>
-            <a href="#depoimentos" className="hover:text-white transition-colors">Depoimentos</a>
+          <div className={`hidden md:flex items-center gap-8 text-sm font-medium transition-colors ${
+            scrolled ? 'text-slate-600' : 'text-white/80'
+          }`}>
+            <a href="#funcionalidades" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Funcionalidades</a>
+            <a href="#para-rh" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Para RH</a>
+            <a href="#depoimentos" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Depoimentos</a>
           </div>
           <div className="hidden md:flex items-center gap-3">
-            <Link to="/login" className="text-sm font-semibold text-white/80 hover:text-white transition-colors px-4 py-2">
+            <Link to="/login" className={`text-sm font-semibold transition-colors px-4 py-2 ${
+              scrolled ? 'text-slate-600 hover:text-indigo-600' : 'text-white/80 hover:text-white'
+            }`}>
               Entrar
             </Link>
             <Link
               to="/login"
-              className="text-sm font-bold text-indigo-700 bg-white hover:bg-indigo-50 px-5 py-2.5 rounded-xl transition-colors shadow-lg"
+              className={`text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg ${
+                scrolled
+                  ? 'text-white bg-indigo-600 hover:bg-indigo-700'
+                  : 'text-indigo-700 bg-white hover:bg-indigo-50'
+              }`}
             >
               Começar grátis →
             </Link>
           </div>
           <button
-            className="md:hidden p-2 text-white/80"
+            className={`md:hidden p-2 transition-colors ${scrolled ? 'text-slate-600' : 'text-white/80'}`}
             onClick={() => setMobileMenu(!mobileMenu)}
           >
             {mobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
