@@ -710,8 +710,19 @@ export const LandingPage: React.FC = () => {
               <a href="mailto:contato@meupdi.app.br" className="hover:text-white transition-colors">Contato</a>
             </div>
           </div>
-          <div className="border-t border-slate-800 pt-8 text-center text-xs text-slate-600">
-            © 2026 Meu PDI · Todos os dados protegidos pela LGPD · Nenhum dado vendido ou compartilhado com terceiros
+          <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
+            <span>© 2026 Meu PDI · Todos os dados protegidos pela LGPD · Nenhum dado vendido ou compartilhado com terceiros</span>
+            <span className="shrink-0">
+              Desenvolvido por{' '}
+              <a
+                href="https://scaledata.com.br"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-indigo-400 font-semibold transition-colors"
+              >
+                Scaledata
+              </a>
+            </span>
           </div>
         </div>
       </footer>
