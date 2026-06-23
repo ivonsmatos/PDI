@@ -281,6 +281,19 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Card certificações grátis */}
+            <div className="absolute -right-8 bottom-12 bg-white rounded-2xl p-4 shadow-2xl border border-slate-100" style={{ animation: 'float 3.8s ease-in-out infinite 1.1s' }}>
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-teal-100 flex items-center justify-center">
+                  <Award className="w-5 h-5 text-teal-600" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Certificações grátis</p>
+                  <p className="text-sm font-bold text-teal-700">+{TOTAL_CERTIFICACOES} sugeridas no gap</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -295,11 +308,11 @@ export const LandingPage: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
             {[
               { icon: <Zap className="w-4 h-4 text-amber-500" />,    text: '100% Gratuito' },
+              { icon: <Award className="w-4 h-4 text-emerald-600" />, text: `+${TOTAL_CERTIFICACOES} Certificações Grátis` },
               { icon: <Shield className="w-4 h-4 text-emerald-500" />, text: 'LGPD Compliant' },
               { icon: <BarChart3 className="w-4 h-4 text-indigo-500" />, text: '26 Áreas Profissionais' },
               { icon: <TrendingUp className="w-4 h-4 text-blue-500" />,  text: '6 Níveis de Carreira' },
               { icon: <Bell className="w-4 h-4 text-violet-500" />,   text: 'Notificações de Prazo' },
-              { icon: <Heart className="w-4 h-4 text-rose-500" />,    text: 'Sem cartão de crédito' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2 text-sm font-semibold text-slate-600">
                 {item.icon} {item.text}
@@ -482,14 +495,16 @@ export const LandingPage: React.FC = () => {
               </span>
             </h2>
             <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed">
-              A Trilha e o Comparador sugerem credenciais reais e gratuitas alinhadas aos seus gaps —
-              direto na ferramenta, com link para começar agora.
+              De plataformas brasileiras como <strong className="text-slate-700">Fundação Bradesco, Santander, SEBRAE e FGV</strong> a
+              gigantes globais. A Trilha e o Comparador sugerem credenciais reais e gratuitas
+              alinhadas aos seus gaps — com link para começar agora.
             </p>
           </div>
 
           {/* Logos de provedores */}
           <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
             {[
+              'Fundação Bradesco', 'Santander', 'SEBRAE', 'FGV',
               'Google', 'Microsoft', 'AWS', 'Oracle', 'IBM', 'MongoDB',
               'HubSpot', 'Cisco', 'Linux Foundation', 'Kaggle', 'Salesforce', 'SEMrush',
             ].map((prov) => (

@@ -21,6 +21,16 @@ export type GrupoCertificacao = {
 
 export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
   {
+    categoria: 'Plataformas Brasileiras (cursos + certificado)',
+    emoji: '🇧🇷',
+    certificacoes: [
+      { nome: 'Escola Virtual — Fundação Bradesco', provedor: 'Fundação Bradesco', url: 'https://www.ev.org.br/', areas: ['tecnologia', 'administracao', 'financas', 'contabilidade', 'marketing', 'vendas', 'recursos_humanos', 'gestao', 'logistica_supply_chain', 'comunicacao_relacoes_publicas', 'educacao', 'design'], keywords: ['excel', 'finanças', 'administração', 'gestão', 'marketing', 'vendas', 'informática', 'lógica de programação', 'comunicação', 'liderança'] },
+      { nome: 'Santander Open Academy', provedor: 'Santander', url: 'https://www.santanderopenacademy.com/pt_br/index.html', areas: ['tecnologia', 'administracao', 'financas', 'marketing', 'vendas', 'gestao', 'recursos_humanos', 'inovacao_transformacao_digital', 'ciencia_de_dados', 'comunicacao_relacoes_publicas'], keywords: ['negócios', 'liderança', 'dados', 'tecnologia', 'soft skills', 'idiomas', 'gestão', 'finanças'] },
+      { nome: 'SEBRAE — Cursos para Empreendedores', provedor: 'SEBRAE', url: 'https://sebrae.com.br/sites/PortalSebrae/cursosonline', areas: ['administracao', 'gestao', 'marketing', 'vendas', 'financas', 'varejo', 'agronegocio', 'inovacao_transformacao_digital', 'logistica_supply_chain', 'compras_procurement'], keywords: ['empreendedorismo', 'negócios', 'gestão', 'finanças', 'marketing', 'vendas', 'plano de negócio', 'mei'] },
+      { nome: 'FGV — Cursos Gratuitos Online', provedor: 'Fundação Getulio Vargas', url: 'https://educacao-executiva.fgv.br/cursos/gratuitos-online', areas: ['administracao', 'gestao', 'financas', 'contabilidade', 'direito', 'gestao_de_produto', 'recursos_humanos', 'marketing', 'sustentabilidade_esg'], keywords: ['gestão', 'finanças', 'administração', 'economia', 'direito', 'estratégia', 'liderança', 'projetos'] },
+    ],
+  },
+  {
     categoria: 'Cloud & Infraestrutura',
     emoji: '☁️',
     certificacoes: [
