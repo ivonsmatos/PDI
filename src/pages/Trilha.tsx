@@ -10,6 +10,10 @@ import {
   type TipoAtividade, type Atividade,
 } from '../data/trilhaTemplates';
 import { matrizDeCompetencias } from '../data/matrizCompetencias';
+import {
+  getCertificacoesPorArea, getCertificacoesPorSkill,
+  type Certificacao,
+} from '../data/certificacoesGratuitas';
 
 // ── Ícones e cores por tipo ────────────────────────────────────────────────────
 const TIPO_ICON: Record<TipoAtividade, React.ReactNode> = {
@@ -124,7 +128,7 @@ export const Trilha: React.FC = () => {
   }, [usuario.areaAtuacao, usuario.nivelCarreira]);
 
   const trilha = useMemo(() => {
-    const itens: { id: string; skill: string; categoria: string; atividades: Atividade[] }[] = [];
+    const itens: { id: string; skill: string; categoria: string; atividades: Atividade[]; certs: Certificacao[] }[] = [];
 
     // Hard Skills com gap
     inventario.hardSkills
@@ -135,6 +139,7 @@ export const Trilha: React.FC = () => {
           skill: s.skill,
           categoria: `Hard Skill — gap ${s.nivelDesejado - s.nivelAtual} nível${s.nivelDesejado - s.nivelAtual > 1 ? 'is' : ''}`,
           atividades: getAtividadesHard(s.skill, s.nivelAtual, s.nivelDesejado),
+          certs: getCertificacoesPorSkill(s.skill, usuario.areaAtuacao).slice(0, 3),
         });
       });
 
@@ -152,11 +157,21 @@ export const Trilha: React.FC = () => {
           skill: s.atributo,
           categoria: 'Soft Skill — área de melhoria',
           atividades,
+          certs: [],
         });
       });
 
     return itens;
-  }, [inventario]);
+  }, [inventario, usuario.areaAtuacao]);
+
+  /** Certificações gratuitas gerais da área (excluindo as já mostradas nos cards de skill) */
+  const certsArea = useMemo(() => {
+    const jaMostradas = new Set(
+      trilha.flatMap(g => g.certs.map(c => c.url)),
+    );
+    return getCertificacoesPorArea(usuario.areaAtuacao)
+      .filter(c => !jaMostradas.has(c.url));
+  }, [trilha, usuario.areaAtuacao]);
 
   /** Soft skills recomendadas pela matriz mas ainda não avaliadas — sugestões inteligentes */
   const softSugeridas = useMemo(() => {
@@ -347,10 +362,79 @@ export const Trilha: React.FC = () => {
                   );
                 })}
               </div>
+
+              {/* Certificações gratuitas que casam com esta skill */}
+              {grupo.certs.length > 0 && (
+                <div className="px-5 py-4 border-t border-slate-100 dark:border-slate-700 bg-emerald-50/40 dark:bg-emerald-900/10">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-1.5">
+                    <Award className="w-3.5 h-3.5" /> Certificações gratuitas para esta skill
+                  </p>
+                  <div className="space-y-1.5">
+                    {grupo.certs.map(cert => (
+                      <a
+                        key={cert.url}
+                        href={cert.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-emerald-100 dark:border-emerald-800/40 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors group"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">{cert.nome}</p>
+                          <p className="text-[10px] text-slate-400">{cert.provedor} · grátis</p>
+                        </div>
+                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
+                          Acessar →
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </motion.div>
           );
         })}
       </div>
+
+      {/* Seção: certificações gratuitas da área */}
+      {certsArea.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="mt-8 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
+        >
+          <div className="p-5 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <Award className="w-5 h-5 text-emerald-500" /> Certificações gratuitas para {areaLabel || 'sua área'}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Credenciais reconhecidas, 100% gratuitas. Conclua e adicione ao seu LinkedIn e ao Currículo de Competências.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 divide-slate-100 dark:divide-slate-700">
+            {certsArea.map(cert => (
+              <a
+                key={cert.url}
+                href={cert.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between gap-2 p-4 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-colors group border-slate-100 dark:border-slate-700 sm:border-b sm:[&:nth-last-child(-n+2)]:border-b-0"
+              >
+                <div className="min-w-0 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
+                    <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{cert.nome}</p>
+                    <p className="text-[10px] text-slate-400">{cert.provedor} · grátis</p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
+                  Acessar →
+                </span>
+              </a>
+            ))}
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

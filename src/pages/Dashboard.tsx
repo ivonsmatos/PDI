@@ -207,7 +207,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
               <CheckSquare className="w-4 h-4 text-indigo-500" /> Plano de Ação
             </h3>
-            <Link to="/plano" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+            <Link to="/app/plano" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
               Ver tudo <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -234,7 +234,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
               <Map className="w-4 h-4 text-blue-500" /> Trilha de Desenvolvimento
             </h3>
-            <Link to="/trilha" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+            <Link to="/app/trilha" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
               Ver tudo <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -314,7 +314,7 @@ export const Dashboard: React.FC = () => {
           <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
             <Calendar className="w-4 h-4 text-indigo-500" /> Próximas Ações
           </h3>
-          <Link to="/plano" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+          <Link to="/app/plano" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
             Ver plano completo <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
@@ -381,10 +381,10 @@ export const Dashboard: React.FC = () => {
         className="grid grid-cols-2 sm:grid-cols-4 gap-4"
       >
         {[
-          { to: '/trilha',   label: 'Trilha',        desc: 'Atividades de desenvolvimento', icon: <Map className="w-5 h-5" />,        color: 'from-blue-600 to-cyan-600' },
-          { to: '/plano',    label: 'Plano',          desc: 'Gerencie suas ações',           icon: <CheckSquare className="w-5 h-5" />, color: 'from-indigo-600 to-blue-600' },
-          { to: '/evolucao', label: 'Evolução',       desc: 'Progresso ao longo do tempo',   icon: <TrendingUp className="w-5 h-5" />, color: 'from-emerald-600 to-teal-600' },
-          { to: '/diario',   label: 'Diário',         desc: 'Registre suas reflexões',       icon: <BookOpen className="w-5 h-5" />,   color: 'from-violet-600 to-purple-600' },
+          { to: '/app/trilha',   label: 'Trilha',     desc: 'Atividades de desenvolvimento', icon: <Map className="w-5 h-5" />,        color: 'from-blue-600 to-cyan-600' },
+          { to: '/app/plano',    label: 'Plano',      desc: 'Gerencie suas ações',           icon: <CheckSquare className="w-5 h-5" />, color: 'from-indigo-600 to-blue-600' },
+          { to: '/app/evolucao', label: 'Evolução',   desc: 'Progresso ao longo do tempo',   icon: <TrendingUp className="w-5 h-5" />, color: 'from-emerald-600 to-teal-600' },
+          { to: '/app/diario',   label: 'Diário',     desc: 'Registre suas reflexões',       icon: <BookOpen className="w-5 h-5" />,   color: 'from-violet-600 to-purple-600' },
         ].map((s) => (
           <Link key={s.to} to={s.to}
             className={`bg-gradient-to-br ${s.color} rounded-2xl p-4 text-white hover:opacity-90 transition-opacity shadow-lg`}

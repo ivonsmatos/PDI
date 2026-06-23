@@ -6,6 +6,7 @@ import {
   ChevronDown, Zap, Shield, Heart, BarChart3, Map,
   CheckSquare, Bell, Menu, X,
 } from 'lucide-react';
+import { TOTAL_CERTIFICACOES } from '../data/certificacoesGratuitas';
 
 /* ── Dados ──────────────────────────────────────────────────── */
 const FEATURES = [
@@ -463,6 +464,74 @@ export const LandingPage: React.FC = () => {
           >
             Descobrir meus gaps <ArrowRight className="w-4 h-4" />
           </Link>
+        </div>
+      </section>
+
+      {/* ── Certificações gratuitas ──────────────────────────── */}
+      <section className="py-24 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-100 rounded-full px-4 py-1.5 mb-5">
+              <Award className="w-4 h-4 text-emerald-600" />
+              <span className="text-sm font-bold text-emerald-700">Certificações gratuitas integradas</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-5 leading-tight">
+              Mais de {TOTAL_CERTIFICACOES} certificações<br />
+              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                gratuitas, mapeadas por área
+              </span>
+            </h2>
+            <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed">
+              A Trilha e o Comparador sugerem credenciais reais e gratuitas alinhadas aos seus gaps —
+              direto na ferramenta, com link para começar agora.
+            </p>
+          </div>
+
+          {/* Logos de provedores */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
+            {[
+              'Google', 'Microsoft', 'AWS', 'Oracle', 'IBM', 'MongoDB',
+              'HubSpot', 'Cisco', 'Linux Foundation', 'Kaggle', 'Salesforce', 'SEMrush',
+            ].map((prov) => (
+              <span
+                key={prov}
+                className="px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-600"
+              >
+                {prov}
+              </span>
+            ))}
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-5">
+            {[
+              {
+                icon: <Target className="w-6 h-6" />,
+                color: 'from-emerald-500 to-teal-500',
+                title: 'Alinhadas ao seu gap',
+                desc: 'Cada certificação aparece exatamente onde faz sentido: na skill que você precisa desenvolver.',
+              },
+              {
+                icon: <Zap className="w-6 h-6" />,
+                color: 'from-amber-500 to-orange-500',
+                title: '100% gratuitas',
+                desc: 'Credenciais reconhecidas de grandes provedores, sem custo. Da fundamentação à especialização.',
+              },
+              {
+                icon: <FileText className="w-6 h-6" />,
+                color: 'from-indigo-500 to-blue-500',
+                title: 'Visíveis no seu currículo',
+                desc: 'Conclua, registre no PDI e elas entram no seu Currículo de Competências e perfil público.',
+              },
+            ].map((c, i) => (
+              <div key={i} className="p-7 rounded-2xl border border-slate-100 bg-white hover:shadow-lg transition-all">
+                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${c.color} flex items-center justify-center text-white mb-4`}>
+                  {c.icon}
+                </div>
+                <h3 className="font-bold text-slate-900 text-lg mb-2">{c.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{c.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

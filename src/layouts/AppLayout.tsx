@@ -355,7 +355,7 @@ export const AppLayout: React.FC = () => {
         ))}
         {/* Config no bottom nav como ícone */}
         <NavLink
-          to="/config"
+          to="/app/config"
           className={({ isActive }) =>
             `flex-1 flex flex-col items-center justify-center py-3 text-[10px] font-semibold gap-1 transition-colors ${
               isActive

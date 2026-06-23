@@ -4,8 +4,12 @@ import { Link } from 'react-router-dom';
 import { usePdiStore } from '../store/usePdiStore';
 import { matrizDeCompetencias } from '../data/matrizCompetencias';
 import {
+  getCertificacoesPorSkill, getCertificacoesPorArea,
+  type Certificacao,
+} from '../data/certificacoesGratuitas';
+import {
   TrendingUp, CheckCircle2, AlertCircle, XCircle,
-  ChevronRight, ArrowRight,
+  ChevronRight, ArrowRight, Award,
 } from 'lucide-react';
 
 const NIVEIS_ORDEM = ['estagiario', 'junior', 'pleno', 'senior', 'especialista', 'gestor'] as const;
@@ -81,6 +85,25 @@ export const Comparador: React.FC = () => {
     softGap.filter(s => s.status === 'forte').length;
   const totalCount = hardGap.length + softGap.length;
   const gapScore = totalCount > 0 ? Math.round((prontoCount / totalCount) * 100) : 0;
+
+  /** Certificações gratuitas para fechar os gaps (skills ainda não consolidadas) */
+  const certsParaGap = useMemo((): Certificacao[] => {
+    const skillsEmGap = hardGap.filter(s => s.status !== 'pronto').map(s => s.skill);
+    const vistas = new Set<string>();
+    const certs: Certificacao[] = [];
+    skillsEmGap.forEach(skill => {
+      getCertificacoesPorSkill(skill, area || undefined).forEach(c => {
+        if (!vistas.has(c.url)) { vistas.add(c.url); certs.push(c); }
+      });
+    });
+    // Completa com certs gerais da área se houver poucas específicas
+    if (certs.length < 4 && area) {
+      getCertificacoesPorArea(area).forEach(c => {
+        if (!vistas.has(c.url)) { vistas.add(c.url); certs.push(c); }
+      });
+    }
+    return certs.slice(0, 6);
+  }, [hardGap, area]);
 
   const gapColor =
     gapScore >= 70 ? 'text-emerald-500' : gapScore >= 40 ? 'text-amber-500' : 'text-rose-500';
@@ -316,9 +339,50 @@ export const Comparador: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* Certificações gratuitas para fechar os gaps */}
+      {certsParaGap.length > 0 && (
+        <motion.div
+          custom={5} variants={card} initial="hidden" animate="show"
+          className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 overflow-hidden"
+        >
+          <div className="p-5 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+              <Award className="w-4 h-4 text-emerald-500" /> Como fechar esses gaps — grátis
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Certificações gratuitas alinhadas às competências que faltam para {NIVEL_LABEL[proximoNivel]}.
+            </p>
+          </div>
+          <div className="divide-y divide-slate-100 dark:divide-slate-700">
+            {certsParaGap.map(cert => (
+              <a
+                key={cert.url}
+                href={cert.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between gap-3 p-4 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-colors group"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
+                    <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{cert.nome}</p>
+                    <p className="text-[10px] text-slate-400">{cert.provedor} · 100% gratuita</p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0 group-hover:translate-x-0.5 transition-transform">
+                  Acessar →
+                </span>
+              </a>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {/* CTA */}
       <motion.div
-        custom={5} variants={card} initial="hidden" animate="show"
+        custom={6} variants={card} initial="hidden" animate="show"
         className="bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-5 text-white shadow-lg"
       >
         <h3 className="font-bold mb-1">Trabalhe os gaps no seu PDI</h3>
@@ -326,7 +390,7 @@ export const Comparador: React.FC = () => {
           Adicione as competências em gap como objetivos do ciclo atual e crie ações concretas para desenvolvê-las.
         </p>
         <Link
-          to="/plano"
+          to="/app/plano"
           className="inline-flex items-center gap-1.5 bg-white text-indigo-700 text-sm font-bold px-4 py-2 rounded-xl hover:bg-indigo-50 transition-colors"
         >
           Ir para o Plano de Ação <ChevronRight className="w-4 h-4" />
