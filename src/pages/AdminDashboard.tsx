@@ -39,12 +39,14 @@ export const AdminDashboard: React.FC = () => {
   const [rows, setRows] = useState<TelemetrySnapshot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
   const isAdmin = isAdminUser(user?.email);
 
   const fetchMetrics = async () => {
     setLoading(true);
     setError(null);
+    setNowMs(Date.now());
     try {
       const data = await loadAllTelemetry();
       setRows(data);
@@ -88,11 +90,29 @@ export const AdminDashboard: React.FC = () => {
 
     const totalAcoes = rows.reduce((acc, r) => acc + (r.acoesCount || 0), 0);
     const totalAcoesConcluidas = rows.reduce((acc, r) => acc + (r.acoesConcluidasCount || 0), 0);
+    const totalObjetivos = rows.reduce((acc, r) => acc + (r.objetivosCount || 0), 0);
     const totalDiario = rows.reduce((acc, r) => acc + (r.diarioCount || 0), 0);
     const totalCiclos = rows.reduce((acc, r) => acc + (r.ciclosCount || 0), 0);
     const saudeMedia = total > 0
       ? Math.round(rows.reduce((acc, r) => acc + (r.scoreSaude || 0), 0) / total)
       : 0;
+
+    const ativos7d = rows.filter(r => {
+      if (!r.ultimoAcesso) return false;
+      const diffDays = (nowMs - new Date(`${r.ultimoAcesso}T00:00:00`).getTime()) / 86400000;
+      return diffDays >= 0 && diffDays <= 7;
+    }).length;
+    const ativos30d = rows.filter(r => {
+      if (!r.ultimoAcesso) return false;
+      const diffDays = (nowMs - new Date(`${r.ultimoAcesso}T00:00:00`).getTime()) / 86400000;
+      return diffDays >= 0 && diffDays <= 30;
+    }).length;
+
+    const saudeFaixas = [
+      { faixa: '0–49% (Crítico)', usuarios: rows.filter(r => (r.scoreSaude || 0) < 50).length, fill: '#f43f5e' },
+      { faixa: '50–79% (Atenção)', usuarios: rows.filter(r => (r.scoreSaude || 0) >= 50 && (r.scoreSaude || 0) < 80).length, fill: '#f59e0b' },
+      { faixa: '80–100% (Saudável)', usuarios: rows.filter(r => (r.scoreSaude || 0) >= 80).length, fill: '#10b981' },
+    ];
 
     const areaMap: Record<string, number> = {};
     const nivelMap: Record<string, number> = {};
@@ -145,12 +165,18 @@ export const AdminDashboard: React.FC = () => {
       taxaAcoes: totalAcoes > 0 ? Math.round((totalAcoesConcluidas / totalAcoes) * 100) : 0,
       totalDiario,
       totalCiclos,
+      ativos7d,
+      ativos30d,
+      mediaObjetivos: total > 0 ? (totalObjetivos / total).toFixed(1) : '0.0',
+      mediaAcoes: total > 0 ? (totalAcoes / total).toFixed(1) : '0.0',
+      mediaDiario: total > 0 ? (totalDiario / total).toFixed(1) : '0.0',
+      saudeFaixas,
       porArea,
       porNivel,
       porDia,
       funil,
     };
-  }, [rows]);
+  }, [rows, nowMs]);
 
   if (!isAdmin) {
     return <Navigate to="/app" replace />;
@@ -224,6 +250,35 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* KPIs secundários: Retenção e Médias */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Retenção Recente</p>
+            <p className="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1">
+              {stats.ativos7d} ativo(s) em 7d · {stats.ativos30d} em 30d
+            </p>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              {stats.total > 0 ? `${Math.round((stats.ativos7d / stats.total) * 100)}% dos usuários voltaram nos últimos 7 dias` : 'Sem dados ainda'}
+            </p>
+          </div>
+          <Users className="w-8 h-8 text-[#159A9C] shrink-0" />
+        </div>
+
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Médias por Usuário</p>
+            <p className="text-lg font-extrabold text-slate-800 dark:text-slate-100 mt-1">
+              {stats.mediaObjetivos} objetivos · {stats.mediaAcoes} ações · {stats.mediaDiario} diários
+            </p>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Engajamento médio entre os {stats.total} usuário(s) sincronizado(s)
+            </p>
+          </div>
+          <Activity className="w-8 h-8 text-indigo-500 shrink-0" />
+        </div>
+      </div>
+
       {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
@@ -289,6 +344,26 @@ export const AdminDashboard: React.FC = () => {
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                 <Tooltip />
                 <Bar dataKey="quantidade" name="Usuários" radius={[8, 8, 0, 0]} fill="#3b82f6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        <section className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm lg:col-span-2">
+          <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Distribuição do Score de Saúde</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Quantos usuários estão em faixa crítica, de atenção ou saudável.</p>
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.saudeFaixas}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="faixa" tick={{ fontSize: 11 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Bar dataKey="usuarios" name="Usuários" radius={[8, 8, 0, 0]}>
+                  {stats.saudeFaixas.map((entry, i) => (
+                    <Cell key={i} fill={entry.fill} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>

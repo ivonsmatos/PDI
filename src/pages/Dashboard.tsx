@@ -10,7 +10,7 @@ import { useToastStore } from '../store/useToastStore';
 import {
   Map, CheckSquare, TrendingUp, Target,
   Rocket, AlertTriangle, Calendar, ArrowRight, CheckCircle2,
-  ChevronDown, Clock, Loader2, BookOpen,
+  ChevronDown, Clock, Loader2, BookOpen, Shield, Globe, Lock, History, Zap,
 } from 'lucide-react';
 
 const card = {
@@ -37,6 +37,7 @@ export const Dashboard: React.FC = () => {
   const {
     usuario, objetivos, planoDeAcao, inventario, campoDeForcas,
     planoAcaoStatus, trilhaProgresso, setPlanoItemStatus,
+    diario, historico, publicProfileId,
   } = usePdiStore();
 
   const [showScoreDrill, setShowScoreDrill] = useState(false);
@@ -56,6 +57,56 @@ export const Dashboard: React.FC = () => {
     }),
     [planoDeAcao, planoAcaoStatus] // eslint-disable-line react-hooks/exhaustive-deps
   );
+
+  const acoesBloqueadas = useMemo(
+    () => planoDeAcao.filter(a => planoAcaoStatus[a.id] === 'bloqueado').length,
+    [planoDeAcao, planoAcaoStatus]
+  );
+
+  const acoesSemana = useMemo(() => {
+    const limite = new Date(hoje);
+    limite.setDate(limite.getDate() + 7);
+    return planoDeAcao.filter(a => {
+      const st = planoAcaoStatus[a.id];
+      if (st === 'concluido' || st === 'bloqueado' || !a.prazoData) return false;
+      const dt = new Date(a.prazoData);
+      return dt >= hoje && dt <= limite;
+    }).length;
+  }, [planoDeAcao, planoAcaoStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const topGaps = useMemo(() => {
+    return [...inventario.hardSkills]
+      .map(s => ({ ...s, gap: Math.max(0, s.nivelDesejado - s.nivelAtual) }))
+      .filter(s => s.gap > 0)
+      .sort((a, b) => b.gap - a.gap)
+      .slice(0, 3);
+  }, [inventario.hardSkills]);
+
+  const mediaHardAtual = useMemo(() => {
+    if (inventario.hardSkills.length === 0) return null;
+    const sum = inventario.hardSkills.reduce((acc, s) => acc + s.nivelAtual, 0);
+    return (sum / inventario.hardSkills.length).toFixed(1);
+  }, [inventario.hardSkills]);
+
+  const mediaHardMeta = useMemo(() => {
+    if (inventario.hardSkills.length === 0) return null;
+    const sum = inventario.hardSkills.reduce((acc, s) => acc + s.nivelDesejado, 0);
+    return (sum / inventario.hardSkills.length).toFixed(1);
+  }, [inventario.hardSkills]);
+
+  const progressoPorObjetivo = useMemo(() => {
+    return objetivos.map(o => {
+      const acoesObj = planoDeAcao.filter(a => a.objetivoId === o.id);
+      const concluidas = acoesObj.filter(a => planoAcaoStatus[a.id] === 'concluido').length;
+      const pct = acoesObj.length > 0 ? Math.round((concluidas / acoesObj.length) * 100) : 0;
+      return { id: o.id, descricao: o.descricao, total: acoesObj.length, concluidas, pct };
+    });
+  }, [objetivos, planoDeAcao, planoAcaoStatus]);
+
+  const ultimoDiario = useMemo(() => {
+    if (diario.length === 0) return null;
+    return [...diario].sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())[0];
+  }, [diario]);
 
   const { total: totalTrilha, concluidas: trilhaConc } = useMemo(() => {
     const trilha = gerarTrilha(inventario, usuario.areaAtuacao);
@@ -81,6 +132,8 @@ export const Dashboard: React.FC = () => {
   }, [inventario, objetivos, planoDeAcao]);
 
   const { score: scoreSaude, penalidades, positivos } = scoreInfo;
+  const ultimoCiclo = historico[historico.length - 1];
+  const deltaSaudeCiclo = ultimoCiclo?.scoreSaude !== undefined ? scoreSaude - ultimoCiclo.scoreSaude : null;
 
   // Próximas ações (não concluídas, por data)
   const proximasAcoes = useMemo(() =>
@@ -410,6 +463,178 @@ export const Dashboard: React.FC = () => {
           </div>
         )}
       </motion.div>
+
+      {/* Gaps de Hard Skills + Progresso por Objetivo */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Maiores Gaps de Hard Skills */}
+        <motion.div custom={9} variants={card} initial="hidden" animate="show"
+          className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+              <Zap className="w-4 h-4 text-amber-500" /> Maiores Gaps de Competência
+            </h3>
+            <Link to="/app/comparador" className="text-xs text-[#159A9C] hover:underline flex items-center gap-1">
+              Comparar <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+          {mediaHardAtual && mediaHardMeta && (
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+              Média atual <strong className="text-slate-700 dark:text-slate-200">{mediaHardAtual}/5</strong> · Meta média{' '}
+              <strong className="text-slate-700 dark:text-slate-200">{mediaHardMeta}/5</strong>
+            </p>
+          )}
+          {topGaps.length > 0 ? (
+            <div className="space-y-3">
+              {topGaps.map(s => (
+                <div key={s.skill}>
+                  <div className="flex items-center justify-between text-xs mb-1 gap-2">
+                    <span className="font-semibold text-slate-700 dark:text-slate-200 truncate">{s.skill}</span>
+                    <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 shrink-0">
+                      {s.nivelAtual}/5 → {s.nivelDesejado}/5 (-{s.gap})
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[#159A9C] rounded-full"
+                      style={{ width: `${Math.round((s.nivelAtual / Math.max(1, s.nivelDesejado)) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 py-4">
+              {inventario.hardSkills.length > 0
+                ? 'Todas as hard skills cadastradas atingiram a meta desejada.'
+                : 'Nenhuma hard skill cadastrada ainda.'}
+            </p>
+          )}
+        </motion.div>
+
+        {/* Progresso por Objetivo */}
+        <motion.div custom={10} variants={card} initial="hidden" animate="show"
+          className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+              <Target className="w-4 h-4 text-indigo-500" /> Progresso por Objetivo
+            </h3>
+            <div className="flex items-center gap-2 text-[11px]">
+              {acoesSemana > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 font-semibold">
+                  {acoesSemana} na semana
+                </span>
+              )}
+              {acoesBloqueadas > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 font-semibold">
+                  {acoesBloqueadas} bloqueada(s)
+                </span>
+              )}
+            </div>
+          </div>
+          {progressoPorObjetivo.length > 0 ? (
+            <div className="space-y-3">
+              {progressoPorObjetivo.map((obj, idx) => (
+                <div key={obj.id}>
+                  <div className="flex items-center justify-between text-xs mb-1 gap-2">
+                    <span className="font-medium text-slate-700 dark:text-slate-200 truncate">
+                      {idx + 1}. {obj.descricao}
+                    </span>
+                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">
+                      {obj.concluidas}/{obj.total} ({obj.pct}%)
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-indigo-500 rounded-full transition-all"
+                      style={{ width: `${obj.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400 py-4">Nenhum objetivo cadastrado ainda.</p>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Diário + Ciclos/Forças + Perfil Público */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <motion.div custom={11} variants={card} initial="hidden" animate="show"
+          className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-violet-500" /> Diário de Progresso
+            </h3>
+            <Link to="/app/diario" className="text-xs text-[#159A9C] hover:underline">Abrir</Link>
+          </div>
+          <p className="text-2xl font-black text-slate-800 dark:text-slate-100">
+            {diario.length} <span className="text-xs font-medium text-slate-400">registro(s)</span>
+          </p>
+          {ultimoDiario ? (
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2">
+              Último em {new Date(ultimoDiario.data).toLocaleDateString('pt-BR')}: “{ultimoDiario.texto}”
+            </p>
+          ) : (
+            <p className="text-xs text-slate-400 mt-1.5">Registre aprendizados e evidências da semana.</p>
+          )}
+        </motion.div>
+
+        <motion.div custom={12} variants={card} initial="hidden" animate="show"
+          className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+              <History className="w-4 h-4 text-emerald-500" /> Ciclos & Campo de Forças
+            </h3>
+            <Link to="/app/evolucao" className="text-xs text-[#159A9C] hover:underline">Evolução</Link>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <p className="text-2xl font-black text-slate-800 dark:text-slate-100">
+              {historico.length} <span className="text-xs font-medium text-slate-400">ciclo(s)</span>
+            </p>
+            {deltaSaudeCiclo !== null && (
+              <span className={`text-xs font-bold ${deltaSaudeCiclo >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'}`}>
+                ({deltaSaudeCiclo >= 0 ? `+${deltaSaudeCiclo}` : deltaSaudeCiclo} pts saúde)
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            {campoDeForcas.impulsionadoras.length} impulsionadora(s) · {campoDeForcas.restritivas.length} restritiva(s)
+          </p>
+        </motion.div>
+
+        <motion.div custom={13} variants={card} initial="hidden" animate="show"
+          className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+              {publicProfileId ? <Globe className="w-4 h-4 text-[#159A9C]" /> : <Lock className="w-4 h-4 text-slate-400" />}
+              Perfil Público
+            </h3>
+            <Link to="/app/config" className="text-xs text-[#159A9C] hover:underline">Configurar</Link>
+          </div>
+          <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
+            {publicProfileId ? 'Ativo e compartilhável' : 'Privado por padrão'}
+          </p>
+          {publicProfileId ? (
+            <Link
+              to={`/p/${publicProfileId}`}
+              className="inline-flex items-center gap-1 text-xs text-[#159A9C] hover:underline mt-1.5"
+            >
+              Abrir /p/{publicProfileId} <ArrowRight className="w-3 h-3" />
+            </Link>
+          ) : (
+            <p className="text-xs text-slate-400 mt-1.5">
+              Ative em Configurações para gerar seu link revogável.
+            </p>
+          )}
+        </motion.div>
+      </div>
 
       {/* Atalhos */}
       <motion.div custom={9} variants={card} initial="hidden" animate="show"
