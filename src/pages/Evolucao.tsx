@@ -201,17 +201,17 @@ export const Evolucao: React.FC = () => {
               </div>
             ) : (
               <div
-                className="h-80 sm:h-96"
+                className="h-[380px] sm:h-[480px] lg:h-[540px]"
                 role="img"
                 aria-label={`Radar de competências técnicas com ${radarMerged.length} habilidades comparando nível atual e meta desejada.`}
               >
                 {radarMerged.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="60%" data={radarMerged} margin={{ top: 28, right: 64, bottom: 28, left: 64 }}>
+                    <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarMerged} margin={{ top: 28, right: 40, bottom: 16, left: 40 }}>
                       <PolarGrid stroke="#cbd5e1" />
                       <PolarAngleAxis
                         dataKey="subject"
-                        tick={<RadarSkillTick className="fill-slate-600 dark:fill-slate-300" fontSize={11} maxLineLen={16} />}
+                        tick={<RadarSkillTick className="fill-slate-600 dark:fill-slate-300" fontSize={12} maxLineLen={22} />}
                       />
                       <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#94a3b8', fontSize: 10 }} />
                       <Radar name="Nível atual" dataKey="atual" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.55} />
@@ -219,7 +219,7 @@ export const Evolucao: React.FC = () => {
                       {cicloAnterior && (
                         <Radar name="Ciclo anterior" dataKey="anterior" stroke="#f97316" fill="#f97316" fillOpacity={0.2} strokeDasharray="4 2" />
                       )}
-                      <Legend verticalAlign="bottom" height={28} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
+                      <Legend verticalAlign="bottom" height={32} iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
                       <Tooltip
                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                         labelFormatter={(_, payload) => payload?.[0]?.payload?.fullName ?? ''}
