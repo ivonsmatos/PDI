@@ -4,7 +4,7 @@ import { ExternalLink, Search, ShieldCheck, ArrowRight } from 'lucide-react';
 import { PublicLayout } from '../components/PublicLayout';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { CERTIFICACOES_GRATUITAS, TOTAL_CERTIFICACOES } from '../data/certificacoesGratuitas';
-import { ACESSO_INFO, CATALOGO_REVISADO_EM, CREDENCIAL_LABEL, formatarDataBR, type AcessoRecurso } from '../lib/recursos';
+import { ACESSO_INFO, CATALOGO_REVISADO_EM, CREDENCIAL_LABEL, formatarDataBR, reportarRecursoUrl, type AcessoRecurso } from '../lib/recursos';
 
 export const CertificacoesPublicas: React.FC = () => {
   const [busca, setBusca] = useState('');
@@ -109,14 +109,25 @@ export const CertificacoesPublicas: React.FC = () => {
                           <p className="text-xs text-slate-600 leading-relaxed">{cert.observacoes}</p>
                         )}
                       </div>
-                      <a
-                        href={cert.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700"
-                      >
-                        Abrir fonte oficial <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
+                      <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                        <a
+                          href={cert.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#159A9C] hover:opacity-80"
+                        >
+                          Abrir fonte oficial <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                        <div className="flex items-center gap-3 text-[11px] text-slate-400">
+                          <span>Última revisão: {formatarDataBR(CATALOGO_REVISADO_EM)}</span>
+                          <a
+                            href={reportarRecursoUrl(cert.nome, cert.url)}
+                            className="hover:text-rose-600 underline decoration-dotted"
+                          >
+                            Reportar link alterado
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
@@ -125,16 +136,16 @@ export const CertificacoesPublicas: React.FC = () => {
           ))}
         </div>
 
-        <section className="bg-indigo-600 text-white rounded-3xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <section className="bg-[#159A9C] text-white rounded-3xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
             <h2 className="text-xl font-extrabold">Quer receber recomendações filtradas pelos seus gaps?</h2>
-            <p className="text-indigo-100 text-sm mt-1">
-              No Meu PDI, sua trilha cruza automaticamente suas lacunas de competência com estes recursos oficiais.
+            <p className="text-[#DEEFE7] text-sm mt-1">
+              No Meu PDI, sua trilha cruza automaticamente suas lacunas de competência com estes recursos oficiais. Gratuito para uso individual.
             </p>
           </div>
           <Link
             to="/login"
-            className="shrink-0 inline-flex items-center gap-2 bg-white text-indigo-700 font-bold px-5 py-3 rounded-xl hover:bg-indigo-50 transition-colors"
+            className="shrink-0 inline-flex items-center gap-2 bg-white text-[#159A9C] font-bold px-5 py-3 rounded-xl hover:bg-[#DEEFE7] transition-colors"
           >
             Criar meu PDI grátis <ArrowRight className="w-4 h-4" />
           </Link>

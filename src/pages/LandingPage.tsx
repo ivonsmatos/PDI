@@ -170,8 +170,9 @@ export const LandingPage: React.FC = () => {
             <a href="#funcionalidades" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Funcionalidades</a>
             <Link to="/para-rh" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Para RH</Link>
             <Link to="/o-que-e-pdi" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>O que é PDI</Link>
-            <Link to="/certificacoes-gratuitas" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Cursos e Certificados</Link>
-            <a href="#depoimentos" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Cenários</a>
+            <Link to="/certificacoes-gratuitas" className={`transition-colors ${scrolled ? 'hover:text-[#159A9C]' : 'hover:text-white'}`}>Cursos e recursos</Link>
+            <Link to="/exemplo" className={`transition-colors ${scrolled ? 'hover:text-[#159A9C]' : 'hover:text-white'}`}>Exemplo</Link>
+            <a href="#depoimentos" className={`transition-colors ${scrolled ? 'hover:text-[#159A9C]' : 'hover:text-white'}`}>Cenários</a>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <Link to="/login" className={`text-sm font-semibold transition-colors px-4 py-2 ${
@@ -203,7 +204,8 @@ export const LandingPage: React.FC = () => {
             <a href="#funcionalidades" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Funcionalidades</a>
             <Link to="/para-rh" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Para RH</Link>
             <Link to="/o-que-e-pdi" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">O que é PDI</Link>
-            <Link to="/certificacoes-gratuitas" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Cursos e Certificados</Link>
+            <Link to="/certificacoes-gratuitas" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Cursos e recursos</Link>
+            <Link to="/exemplo" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Exemplo</Link>
             <a href="#depoimentos" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Cenários</a>
             <Link to="/login" onClick={() => setMobileMenu(false)} className="block mt-2 text-center py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm">
               Criar conta grátis
@@ -223,9 +225,9 @@ export const LandingPage: React.FC = () => {
 
           {/* Texto */}
           <div>
-            <div className="inline-flex items-center gap-2.5 bg-indigo-500/20 border border-indigo-400/30 rounded-full px-4 py-1.5 mb-8">
+            <div className="inline-flex items-center gap-2.5 bg-[#159A9C]/20 border border-[#159A9C]/40 rounded-full px-4 py-1.5 mb-8">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-semibold text-indigo-200 tracking-wide">100% gratuito · Sem cartão · LGPD</span>
+              <span className="text-xs font-semibold text-[#DEEFE7] tracking-wide">Gratuito para uso individual · Sem cartão · LGPD</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl xl:text-7xl font-black text-white leading-[1.05] mb-7">
@@ -247,12 +249,12 @@ export const LandingPage: React.FC = () => {
               >
                 Criar meu PDI grátis <ArrowRight className="w-5 h-5" />
               </Link>
-              <a
-                href="#funcionalidades"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-2xl border border-white/20 transition-all text-lg"
+              <Link
+                to="/exemplo"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#DEEFE7]/15 hover:bg-[#DEEFE7]/25 text-[#DEEFE7] font-semibold rounded-2xl border border-[#DEEFE7]/30 transition-all text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C]"
               >
-                Ver como funciona
-              </a>
+                Ver um PDI preenchido
+              </Link>
             </div>
 
             {/* Social proof */}
@@ -685,9 +687,9 @@ export const LandingPage: React.FC = () => {
                 ))}
               </div>
 
-              <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100">
-                <p className="text-sm text-emerald-800 leading-relaxed">
-                  <span className="font-bold">Dica para headhunters:</span> Recomende o Meu PDI para seus candidatos antes de apresentá-los ao cliente. Candidatos com PDI estruturado chegam mais preparados e têm taxas de aprovação significativamente maiores.
+              <div className="p-5 rounded-2xl bg-[#DEEFE7]/60 border border-[#159A9C]/25">
+                <p className="text-sm text-slate-800 leading-relaxed">
+                  <span className="font-bold text-[#159A9C]">Dica para headhunters:</span> Recomende o Meu PDI para seus candidatos antes de apresentá-los ao cliente. Candidatos com PDI estruturado podem chegar mais preparados às entrevistas e tornar sua evolução mais demonstrável.
                 </p>
               </div>
             </div>
@@ -711,10 +713,15 @@ export const LandingPage: React.FC = () => {
           <div className="grid sm:grid-cols-3 gap-6">
             {TESTIMONIALS.map((t, i) => (
               <div key={i} className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col">
-                <div className="flex gap-1 mb-5">
-                  {Array.from({ length: t.stars }).map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
+                <div className="flex items-center justify-between gap-2 mb-5">
+                  <div className="flex gap-1">
+                    {Array.from({ length: t.stars }).map((_, j) => (
+                      <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#DEEFE7] text-[#159A9C]">
+                    Cenário ilustrativo
+                  </span>
                 </div>
                 <p className="text-slate-700 leading-relaxed flex-1 mb-6 text-[15px] italic">"{t.text}"</p>
                 <div className="flex items-center gap-3">
@@ -738,8 +745,8 @@ export const LandingPage: React.FC = () => {
               A diferença é clara
             </h2>
             <p className="text-slate-500 text-lg max-w-xl mx-auto">
-              Profissionais com PDI estruturado são mais reconhecidos, promovidos mais rápido e
-              chegam mais preparados em processos seletivos.
+              Profissionais com PDI estruturado organizam melhor suas prioridades, documentam evidências reais e
+              podem chegar mais preparados em processos seletivos.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-6">

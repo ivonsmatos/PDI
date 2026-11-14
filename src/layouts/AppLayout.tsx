@@ -47,7 +47,7 @@ const navItems = [
   { to: '/app/diario',     icon: <BookOpen className="w-5 h-5" />,          label: 'Diário'      },
   { to: '/app/comparador', icon: <GitCompareArrows className="w-5 h-5" />,  label: 'Comparador'  },
   { to: '/app/curriculo',  icon: <FileText className="w-5 h-5" />,          label: 'Currículo'   },
-  { to: '/certificacoes-gratuitas', icon: <Award className="w-5 h-5" />,    label: 'Cursos e Certificados' },
+  { to: '/certificacoes-gratuitas', icon: <Award className="w-5 h-5" />,    label: 'Cursos e recursos' },
 ];
 
 // bottom nav mostra só os 4 principais para não lotar
