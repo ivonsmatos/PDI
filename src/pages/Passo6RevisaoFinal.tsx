@@ -298,6 +298,25 @@ export const Passo6RevisaoFinal: React.FC = () => {
                 <Rocket className="w-5 h-5 text-emerald-400" /> {planoDeAcao.length} Ações
               </span>
             </div>
+            <div className="flex flex-wrap gap-2 mt-4">
+              <span className="text-[11px] text-slate-400 self-center mr-1">Editar etapa:</span>
+              {[
+                { step: 1, label: '1. Causa' },
+                { step: 2, label: '2. Competências' },
+                { step: 3, label: '3. Objetivos' },
+                { step: 4, label: '4. Plano' },
+                { step: 5, label: '5. Forças' },
+              ].map((s) => (
+                <button
+                  key={s.step}
+                  type="button"
+                  onClick={() => store.setStepAtual(s.step)}
+                  className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors"
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="z-10 flex flex-col items-center justify-center p-4 bg-slate-800/80 rounded-2xl border border-slate-700 shadow-inner min-w-[180px]">
             <span className="text-xs uppercase tracking-widest font-bold text-slate-400 mb-2">Saúde do plano</span>
@@ -437,6 +456,9 @@ export const Passo6RevisaoFinal: React.FC = () => {
             <RefreshCw className="w-5 h-5" /> Salvar Ciclo
           </button>
         </div>
+        <p className="text-center text-xs text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto">
+          <strong>Salvar Ciclo</strong> arquiva uma fotografia deste plano no seu histórico com retrospectiva; para acompanhar o plano atual no dia a dia, use <strong>Finalizar e Ir para o Painel</strong> abaixo.
+        </p>
       </div>
 
       {/* Relatório estruturado off-screen para exportação em PDF */}

@@ -6,6 +6,8 @@ import { Plus, Trash2, BookOpen, Calendar, Target, Search, X, Pencil, Check, Shi
 
 const MAX_CARACTERES = 2000;
 
+const TAGS_SUGERIDAS = ['conquista', 'aprendizado', 'feedback', 'bloqueio'];
+
 const PERIODOS = [
   { value: '',   label: 'Sempre' },
   { value: '7',  label: '7 dias' },
@@ -18,7 +20,9 @@ export const Diario: React.FC = () => {
   const { addToast } = useToastStore();
   const [texto, setTexto] = useState('');
   const [objetivoId, setObjetivoId] = useState('');
+  const [tagsSelecionadas, setTagsSelecionadas] = useState<string[]>([]);
   const [filtroObj, setFiltroObj] = useState('');
+  const [filtroTag, setFiltroTag] = useState('');
   const [busca, setBusca] = useState('');
   const [periodo, setPeriodo] = useState('');
   const [editandoId, setEditandoId] = useState<string | null>(null);
@@ -43,15 +47,25 @@ export const Diario: React.FC = () => {
       data: new Date().toISOString(),
       texto: t,
       objetivoId: objetivoId || undefined,
+      tags: tagsSelecionadas.length > 0 ? tagsSelecionadas : undefined,
     });
     setTexto('');
     setObjetivoId('');
+    setTagsSelecionadas([]);
+  };
+
+  const toggleTag = (tag: string) => {
+    setTagsSelecionadas((prev) =>
+      prev.includes(tag) ? prev.filter((item) => item !== tag) : [...prev, tag]
+    );
   };
 
   const entriesFiltradas = useMemo(() => {
     let result = diario;
 
     if (filtroObj) result = result.filter(e => e.objetivoId === filtroObj);
+
+    if (filtroTag) result = result.filter(e => e.tags?.includes(filtroTag));
 
     if (periodo) {
       const limite = new Date();
@@ -61,11 +75,14 @@ export const Diario: React.FC = () => {
 
     if (busca.trim()) {
       const q = busca.trim().toLowerCase();
-      result = result.filter(e => e.texto.toLowerCase().includes(q));
+      result = result.filter(e =>
+        e.texto.toLowerCase().includes(q) ||
+        (e.tags ?? []).some(t => t.toLowerCase().includes(q))
+      );
     }
 
     return result;
-  }, [diario, filtroObj, periodo, busca]);
+  }, [diario, filtroObj, filtroTag, periodo, busca]);
 
   const formatDate = (iso: string) => {
     const d = new Date(iso);
@@ -171,7 +188,28 @@ export const Diario: React.FC = () => {
           className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
         />
 
-        <div className="flex items-center gap-2 mt-2 text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 border border-amber-200/70 dark:border-amber-800/40 rounded-lg px-3 py-1.5">
+        <div className="flex flex-wrap items-center gap-1.5 mt-3">
+          <span className="text-[11px] font-semibold text-slate-400 mr-1">Tags:</span>
+          {TAGS_SUGERIDAS.map((tag) => {
+            const active = tagsSelecionadas.includes(tag);
+            return (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => toggleTag(tag)}
+                className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-colors ${
+                  active
+                    ? 'bg-violet-600 text-white border-violet-600'
+                    : 'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                #{tag}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center gap-2 mt-3 text-[11px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 border border-amber-200/70 dark:border-amber-800/40 rounded-lg px-3 py-1.5">
           <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
           <span>Evite registrar informações confidenciais da empresa, senhas ou dados pessoais de terceiros.</span>
         </div>
@@ -230,26 +268,44 @@ export const Diario: React.FC = () => {
         </div>
       )}
 
-      {/* Filtro por objetivo */}
-      {objetivos.length > 0 && diario.length > 0 && (
+      {/* Filtro por objetivo e tags */}
+      {diario.length > 0 && (
         <div className="flex gap-2 flex-wrap mb-5">
-          <button
-            onClick={() => setFiltroObj('')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-              filtroObj === '' ? 'bg-violet-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
-            }`}
-          >
-            Todos
-          </button>
-          {objetivos.map(o => (
+          {objetivos.length > 0 && (
+            <>
+              <button
+                onClick={() => setFiltroObj('')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                  filtroObj === '' ? 'bg-violet-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                }`}
+              >
+                Todos
+              </button>
+              {objetivos.map(o => (
+                <button
+                  key={o.id}
+                  onClick={() => setFiltroObj(o.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all truncate max-w-[200px] ${
+                    filtroObj === o.id ? 'bg-violet-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                  }`}
+                >
+                  {o.descricao.length > 30 ? o.descricao.slice(0, 30) + '…' : o.descricao}
+                </button>
+              ))}
+            </>
+          )}
+          {TAGS_SUGERIDAS.map(tag => (
             <button
-              key={o.id}
-              onClick={() => setFiltroObj(o.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all truncate max-w-[200px] ${
-                filtroObj === o.id ? 'bg-violet-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+              key={tag}
+              type="button"
+              onClick={() => setFiltroTag(prev => (prev === tag ? '' : tag))}
+              className={`px-2.5 py-1 rounded-xl text-xs font-semibold transition-all ${
+                filtroTag === tag
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
-              {o.descricao.length > 30 ? o.descricao.slice(0, 30) + '…' : o.descricao}
+              #{tag}
             </button>
           ))}
         </div>
@@ -298,6 +354,11 @@ export const Diario: React.FC = () => {
                           {obj.descricao.length > 25 ? obj.descricao.slice(0, 25) + '…' : obj.descricao}
                         </span>
                       )}
+                      {(entry.tags ?? []).map(tag => (
+                        <span key={tag} className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                          #{tag}
+                        </span>
+                      ))}
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <button

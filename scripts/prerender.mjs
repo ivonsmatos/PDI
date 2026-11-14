@@ -96,6 +96,18 @@ async function run() {
       fs.writeFileSync(outFile, stdout, 'utf8');
       console.log(`[prerender] Gerado ${path.relative(process.cwd(), outFile)} (${stdout.length} bytes)`);
     }
+
+    // Gera dist/404.html pré-renderizado (com noindex) para provedores estáticos
+    const notFoundUrl = `http://127.0.0.1:${port}/404`;
+    const { stdout: notFoundHtml } = await execFileAsync(
+      browser,
+      ['--headless=new', '--disable-gpu', '--no-sandbox', '--virtual-time-budget=3000', '--dump-dom', notFoundUrl],
+      { maxBuffer: 10 * 1024 * 1024 },
+    );
+    if (notFoundHtml && notFoundHtml.includes('<div id="root">') && !notFoundHtml.includes('<div id="root"></div>')) {
+      fs.writeFileSync(path.join(DIST_DIR, '404.html'), notFoundHtml, 'utf8');
+      console.log(`[prerender] Gerado dist\\404.html (${notFoundHtml.length} bytes)`);
+    }
   } finally {
     server.close();
   }

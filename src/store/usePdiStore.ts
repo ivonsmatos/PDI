@@ -46,6 +46,7 @@ export type DiarioEntry = {
   data: string;       // ISO string
   objetivoId?: string;
   texto: string;
+  tags?: string[];
 };
 
 export type RetrospectivaData = {
