@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
-import { ShieldCheck, Users, CheckCircle2, Activity, Target, RefreshCw, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Users, CheckCircle2, Activity, Target, RefreshCw, AlertTriangle, Filter, Calendar, RotateCcw } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminUser } from '../lib/admin';
 import { loadAllTelemetry, type TelemetrySnapshot } from '../lib/firestore';
@@ -34,12 +34,131 @@ const NIVEL_NOMES: Record<string, string> = {
 
 const COLORS = ['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
 
+type PeriodPreset =
+  | 'all'
+  | 'today'
+  | 'yesterday'
+  | 'this_week'
+  | 'last_7d'
+  | 'last_week'
+  | 'last_28d'
+  | 'last_30d'
+  | 'this_month'
+  | 'last_month'
+  | 'last_90d'
+  | 'this_quarter'
+  | 'this_year'
+  | 'last_year'
+  | 'custom';
+
+const PERIOD_OPTIONS: { value: PeriodPreset; label: string }[] = [
+  { value: 'all', label: 'Todo o período' },
+  { value: 'today', label: 'Hoje' },
+  { value: 'yesterday', label: 'Ontem' },
+  { value: 'this_week', label: 'Esta semana (Dom - Hoje)' },
+  { value: 'last_7d', label: 'Últimos 7 dias' },
+  { value: 'last_week', label: 'Semana passada (Dom - Sáb)' },
+  { value: 'last_28d', label: 'Últimos 28 dias' },
+  { value: 'last_30d', label: 'Últimos 30 dias' },
+  { value: 'this_month', label: 'Este mês' },
+  { value: 'last_month', label: 'Mês passado' },
+  { value: 'last_90d', label: 'Últimos 90 dias' },
+  { value: 'this_quarter', label: 'Acumulado no trimestre' },
+  { value: 'this_year', label: 'Este ano (janeiro – hoje)' },
+  { value: 'last_year', label: 'Ano passado' },
+  { value: 'custom', label: 'Personalizado' },
+];
+
+function toYmd(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function getPeriodBounds(
+  preset: PeriodPreset,
+  nowMs: number,
+  customStart: string,
+  customEnd: string
+): { start: string; end: string } | null {
+  if (preset === 'all') return null;
+  if (preset === 'custom') {
+    if (!customStart && !customEnd) return null;
+    return { start: customStart || '0000-01-01', end: customEnd || '9999-12-31' };
+  }
+
+  const today = new Date(nowMs);
+  today.setHours(0, 0, 0, 0);
+  const todayStr = toYmd(today);
+
+  if (preset === 'today') return { start: todayStr, end: todayStr };
+
+  if (preset === 'yesterday') {
+    const d = new Date(today);
+    d.setDate(d.getDate() - 1);
+    const s = toYmd(d);
+    return { start: s, end: s };
+  }
+
+  if (preset === 'this_week') {
+    const start = new Date(today);
+    start.setDate(start.getDate() - start.getDay());
+    return { start: toYmd(start), end: todayStr };
+  }
+
+  if (preset === 'last_week') {
+    const end = new Date(today);
+    end.setDate(end.getDate() - end.getDay() - 1);
+    const start = new Date(end);
+    start.setDate(start.getDate() - 6);
+    return { start: toYmd(start), end: toYmd(end) };
+  }
+
+  if (preset === 'last_7d' || preset === 'last_28d' || preset === 'last_30d' || preset === 'last_90d') {
+    const days = preset === 'last_7d' ? 6 : preset === 'last_28d' ? 27 : preset === 'last_30d' ? 29 : 89;
+    const start = new Date(today);
+    start.setDate(start.getDate() - days);
+    return { start: toYmd(start), end: todayStr };
+  }
+
+  if (preset === 'this_month') {
+    const start = new Date(today.getFullYear(), today.getMonth(), 1);
+    return { start: toYmd(start), end: todayStr };
+  }
+
+  if (preset === 'last_month') {
+    const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const end = new Date(today.getFullYear(), today.getMonth(), 0);
+    return { start: toYmd(start), end: toYmd(end) };
+  }
+
+  if (preset === 'this_quarter') {
+    const qMonth = Math.floor(today.getMonth() / 3) * 3;
+    const start = new Date(today.getFullYear(), qMonth, 1);
+    return { start: toYmd(start), end: todayStr };
+  }
+
+  if (preset === 'this_year') {
+    return { start: `${today.getFullYear()}-01-01`, end: todayStr };
+  }
+
+  // last_year
+  const prevYear = today.getFullYear() - 1;
+  return { start: `${prevYear}-01-01`, end: `${prevYear}-12-31` };
+}
+
 export const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
   const [rows, setRows] = useState<TelemetrySnapshot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const [period, setPeriod] = useState<PeriodPreset>('all');
+  const [customStart, setCustomStart] = useState('');
+  const [customEnd, setCustomEnd] = useState('');
+  const [areaFilter, setAreaFilter] = useState('all');
+  const [nivelFilter, setNivelFilter] = useState('all');
 
   const isAdmin = isAdminUser(user?.email);
 
@@ -80,45 +199,79 @@ export const AdminDashboard: React.FC = () => {
     };
   }, [isAdmin]);
 
-  const stats = useMemo(() => {
-    const total = rows.length;
-    const concluidos = rows.filter(r => r.wizardConcluido).length;
-    const comObjetivos = rows.filter(r => r.objetivosCount > 0).length;
-    const comAcoes = rows.filter(r => r.acoesCount > 0).length;
-    const comAcaoConcluida = rows.filter(r => r.acoesConcluidasCount > 0).length;
-    const comDiario = rows.filter(r => r.diarioCount > 0).length;
+  const availableAreas = useMemo(() => {
+    const keys = Array.from(new Set(rows.map(r => r.areaAtuacao || 'nao_informado')));
+    return keys
+      .map(k => ({ value: k, label: AREA_NOMES[k] || k }))
+      .sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
+  }, [rows]);
 
-    const totalAcoes = rows.reduce((acc, r) => acc + (r.acoesCount || 0), 0);
-    const totalAcoesConcluidas = rows.reduce((acc, r) => acc + (r.acoesConcluidasCount || 0), 0);
-    const totalObjetivos = rows.reduce((acc, r) => acc + (r.objetivosCount || 0), 0);
-    const totalDiario = rows.reduce((acc, r) => acc + (r.diarioCount || 0), 0);
-    const totalCiclos = rows.reduce((acc, r) => acc + (r.ciclosCount || 0), 0);
+  const availableNiveis = useMemo(() => {
+    const keys = Array.from(new Set(rows.map(r => r.nivelCarreira || 'nao_informado')));
+    return keys
+      .map(k => ({ value: k, label: NIVEL_NOMES[k] || k }))
+      .sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
+  }, [rows]);
+
+  const filteredRows = useMemo(() => {
+    const bounds = getPeriodBounds(period, nowMs, customStart, customEnd);
+    return rows.filter(r => {
+      if (bounds) {
+        if (!r.ultimoAcesso || r.ultimoAcesso < bounds.start || r.ultimoAcesso > bounds.end) {
+          return false;
+        }
+      }
+      if (areaFilter !== 'all' && (r.areaAtuacao || 'nao_informado') !== areaFilter) {
+        return false;
+      }
+      if (nivelFilter !== 'all' && (r.nivelCarreira || 'nao_informado') !== nivelFilter) {
+        return false;
+      }
+      return true;
+    });
+  }, [rows, period, nowMs, customStart, customEnd, areaFilter, nivelFilter]);
+
+  const hasActiveFilters = period !== 'all' || areaFilter !== 'all' || nivelFilter !== 'all';
+
+  const stats = useMemo(() => {
+    const total = filteredRows.length;
+    const concluidos = filteredRows.filter(r => r.wizardConcluido).length;
+    const comObjetivos = filteredRows.filter(r => r.objetivosCount > 0).length;
+    const comAcoes = filteredRows.filter(r => r.acoesCount > 0).length;
+    const comAcaoConcluida = filteredRows.filter(r => r.acoesConcluidasCount > 0).length;
+    const comDiario = filteredRows.filter(r => r.diarioCount > 0).length;
+
+    const totalAcoes = filteredRows.reduce((acc, r) => acc + (r.acoesCount || 0), 0);
+    const totalAcoesConcluidas = filteredRows.reduce((acc, r) => acc + (r.acoesConcluidasCount || 0), 0);
+    const totalObjetivos = filteredRows.reduce((acc, r) => acc + (r.objetivosCount || 0), 0);
+    const totalDiario = filteredRows.reduce((acc, r) => acc + (r.diarioCount || 0), 0);
+    const totalCiclos = filteredRows.reduce((acc, r) => acc + (r.ciclosCount || 0), 0);
     const saudeMedia = total > 0
-      ? Math.round(rows.reduce((acc, r) => acc + (r.scoreSaude || 0), 0) / total)
+      ? Math.round(filteredRows.reduce((acc, r) => acc + (r.scoreSaude || 0), 0) / total)
       : 0;
 
-    const ativos7d = rows.filter(r => {
+    const ativos7d = filteredRows.filter(r => {
       if (!r.ultimoAcesso) return false;
       const diffDays = (nowMs - new Date(`${r.ultimoAcesso}T00:00:00`).getTime()) / 86400000;
       return diffDays >= 0 && diffDays <= 7;
     }).length;
-    const ativos30d = rows.filter(r => {
+    const ativos30d = filteredRows.filter(r => {
       if (!r.ultimoAcesso) return false;
       const diffDays = (nowMs - new Date(`${r.ultimoAcesso}T00:00:00`).getTime()) / 86400000;
       return diffDays >= 0 && diffDays <= 30;
     }).length;
 
     const saudeFaixas = [
-      { faixa: '0–49% (Crítico)', usuarios: rows.filter(r => (r.scoreSaude || 0) < 50).length, fill: '#f43f5e' },
-      { faixa: '50–79% (Atenção)', usuarios: rows.filter(r => (r.scoreSaude || 0) >= 50 && (r.scoreSaude || 0) < 80).length, fill: '#f59e0b' },
-      { faixa: '80–100% (Saudável)', usuarios: rows.filter(r => (r.scoreSaude || 0) >= 80).length, fill: '#10b981' },
+      { faixa: '0–49% (Crítico)', usuarios: filteredRows.filter(r => (r.scoreSaude || 0) < 50).length, fill: '#f43f5e' },
+      { faixa: '50–79% (Atenção)', usuarios: filteredRows.filter(r => (r.scoreSaude || 0) >= 50 && (r.scoreSaude || 0) < 80).length, fill: '#f59e0b' },
+      { faixa: '80–100% (Saudável)', usuarios: filteredRows.filter(r => (r.scoreSaude || 0) >= 80).length, fill: '#10b981' },
     ];
 
     const areaMap: Record<string, number> = {};
     const nivelMap: Record<string, number> = {};
     const diaMap: Record<string, number> = {};
 
-    rows.forEach((r) => {
+    filteredRows.forEach((r) => {
       const areaKey = AREA_NOMES[r.areaAtuacao] || r.areaAtuacao || 'Não informado';
       areaMap[areaKey] = (areaMap[areaKey] || 0) + 1;
 
@@ -176,7 +329,7 @@ export const AdminDashboard: React.FC = () => {
       porDia,
       funil,
     };
-  }, [rows, nowMs]);
+  }, [filteredRows, nowMs]);
 
   if (!isAdmin) {
     return <Navigate to="/app" replace />;
@@ -210,6 +363,98 @@ export const AdminDashboard: React.FC = () => {
           <p>{error}</p>
         </div>
       )}
+
+      {/* Filtros */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex flex-wrap items-end gap-3">
+        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mr-1 self-center">
+          <Filter className="w-3.5 h-3.5 text-[#159A9C]" /> Filtros
+        </div>
+
+        <label className="flex flex-col gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+          <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> Período</span>
+          <select
+            value={period}
+            onChange={(e) => setPeriod(e.target.value as PeriodPreset)}
+            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+          >
+            {PERIOD_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </label>
+
+        {period === 'custom' && (
+          <>
+            <label className="flex flex-col gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+              <span>De</span>
+              <input
+                type="date"
+                value={customStart}
+                onChange={(e) => setCustomStart(e.target.value)}
+                className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+              <span>Até</span>
+              <input
+                type="date"
+                value={customEnd}
+                onChange={(e) => setCustomEnd(e.target.value)}
+                className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+              />
+            </label>
+          </>
+        )}
+
+        <label className="flex flex-col gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+          <span>Área de atuação</span>
+          <select
+            value={areaFilter}
+            onChange={(e) => setAreaFilter(e.target.value)}
+            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+          >
+            <option value="all">Todas as áreas</option>
+            {availableAreas.map(a => (
+              <option key={a.value} value={a.value}>{a.label}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+          <span>Nível de carreira</span>
+          <select
+            value={nivelFilter}
+            onChange={(e) => setNivelFilter(e.target.value)}
+            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+          >
+            <option value="all">Todos os níveis</option>
+            {availableNiveis.map(n => (
+              <option key={n.value} value={n.value}>{n.label}</option>
+            ))}
+          </select>
+        </label>
+
+        <div className="ml-auto flex items-center gap-3 self-center">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
+            Exibindo <strong className="text-slate-800 dark:text-slate-100">{filteredRows.length}</strong> de {rows.length}
+          </span>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={() => {
+                setPeriod('all');
+                setCustomStart('');
+                setCustomEnd('');
+                setAreaFilter('all');
+                setNivelFilter('all');
+              }}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors"
+            >
+              <RotateCcw className="w-3.5 h-3.5" /> Limpar
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
