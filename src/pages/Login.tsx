@@ -95,9 +95,11 @@ export const Login: React.FC = () => {
 
         {/* Logo + badges */}
         <div className="text-center mb-8">
-          <span className="text-4xl font-black bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent tracking-tight">
-            Meu PDI
-          </span>
+          <img
+            src="/meu-pdi-logo.png"
+            alt="Meu PDI"
+            className="h-14 w-auto mx-auto object-contain dark:bg-white/95 dark:px-3 dark:py-1.5 dark:rounded-xl"
+          />
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
             Seu plano de desenvolvimento inteligente
           </p>

@@ -179,9 +179,11 @@ export const AppLayout: React.FC = () => {
             >
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">
-              Meu PDI
-            </span>
+            <img
+              src="/meu-pdi-logo.png"
+              alt="Meu PDI"
+              className="h-8 w-auto object-contain dark:bg-white/95 dark:px-2 dark:py-0.5 dark:rounded-lg"
+            />
           </div>
 
           <div className="flex items-center gap-2">

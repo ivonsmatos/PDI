@@ -63,9 +63,11 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 transition-colors sticky top-0 z-40">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-blue-500 dark:from-indigo-400 dark:to-blue-400 bg-clip-text text-transparent tracking-tight">
-            Meu PDI
-          </h1>
+          <img
+            src="/meu-pdi-logo.png"
+            alt="Meu PDI"
+            className="h-8 sm:h-9 w-auto object-contain dark:bg-white/95 dark:px-2 dark:py-0.5 dark:rounded-lg"
+          />
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowHistorico(true)}

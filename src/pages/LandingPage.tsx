@@ -161,9 +161,14 @@ export const LandingPage: React.FC = () => {
         scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100' : 'bg-transparent'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-black bg-gradient-to-r from-indigo-500 to-blue-400 bg-clip-text text-transparent">
-            Meu PDI
-          </span>
+          <a
+            href="#"
+            className={`inline-flex items-center rounded-xl transition-all ${
+              scrolled ? '' : 'bg-white/95 px-2.5 py-1 shadow-sm'
+            }`}
+          >
+            <img src="/meu-pdi-logo.png" alt="Meu PDI" className="h-8 sm:h-9 w-auto object-contain" />
+          </a>
           <div className={`hidden md:flex items-center gap-7 text-sm font-medium transition-colors ${
             scrolled ? 'text-slate-600' : 'text-white/80'
           }`}>

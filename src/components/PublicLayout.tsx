@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -11,11 +11,8 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2 font-extrabold text-slate-900 tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded-lg">
-            <span className="w-8 h-8 rounded-xl bg-[#159A9C] text-white flex items-center justify-center">
-              <Sparkles className="w-4 h-4" />
-            </span>
-            <span>Meu PDI</span>
+          <Link to="/" className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded-lg">
+            <img src="/meu-pdi-logo.png" alt="Meu PDI" className="h-9 w-auto object-contain" />
           </Link>
           <nav aria-label="Navegação pública" className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
             <Link to="/o-que-e-pdi" className="hover:text-[#159A9C] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded">O que é PDI</Link>
