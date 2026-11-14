@@ -19,7 +19,7 @@ function buildTelemetry(state: PdiState) {
     ciclosCount: state.historico.length,
     hardSkillsCount: state.inventario.hardSkills.length,
     softSkillsCount: state.inventario.softSkills.length,
-    scoreSaude: computeHealthScore(state),
+    scoreSaude: computeHealthScore(state).score,
     ultimoAcesso: new Date().toISOString().slice(0, 10),
   };
 }
