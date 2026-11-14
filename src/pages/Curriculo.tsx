@@ -50,7 +50,7 @@ const CAT_COLOR: Record<string, { bg: string; text: string }> = {
 };
 
 export const Curriculo: React.FC = () => {
-  const { usuario, inventario, objetivos, planoDeAcao, planoAcaoStatus, historico } = usePdiStore();
+  const { usuario, inventario, objetivos, planoDeAcao, planoAcaoStatus, historico, diario, publicProfileId } = usePdiStore();
   const { addToast } = useToastStore();
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -59,6 +59,11 @@ export const Curriculo: React.FC = () => {
   const [incluirProposito, setIncluirProposito] = useState(true);
   const [incluirObjetivos, setIncluirObjetivos] = useState(true);
   const [incluirContadores, setIncluirContadores] = useState(true);
+  const [incluirAcoesEvidencias, setIncluirAcoesEvidencias] = useState(true);
+  const [incluirExemplosSoft, setIncluirExemplosSoft] = useState(true);
+  const [incluirDiario, setIncluirDiario] = useState(true);
+  const [incluirHistoricoCiclos, setIncluirHistoricoCiclos] = useState(true);
+  const [incluirPerfilPublico, setIncluirPerfilPublico] = useState(true);
   const [gerandoPdf, setGerandoPdf] = useState(false);
 
   const radarData = inventario.hardSkills.map(s => ({
@@ -68,11 +73,32 @@ export const Curriculo: React.FC = () => {
     fullMark: 5,
   }));
 
+  const mediaHardAtual = inventario.hardSkills.length > 0
+    ? (inventario.hardSkills.reduce((acc, s) => acc + s.nivelAtual, 0) / inventario.hardSkills.length).toFixed(1)
+    : null;
+  const mediaHardMeta = inventario.hardSkills.length > 0
+    ? (inventario.hardSkills.reduce((acc, s) => acc + s.nivelDesejado, 0) / inventario.hardSkills.length).toFixed(1)
+    : null;
+
   const softFortes = inventario.softSkills.filter(s => s.pontoForteOuMelhoria === 'Forte');
   const softMelhoria = inventario.softSkills.filter(s => s.pontoForteOuMelhoria === 'Melhoria');
+  const softComExemplo = inventario.softSkills.filter(s => s.exemplo?.trim());
+
+  const acoesOrdenadas = [...planoDeAcao].sort((a, b) => {
+    const rank = (id: string) => {
+      const st = planoAcaoStatus[id] ?? 'pendente';
+      return st === 'concluido' ? 0 : st === 'em_andamento' ? 1 : st === 'pendente' ? 2 : 3;
+    };
+    return rank(a.id) - rank(b.id);
+  });
+
+  const destaquesDiario = [...diario]
+    .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+    .slice(0, 4);
 
   const acoesConc = Object.values(planoAcaoStatus).filter(v => v === 'concluido').length;
   const dataGer = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const publicProfileUrl = publicProfileId ? `https://meupdi.app.br/p/${publicProfileId}` : '';
 
   const handleDownloadPDF = async () => {
     const el = printRef.current;
@@ -147,6 +173,28 @@ export const Curriculo: React.FC = () => {
               <input type="checkbox" checked={incluirContadores} onChange={e => setIncluirContadores(e.target.checked)} className="rounded text-indigo-600" />
               Contadores de progresso
             </label>
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={incluirExemplosSoft} onChange={e => setIncluirExemplosSoft(e.target.checked)} className="rounded text-indigo-600" />
+              Exemplos de Soft Skills
+            </label>
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={incluirAcoesEvidencias} onChange={e => setIncluirAcoesEvidencias(e.target.checked)} className="rounded text-indigo-600" />
+              Ações e evidências
+            </label>
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={incluirDiario} onChange={e => setIncluirDiario(e.target.checked)} className="rounded text-indigo-600" />
+              Destaques do diário
+            </label>
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={incluirHistoricoCiclos} onChange={e => setIncluirHistoricoCiclos(e.target.checked)} className="rounded text-indigo-600" />
+              Histórico de ciclos
+            </label>
+            {publicProfileId && (
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={incluirPerfilPublico} onChange={e => setIncluirPerfilPublico(e.target.checked)} className="rounded text-indigo-600" />
+                Link do perfil público
+              </label>
+            )}
           </div>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2">
             Este documento reflete a sua autoavaliação. O Meu PDI organiza seus registros, mas não autentica automaticamente as competências.
@@ -173,6 +221,11 @@ export const Curriculo: React.FC = () => {
               </p>
               {incluirEmail && usuario.email && (
                 <p style={{ fontSize: '12px', color: '#818cf8', margin: '4px 0 0' }}>{usuario.email}</p>
+              )}
+              {incluirPerfilPublico && publicProfileUrl && (
+                <p style={{ fontSize: '11px', color: '#c7d2fe', margin: '4px 0 0' }}>
+                  Perfil público: <span style={{ color: '#e0e7ff', textDecoration: 'underline' }}>{publicProfileUrl}</span>
+                </p>
               )}
             </div>
             {incluirContadores && (
@@ -206,19 +259,28 @@ export const Curriculo: React.FC = () => {
         {/* Hard Skills + Radar */}
         {radarData.length > 0 && (
           <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
               <div style={{ flex: 1 }}>
-                <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', margin: '0 0 12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Hard Skills
-                </h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '12px', gap: '8px' }}>
+                  <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Hard Skills
+                  </h2>
+                  {mediaHardAtual && mediaHardMeta && (
+                    <span style={{ fontSize: '10px', fontWeight: 600, color: '#475569' }}>
+                      Média: {mediaHardAtual}/5 · Meta: {mediaHardMeta}/5
+                    </span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {inventario.hardSkills.map(s => {
                     const pct = Math.round((s.nivelAtual / 5) * 100);
                     return (
                       <div key={s.skill}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 600, color: '#334155' }}>{s.skill}</span>
-                          <span style={{ fontSize: '10px', color: '#64748b' }}>{s.nivelAtual}/5</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
+                          <span style={{ fontSize: '11px', fontWeight: 600, color: '#334155', lineHeight: 1.4, paddingBottom: '2px' }}>{s.skill}</span>
+                          <span style={{ fontSize: '10px', color: '#64748b', whiteSpace: 'nowrap', lineHeight: 1.4 }}>
+                            {s.nivelAtual}/5 <span style={{ color: '#94a3b8' }}>(meta {s.nivelDesejado})</span>
+                          </span>
                         </div>
                         <div style={{ height: '6px', backgroundColor: '#f1f5f9', borderRadius: '99px', overflow: 'hidden' }}>
                           <div style={{ height: '100%', width: `${pct}%`, backgroundColor: s.nivelAtual >= 4 ? '#10b981' : s.nivelAtual >= 3 ? '#6366f1' : '#f59e0b', borderRadius: '99px' }} />
@@ -228,14 +290,14 @@ export const Curriculo: React.FC = () => {
                   })}
                 </div>
               </div>
-              <div style={{ width: '320px', flexShrink: 0 }}>
-                <div style={{ width: '320px', height: '250px' }}>
+              <div style={{ width: '340px', flexShrink: 0 }}>
+                <div style={{ width: '340px', height: '270px' }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="56%" data={radarData} margin={{ top: 24, right: 64, bottom: 24, left: 64 }}>
+                    <RadarChart cx="50%" cy="50%" outerRadius="64%" data={radarData} margin={{ top: 24, right: 54, bottom: 24, left: 54 }}>
                       <PolarGrid stroke="#cbd5e1" />
                       <PolarAngleAxis
                         dataKey="subject"
-                        tick={<RadarSkillTick fill="#475569" fontSize={9} maxLineLen={14} />}
+                        tick={<RadarSkillTick fill="#475569" fontSize={9.5} maxLineLen={17} />}
                       />
                       <PolarRadiusAxis domain={[0, 5]} tick={false} axisLine={false} />
                       <Radar name="Meta" dataKey="meta" stroke="#93c5fd" fill="#93c5fd" fillOpacity={0.35} isAnimationActive={false} />
@@ -290,6 +352,20 @@ export const Curriculo: React.FC = () => {
                 </div>
               )}
             </div>
+            {incluirExemplosSoft && softComExemplo.length > 0 && (
+              <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
+                <p style={{ fontSize: '10px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 8px' }}>
+                  Exemplos práticos
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {softComExemplo.map(s => (
+                    <div key={s.atributo} style={{ fontSize: '11px', color: '#334155', lineHeight: 1.45 }}>
+                      <strong style={{ color: '#0f172a' }}>{s.atributo}:</strong> {s.exemplo}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -319,6 +395,11 @@ export const Curriculo: React.FC = () => {
                         </span>
                       </div>
                     </div>
+                    {o.justificativa?.trim() && (
+                      <p style={{ fontSize: '10px', color: '#475569', margin: '5px 0 0', lineHeight: 1.45 }}>
+                        {o.justificativa}
+                      </p>
+                    )}
                     {acoesObj.length > 0 && (
                       <p style={{ fontSize: '10px', color: '#64748b', margin: '6px 0 0' }}>
                         {concObj}/{acoesObj.length} ações concluídas
@@ -327,6 +408,119 @@ export const Curriculo: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Plano de Ação e Evidências */}
+        {incluirAcoesEvidencias && acoesOrdenadas.length > 0 && (
+          <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', margin: '0 0 14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Plano de Ação e Evidências
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {acoesOrdenadas.map(a => {
+                const st = planoAcaoStatus[a.id] ?? 'pendente';
+                const statusMap: Record<string, { label: string; bg: string; color: string }> = {
+                  concluido: { label: 'Concluída', bg: '#d1fae5', color: '#065f46' },
+                  em_andamento: { label: 'Em andamento', bg: '#dbeafe', color: '#1e40af' },
+                  pendente: { label: 'Planejada', bg: '#f1f5f9', color: '#475569' },
+                  bloqueado: { label: 'Bloqueada', bg: '#fee2e2', color: '#991b1b' },
+                };
+                const badge = statusMap[st] ?? statusMap.pendente;
+                return (
+                  <div key={a.id} style={{ backgroundColor: '#f8fafc', borderRadius: '10px', padding: '10px 14px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                      <p style={{ fontSize: '11.5px', fontWeight: 700, color: '#1e293b', margin: 0, lineHeight: 1.4 }}>{a.acao}</p>
+                      <div style={{ display: 'flex', gap: '4px', flexShrink: 0, alignItems: 'center' }}>
+                        {a.prazoData && (
+                          <span style={{ fontSize: '9px', fontWeight: 600, color: '#64748b', backgroundColor: '#f1f5f9', padding: '2px 7px', borderRadius: '99px' }}>
+                            Prazo: {new Date(`${a.prazoData}T00:00:00`).toLocaleDateString('pt-BR')}
+                          </span>
+                        )}
+                        <span style={{ backgroundColor: badge.bg, color: badge.color, fontSize: '9px', fontWeight: 700, padding: '2px 7px', borderRadius: '99px' }}>
+                          {badge.label}
+                        </span>
+                      </div>
+                    </div>
+                    {a.resultadoEsperado?.trim() && (
+                      <p style={{ fontSize: '10px', color: '#475569', margin: '4px 0 0', lineHeight: 1.4 }}>
+                        <strong>Resultado:</strong> {a.resultadoEsperado}
+                      </p>
+                    )}
+                    {a.evidenciaUrl?.trim() && (
+                      <p style={{ fontSize: '10px', color: '#159A9C', margin: '3px 0 0', wordBreak: 'break-all' }}>
+                        <strong>Evidência:</strong> {a.evidenciaUrl}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Destaques do Diário de Progresso */}
+        {incluirDiario && destaquesDiario.length > 0 && (
+          <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', margin: '0 0 14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Destaques do Diário de Progresso
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {destaquesDiario.map(entry => (
+                <div key={entry.id} style={{ backgroundColor: '#f8fafc', borderRadius: '10px', padding: '10px 14px', borderLeft: '3px solid #159A9C' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', gap: '8px' }}>
+                    <span style={{ fontSize: '9.5px', fontWeight: 700, color: '#64748b' }}>
+                      {new Date(entry.data).toLocaleDateString('pt-BR')}
+                    </span>
+                    {entry.tags && entry.tags.length > 0 && (
+                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                        {entry.tags.map(tag => (
+                          <span key={tag} style={{ fontSize: '9px', fontWeight: 600, backgroundColor: '#DEEFE7', color: '#159A9C', padding: '1px 6px', borderRadius: '99px' }}>
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <p style={{ fontSize: '11px', color: '#334155', margin: 0, lineHeight: 1.45 }}>{entry.texto}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Histórico de Ciclos */}
+        {incluirHistoricoCiclos && historico.length > 0 && (
+          <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', margin: '0 0 14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Evolução entre Ciclos
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {historico.map((c, idx) => (
+                <div key={c.idCiclo} style={{ backgroundColor: '#f8fafc', borderRadius: '10px', padding: '10px 14px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#1e293b' }}>
+                      Ciclo {idx + 1} · {new Date(c.dataSalvamento).toLocaleDateString('pt-BR')}
+                    </span>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      <span style={{ fontSize: '9.5px', color: '#64748b' }}>
+                        {c.objetivos.length} objetivo(s) · {c.inventario.hardSkills.length} hard skill(s)
+                      </span>
+                      {c.scoreSaude !== undefined && (
+                        <span style={{ fontSize: '9.5px', fontWeight: 700, backgroundColor: '#ede9fe', color: '#5b21b6', padding: '2px 7px', borderRadius: '99px' }}>
+                          Saúde: {c.scoreSaude}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {c.retrospectiva?.aprendizagem?.trim() && (
+                    <p style={{ fontSize: '10px', color: '#475569', margin: '4px 0 0', lineHeight: 1.4 }}>
+                      <strong>Aprendizado-chave:</strong> {c.retrospectiva.aprendizagem}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}
