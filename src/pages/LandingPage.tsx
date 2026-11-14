@@ -7,6 +7,7 @@ import {
   CheckSquare, Bell, Menu, X,
 } from 'lucide-react';
 import { TOTAL_CERTIFICACOES } from '../data/certificacoesGratuitas';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 /* ── Dados ──────────────────────────────────────────────────── */
 const FEATURES = [
@@ -76,7 +77,7 @@ const TESTIMONIALS = [
     role: 'Gerente de Pessoas',
     company: 'Varejo Nacional',
     photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=120&q=80',
-    text: 'Uso com minha equipe de 12 pessoas. As conversas de carreira ficaram muito mais objetivas. A liderança enxerga evolução concreta, não só intenção. Reduziu o turnover em 30%.',
+    text: 'Uso com minha equipe de 12 pessoas. As conversas de carreira ficaram muito mais objetivas e estruturadas em cima de evidências, não só de intenção.',
     stars: 5,
   },
 ];
@@ -103,6 +104,13 @@ const CONS = [
 export const LandingPage: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+
+  usePageMeta({
+    title: 'Meu PDI: Plano de Desenvolvimento Individual gratuito',
+    description:
+      'Monte seu Plano de Desenvolvimento Individual (PDI), mapeie competências, acompanhe ações e gere seu currículo de evolução. Gratuito para uso individual.',
+    canonicalPath: '/',
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -227,7 +235,7 @@ export const LandingPage: React.FC = () => {
                 ))}
               </div>
               <div className="text-sm text-slate-400">
-                <span className="text-white font-bold">+2.400 profissionais</span> já têm seu PDI estruturado
+                <span className="text-white font-bold">Uso individual gratuito</span> · Planejamento, ações e evidências em um só lugar
               </div>
             </div>
           </div>
@@ -307,12 +315,12 @@ export const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
             {[
-              { icon: <Zap className="w-4 h-4 text-amber-500" />,    text: '100% Gratuito' },
-              { icon: <Award className="w-4 h-4 text-emerald-600" />, text: `+${TOTAL_CERTIFICACOES} Certificações Grátis` },
-              { icon: <Shield className="w-4 h-4 text-emerald-500" />, text: 'LGPD Compliant' },
+              { icon: <Zap className="w-4 h-4 text-amber-500" />,    text: 'Plano Individual Gratuito' },
+              { icon: <Award className="w-4 h-4 text-emerald-600" />, text: `${TOTAL_CERTIFICACOES} Recursos Curados` },
+              { icon: <Shield className="w-4 h-4 text-emerald-500" />, text: 'Privacidade e LGPD' },
               { icon: <BarChart3 className="w-4 h-4 text-indigo-500" />, text: '26 Áreas Profissionais' },
               { icon: <TrendingUp className="w-4 h-4 text-blue-500" />,  text: '6 Níveis de Carreira' },
-              { icon: <Bell className="w-4 h-4 text-violet-500" />,   text: 'Notificações de Prazo' },
+              { icon: <Bell className="w-4 h-4 text-violet-500" />,   text: 'Notificações sob Controle' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-2 text-sm font-semibold text-slate-600">
                 {item.icon} {item.text}
@@ -337,12 +345,12 @@ export const LandingPage: React.FC = () => {
           </p>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
-              { stat: '73%', label: 'dos profissionais não têm um plano de desenvolvimento documentado', accent: 'text-rose-400' },
-              { stat: '68%', label: 'sente que não evolui na velocidade que poderia evoluir', accent: 'text-amber-400' },
-              { stat: '12%', label: 'consegue demonstrar evidências concretas de crescimento em entrevistas', accent: 'text-sky-400' },
+              { stat: 'Sem plano', label: 'objetivos de carreira ficam apenas em anotações soltas ou na cabeça', accent: 'text-rose-400' },
+              { stat: 'Sem foco', label: 'cursos aleatórios consomem tempo sem atacar as lacunas reais do próximo nível', accent: 'text-amber-400' },
+              { stat: 'Sem prova', label: 'fica difícil demonstrar evolução concreta em conversas 1:1 e entrevistas', accent: 'text-sky-400' },
             ].map((item, i) => (
               <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-7 text-left backdrop-blur-sm hover:bg-white/[0.07] transition-colors">
-                <p className={`text-5xl font-black mb-3 ${item.accent}`}>{item.stat}</p>
+                <p className={`text-3xl font-black mb-3 ${item.accent}`}>{item.stat}</p>
                 <p className="text-slate-400 text-sm leading-relaxed">{item.label}</p>
               </div>
             ))}
@@ -489,15 +497,17 @@ export const LandingPage: React.FC = () => {
               <span className="text-sm font-bold text-emerald-700">Certificações gratuitas integradas</span>
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-5 leading-tight">
-              Mais de {TOTAL_CERTIFICACOES} certificações<br />
+              {TOTAL_CERTIFICACOES} cursos e credenciais<br />
               <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
-                gratuitas, mapeadas por área
+                curados, mapeados por área
               </span>
             </h2>
             <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed">
-              De plataformas brasileiras como <strong className="text-slate-700">Fundação Bradesco, Santander, SEBRAE e FGV</strong> a
-              gigantes globais. A Trilha e o Comparador sugerem credenciais reais e gratuitas
-              alinhadas aos seus gaps — com link para começar agora.
+              De plataformas brasileiras como <strong className="text-slate-700">Fundação Bradesco, Santander, SENAI-SP e FGV</strong> a
+              ecossistemas globais. A Trilha e o Comparador indicam a modalidade real de acesso e credencial —{' '}
+              <Link to="/certificacoes-gratuitas" className="text-indigo-600 font-semibold hover:underline">
+                ver catálogo completo
+              </Link>.
             </p>
           </div>
 
@@ -572,9 +582,9 @@ export const LandingPage: React.FC = () => {
                     <Share2 className="w-5 h-5 text-indigo-600" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 mb-0.5">Perfil público verificável</p>
-                    <p className="text-sm font-bold text-slate-800">meupdi.app.br/p/rafael-mendes</p>
-                    <p className="text-xs text-indigo-600 mt-1">↗ Radar de skills · Histórico · Ciclos</p>
+                    <p className="text-xs font-semibold text-slate-500 mb-0.5">Perfil público compartilhável</p>
+                    <p className="text-sm font-bold text-slate-800">meupdi.app.br/p/exemplo</p>
+                    <p className="text-xs text-indigo-600 mt-1">↗ Radar de skills · Histórico · Revogável</p>
                   </div>
                 </div>
               </div>
@@ -608,8 +618,8 @@ export const LandingPage: React.FC = () => {
                   {
                     icon: <Share2 className="w-5 h-5 text-blue-600" />,
                     bg: 'bg-blue-50 border-blue-100',
-                    title: 'Link de perfil público verificável',
-                    desc: 'Cada profissional tem uma URL com radar de competências e progresso. Você avalia antes da entrevista.',
+                    title: 'Link de perfil público sob controle',
+                    desc: 'O profissional escolhe quando gerar um link com radar de competências e pode revogar a qualquer momento.',
                   },
                   {
                     icon: <TrendingUp className="w-5 h-5 text-violet-600" />,
@@ -650,12 +660,12 @@ export const LandingPage: React.FC = () => {
       <section id="depoimentos" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <p className="text-indigo-600 font-bold text-xs uppercase tracking-[0.2em] mb-3">Depoimentos</p>
+            <p className="text-indigo-600 font-bold text-xs uppercase tracking-[0.2em] mb-3">Cenários de uso</p>
             <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mb-4">
-              Quem usa, recomenda
+              Como profissionais e RH aplicam
             </h2>
             <p className="text-slate-500 text-lg max-w-xl mx-auto">
-              Profissionais de diferentes áreas compartilham como o Meu PDI mudou sua trajetória.
+              Exemplos ilustrativos de como diferentes perfis estruturam seus ciclos no Meu PDI.
             </p>
           </div>
 
@@ -731,6 +741,48 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* ── FAQ ──────────────────────────────────────────────── */}
+      <section className="py-20 bg-slate-50 border-t border-slate-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <p className="text-indigo-600 font-bold text-xs uppercase tracking-[0.2em] mb-3">Perguntas frequentes</p>
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900">
+              Dúvidas comuns sobre o Meu PDI
+            </h2>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-5">
+            {[
+              {
+                q: 'O que é um Plano de Desenvolvimento Individual (PDI)?',
+                a: 'É um plano estruturado que conecta suas metas de carreira às competências que você precisa desenvolver, com ações práticas, prazos e evidências.',
+              },
+              {
+                q: 'O uso individual é realmente gratuito?',
+                a: 'Sim. O planejamento, autoavaliação, diário, comparador e exportação em PDF são gratuitos para uso individual, sem exigir cartão de crédito.',
+              },
+              {
+                q: 'Meus dados ficam públicos automaticamente?',
+                a: 'Não. Seu PDI, diário e autoavaliação são privados por padrão. Você só gera um link público se quiser compartilhar — e pode revogá-lo quando desejar.',
+              },
+              {
+                q: 'Os cursos sugeridos têm certificado gratuito?',
+                a: 'Cada recurso indica claramente se o certificado é gratuito, se há declaração ou badge, ou se o acesso é parcial/condicionado pelo provedor oficial.',
+              },
+            ].map((item) => (
+              <div key={item.q} className="bg-white rounded-2xl p-6 border border-slate-200">
+                <h3 className="font-bold text-slate-900 text-base mb-2">{item.q}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">{item.a}</p>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link to="/o-que-e-pdi" className="text-sm font-bold text-indigo-600 hover:underline">
+              Ler guia completo: O que é PDI e como montar o seu →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA Final ────────────────────────────────────────── */}
       <section className="py-28 bg-gradient-to-br from-indigo-600 via-blue-600 to-blue-700 relative overflow-hidden">
         <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
@@ -744,11 +796,10 @@ export const LandingPage: React.FC = () => {
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.05]">
             Comece hoje.<br />
             Grátis.<br />
-            <span className="text-indigo-200">Para sempre.</span>
+            <span className="text-indigo-200">No seu ritmo.</span>
           </h2>
           <p className="text-indigo-200 text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
-            Não precisa de cartão de crédito. Não existe versão paga.
-            Seus dados são seus. Crie sua conta em menos de 2 minutos.
+            Não precisa de cartão de crédito. Seus dados ficam sob seu controle e você pode exportar ou excluir tudo quando quiser.
           </p>
           <Link
             to="/login"
@@ -765,8 +816,8 @@ export const LandingPage: React.FC = () => {
           <div className="mt-16 grid grid-cols-3 gap-6 max-w-lg mx-auto">
             {[
               { n: '2 min', label: 'para criar a conta' },
-              { n: '30 min', label: 'para ter seu PDI completo' },
-              { n: '100%', label: 'gratuito para sempre' },
+              { n: '5 etapas', label: 'no wizard guiado' },
+              { n: 'Grátis', label: 'para uso individual' },
             ].map((s, i) => (
               <div key={i} className="text-center">
                 <p className="text-3xl font-black text-white mb-1">{s.n}</p>
@@ -788,9 +839,10 @@ export const LandingPage: React.FC = () => {
               <p className="text-slate-500 text-sm mt-1">Plano de Desenvolvimento Individual gratuito</p>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-500">
+              <Link to="/o-que-e-pdi" className="hover:text-white transition-colors">O que é PDI</Link>
+              <Link to="/para-rh" className="hover:text-white transition-colors">Para RH</Link>
+              <Link to="/certificacoes-gratuitas" className="hover:text-white transition-colors">Cursos curados</Link>
               <Link to="/privacidade" className="hover:text-white transition-colors">Privacidade & LGPD</Link>
-              <a href="#funcionalidades" className="hover:text-white transition-colors">Funcionalidades</a>
-              <a href="#para-rh" className="hover:text-white transition-colors">Para RH</a>
               <a href="mailto:contato@meupdi.app.br" className="hover:text-white transition-colors">Contato</a>
             </div>
           </div>

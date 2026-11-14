@@ -68,3 +68,4 @@ export const RadarSkillTick: React.FC<RadarTickProps> = ({
     </text>
   );
 };
+

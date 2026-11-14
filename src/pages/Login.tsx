@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Loader2, Mail, Lock, User, Eye, EyeOff, Gift, Shield } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 // SVG inline do Google (lucide-react não inclui ícone do Google)
 const GoogleIcon = () => (
@@ -18,6 +19,13 @@ type Mode = 'login' | 'signup' | 'reset';
 export const Login: React.FC = () => {
   const { login, signup, loginWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
+
+  usePageMeta({
+    title: 'Entrar — Meu PDI',
+    description: 'Acesse sua conta do Meu PDI com Google ou e-mail.',
+    canonicalPath: '/login',
+    noindex: true,
+  });
 
   const [mode, setMode] = useState<Mode>('login');
   const [nome, setNome] = useState('');

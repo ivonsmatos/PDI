@@ -8,9 +8,16 @@ import { Passo4PlanoAcao } from './pages/Passo4PlanoAcao';
 import { Passo5CampoForcas } from './pages/Passo5CampoForcas';
 import { Passo6RevisaoFinal } from './pages/Passo6RevisaoFinal';
 import { AnimatePresence, motion } from 'framer-motion';
+import { usePageMeta } from './hooks/usePageMeta';
 import './index.css';
 
 function App() {
+  usePageMeta({
+    title: 'Configurar PDI (Wizard) — Meu PDI',
+    description: 'Monte seu Plano de Desenvolvimento Individual passo a passo.',
+    canonicalPath: '/wizard',
+    noindex: true,
+  });
   const stepAtual    = usePdiStore(s => s.stepAtual);
   const setWizardConcluido = usePdiStore(s => s.setWizardConcluido);
   const navigate     = useNavigate();

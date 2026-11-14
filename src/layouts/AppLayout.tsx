@@ -16,6 +16,7 @@ import {
 import { generatePublicProfileId, type PublicProfileData } from '../lib/publicProfile';
 import { savePublicProfile } from '../lib/firestore';
 import { useToastStore } from '../store/useToastStore';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const AREA_LABELS: Record<string, string> = {
   tecnologia: '💻 Tecnologia / Desenvolvimento',
@@ -58,6 +59,13 @@ export const AppLayout: React.FC = () => {
   const [showHistorico, setShowHistorico] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareToast, setShareToast] = useState<'copied' | 'shared' | null>(null);
+
+  usePageMeta({
+    title: 'Área do Plano — Meu PDI',
+    description: 'Painel privado de acompanhamento do seu Plano de Desenvolvimento Individual.',
+    canonicalPath: '/app',
+    noindex: true,
+  });
 
   // Ativa sincronização automática com Firestore
   useFirebaseSync();

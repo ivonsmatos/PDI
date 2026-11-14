@@ -34,4 +34,14 @@ export default defineConfig({
   optimizeDeps: {
     include: ['recharts', 'react-is'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/firebase')) return 'vendor-firebase';
+          if (id.includes('node_modules/recharts')) return 'vendor-recharts';
+        },
+      },
+    },
+  },
 })

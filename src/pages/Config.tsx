@@ -4,6 +4,7 @@ import { usePdiStore } from '../store/usePdiStore';
 import { useAuth } from '../contexts/AuthContext';
 import { useToastStore } from '../store/useToastStore';
 import { deleteAllUserData, revokePublicProfile } from '../lib/firestore';
+import { deleteUser } from 'firebase/auth';
 import {
   User, Moon, Sun, DownloadCloud, UploadCloud, Trash2,
   Settings, CheckCircle2, AlertTriangle, Bell, Share2,
@@ -33,6 +34,7 @@ export const Config: React.FC = () => {
   const [saved, setSaved] = useState(false);
   const [importError, setImportError] = useState('');
   const [importOk, setImportOk] = useState(false);
+  const [deleteAuthAccount, setDeleteAuthAccount] = useState(false);
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [confirmDeleteText, setConfirmDeleteText] = useState('');
@@ -205,11 +207,21 @@ export const Config: React.FC = () => {
         await deleteAllUserData(user.uid, publicProfileId);
       }
       limparTudo();
-      addToast('Todos os dados do PDI foram apagados.', 'success');
+      if (deleteAuthAccount && user) {
+        await deleteUser(user);
+        addToast('Dados do PDI e conta de acesso excluídos permanentemente.', 'success');
+      } else {
+        addToast('Todos os dados do PDI foram apagados.', 'success');
+      }
       window.location.reload();
     } catch (err) {
       console.error('[Config] Erro ao apagar dados remotos:', err);
-      addToast('Não foi possível apagar os dados na nuvem. Verifique sua conexão e tente novamente.', 'error');
+      const code = (err as { code?: string })?.code;
+      if (code === 'auth/requires-recent-login') {
+        addToast('Os dados do PDI foram apagados, mas para excluir a conta de login é necessário sair e entrar novamente antes de confirmar.', 'error');
+      } else {
+        addToast('Não foi possível apagar os dados na nuvem. Verifique sua conexão e tente novamente.', 'error');
+      }
       setDeleting(false);
     }
   };
@@ -487,6 +499,17 @@ export const Config: React.FC = () => {
                 aria-label="Confirmação para apagar todos os dados"
                 className="w-full px-3 py-2 rounded-lg border border-rose-300 dark:border-rose-700 bg-white dark:bg-slate-900 text-sm text-slate-800 dark:text-slate-100"
               />
+              {user && (
+                <label className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={deleteAuthAccount}
+                    onChange={e => setDeleteAuthAccount(e.target.checked)}
+                    className="mt-0.5 rounded border-rose-300 text-rose-600 focus:ring-rose-500"
+                  />
+                  <span>Excluir também minha conta de login (Firebase Auth) permanentemente.</span>
+                </label>
+              )}
               <div className="flex gap-2">
                 <button
                   type="button"

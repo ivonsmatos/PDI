@@ -17,6 +17,7 @@ export type CredencialRecurso =
   | 'certificado_conclusao'
   | 'certificacao_exame'
   | 'badge'
+  | 'credencial_digital'
   | 'declaracao'
   | 'nenhuma';
 
@@ -62,6 +63,7 @@ export const CREDENCIAL_LABEL: Record<CredencialRecurso, string> = {
   certificado_conclusao: 'Certificado de conclusão',
   certificacao_exame: 'Certificação por exame',
   badge: 'Badge digital',
+  credencial_digital: 'Credencial digital',
   declaracao: 'Declaração de participação',
   nenhuma: 'Sem credencial',
 };

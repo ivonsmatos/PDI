@@ -1,9 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Shield, Gift, Lock, UserCheck, Trash2, Mail, BookOpen, Target, TrendingUp, CheckSquare } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const Privacidade: React.FC = () => {
   const navigate = useNavigate();
+
+  usePageMeta({
+    title: 'Privacidade e LGPD — Meu PDI',
+    description: 'Saiba quais dados o Meu PDI coleta, como funciona o consentimento de analytics, o perfil compartilhável e seus direitos na LGPD.',
+    canonicalPath: '/privacidade',
+  });
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 px-4 py-10">

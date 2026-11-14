@@ -5,8 +5,11 @@ import { Login } from './pages/Login';
 import { AppLayout } from './layouts/AppLayout';
 
 const App           = lazy(() => import('./App'));
-const LandingPage   = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })));
-const Privacidade   = lazy(() => import('./pages/Privacidade').then(m => ({ default: m.Privacidade })));
+const LandingPage          = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })));
+const OQueEPdi             = lazy(() => import('./pages/OQueEPdi').then(m => ({ default: m.OQueEPdi })));
+const ParaRh               = lazy(() => import('./pages/ParaRh').then(m => ({ default: m.ParaRh })));
+const CertificacoesPublicas = lazy(() => import('./pages/CertificacoesPublicas').then(m => ({ default: m.CertificacoesPublicas })));
+const Privacidade          = lazy(() => import('./pages/Privacidade').then(m => ({ default: m.Privacidade })));
 const Dashboard     = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Trilha        = lazy(() => import('./pages/Trilha').then(m => ({ default: m.Trilha })));
 const PlanoBoard    = lazy(() => import('./pages/PlanoBoard').then(m => ({ default: m.PlanoBoard })));
@@ -32,6 +35,18 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: lazyPage(<LandingPage />),
+  },
+  {
+    path: '/o-que-e-pdi',
+    element: lazyPage(<OQueEPdi />),
+  },
+  {
+    path: '/para-rh',
+    element: lazyPage(<ParaRh />),
+  },
+  {
+    path: '/certificacoes-gratuitas',
+    element: lazyPage(<CertificacoesPublicas />),
   },
   {
     path: '/login',
