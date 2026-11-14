@@ -48,8 +48,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
           <div className="flex flex-wrap gap-5 text-xs">
             <Link to="/" className="hover:text-white transition-colors">Início</Link>
             <Link to="/o-que-e-pdi" className="hover:text-white transition-colors">O que é PDI</Link>
+            <Link to="/como-fazer-um-pdi" className="hover:text-white transition-colors">Como fazer um PDI</Link>
             <Link to="/para-rh" className="hover:text-white transition-colors">Para RH</Link>
             <Link to="/certificacoes-gratuitas" className="hover:text-white transition-colors">Cursos curados</Link>
+            <Link to="/sobre" className="hover:text-white transition-colors">Sobre</Link>
             <Link to="/privacidade" className="hover:text-white transition-colors">Privacidade & LGPD</Link>
           </div>
         </div>

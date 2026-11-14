@@ -7,7 +7,7 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 
 const DIST_DIR = path.resolve(process.cwd(), 'dist');
-const PUBLIC_ROUTES = ['/', '/o-que-e-pdi', '/para-rh', '/certificacoes-gratuitas', '/privacidade'];
+const PUBLIC_ROUTES = ['/', '/o-que-e-pdi', '/como-fazer-um-pdi', '/para-rh', '/certificacoes-gratuitas', '/sobre', '/privacidade'];
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',

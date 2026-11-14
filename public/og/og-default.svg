@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="55%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="1040" cy="120" r="220" fill="#4f46e5" opacity="0.16" />
+  <circle cx="160" cy="540" r="180" fill="#38bdf8" opacity="0.12" />
+  <rect x="88" y="96" width="190" height="44" rx="22" fill="#4f46e5" opacity="0.28" stroke="#818cf8" stroke-width="1.5" />
+  <text x="183" y="125" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="700" fill="#c7d2fe">MEU PDI · BRASIL</text>
+  <text x="88" y="235" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="62" font-weight="800" fill="#ffffff">Seu PDI. Estruturado. Vivo.</text>
+  <text x="88" y="310" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="500" fill="#cbd5e1">Plano de Desenvolvimento Individual gratuito para</text>
+  <text x="88" y="352" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="500" fill="#cbd5e1">transformar metas de carreira em competências e evidências.</text>
+  <rect x="88" y="420" width="260" height="10" rx="5" fill="url(#accent)" />
+  <text x="88" y="510" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="22" font-weight="600" fill="#94a3b8">Objetivos · Trilha Curada · Plano de Ação · Diário · Currículo PDF</text>
+  <text x="88" y="555" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="20" font-weight="700" fill="#818cf8">meupdi.app.br</text>
+</svg>

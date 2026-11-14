@@ -4,11 +4,13 @@ export interface PageMetaOptions {
   title: string;
   description: string;
   canonicalPath?: string;
+  ogImage?: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown>;
 }
 
 const BASE_URL = 'https://meupdi.app.br';
+const DEFAULT_OG_IMAGE = '/og/og-default.svg';
 
 function upsertMeta(attr: 'name' | 'property', key: string, content: string) {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
@@ -28,20 +30,25 @@ export function usePageMeta({
   title,
   description,
   canonicalPath = '/',
+  ogImage = DEFAULT_OG_IMAGE,
   noindex = false,
   jsonLd,
 }: PageMetaOptions) {
   useEffect(() => {
     document.title = title;
     const canonicalUrl = `${BASE_URL}${canonicalPath === '/' ? '/' : canonicalPath}`;
+    const imageUrl = ogImage.startsWith('http') ? ogImage : `${BASE_URL}${ogImage}`;
 
     upsertMeta('name', 'description', description);
     upsertMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow');
     upsertMeta('property', 'og:title', title);
     upsertMeta('property', 'og:description', description);
     upsertMeta('property', 'og:url', canonicalUrl);
+    upsertMeta('property', 'og:image', imageUrl);
+    upsertMeta('name', 'twitter:card', 'summary_large_image');
     upsertMeta('name', 'twitter:title', title);
     upsertMeta('name', 'twitter:description', description);
+    upsertMeta('name', 'twitter:image', imageUrl);
 
     let link = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!link) {
@@ -63,6 +70,6 @@ export function usePageMeta({
     } else if (existingScript) {
       existingScript.remove();
     }
-  }, [title, description, canonicalPath, noindex, jsonLd]);
+  }, [title, description, canonicalPath, ogImage, noindex, jsonLd]);
 }
 

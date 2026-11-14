@@ -7,8 +7,10 @@ import { AppLayout } from './layouts/AppLayout';
 const App           = lazy(() => import('./App'));
 const LandingPage          = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })));
 const OQueEPdi             = lazy(() => import('./pages/OQueEPdi').then(m => ({ default: m.OQueEPdi })));
+const ComoFazerPdi         = lazy(() => import('./pages/ComoFazerPdi').then(m => ({ default: m.ComoFazerPdi })));
 const ParaRh               = lazy(() => import('./pages/ParaRh').then(m => ({ default: m.ParaRh })));
 const CertificacoesPublicas = lazy(() => import('./pages/CertificacoesPublicas').then(m => ({ default: m.CertificacoesPublicas })));
+const Sobre                = lazy(() => import('./pages/Sobre').then(m => ({ default: m.Sobre })));
 const Privacidade          = lazy(() => import('./pages/Privacidade').then(m => ({ default: m.Privacidade })));
 const Dashboard     = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Trilha        = lazy(() => import('./pages/Trilha').then(m => ({ default: m.Trilha })));
@@ -41,12 +43,20 @@ const router = createBrowserRouter([
     element: lazyPage(<OQueEPdi />),
   },
   {
+    path: '/como-fazer-um-pdi',
+    element: lazyPage(<ComoFazerPdi />),
+  },
+  {
     path: '/para-rh',
     element: lazyPage(<ParaRh />),
   },
   {
     path: '/certificacoes-gratuitas',
     element: lazyPage(<CertificacoesPublicas />),
+  },
+  {
+    path: '/sobre',
+    element: lazyPage(<Sobre />),
   },
   {
     path: '/login',

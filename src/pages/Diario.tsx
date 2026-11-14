@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePdiStore } from '../store/usePdiStore';
 import { useToastStore } from '../store/useToastStore';
-import { Plus, Trash2, BookOpen, Calendar, Target, Search, X, Pencil, Check, ShieldAlert } from 'lucide-react';
+import { Plus, Trash2, BookOpen, Calendar, Target, Search, X, Pencil, Check, ShieldAlert, Download, Wifi, WifiOff } from 'lucide-react';
 
 const MAX_CARACTERES = 2000;
 
@@ -23,6 +23,18 @@ export const Diario: React.FC = () => {
   const [periodo, setPeriodo] = useState('');
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [editTexto, setEditTexto] = useState('');
+  const [online, setOnline] = useState(() => (typeof navigator !== 'undefined' ? navigator.onLine : true));
+
+  useEffect(() => {
+    const onOnline = () => setOnline(true);
+    const onOffline = () => setOnline(false);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+    return () => {
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
+    };
+  }, []);
 
   const handleAdd = () => {
     const t = texto.trim();
@@ -60,12 +72,61 @@ export const Diario: React.FC = () => {
     return d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
   };
 
+  const handleExportMarkdown = () => {
+    if (entriesFiltradas.length === 0) return;
+    const lines = [
+      '# Diário de Progresso — Meu PDI',
+      '',
+      ...entriesFiltradas.flatMap((entry) => {
+        const obj = entry.objetivoId ? objetivos.find(o => o.id === entry.objetivoId) : null;
+        return [
+          `## ${formatDate(entry.data)}${obj ? ` · ${obj.descricao}` : ''}`,
+          '',
+          entry.texto,
+          '',
+        ];
+      }),
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `diario-pdi-${new Date().toISOString().slice(0, 10)}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+    addToast(`${entriesFiltradas.length} entrada(s) exportada(s) em Markdown.`, 'success');
+  };
+
   return (
     <div className="pb-24 lg:pb-0 max-w-2xl mx-auto">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
-          <BookOpen className="w-6 h-6 text-violet-500" /> Diário de Progresso
-        </h1>
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+          <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <BookOpen className="w-6 h-6 text-violet-500" /> Diário de Progresso
+          </h1>
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full border ${
+                online
+                  ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/40'
+                  : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/40'
+              }`}
+            >
+              {online ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+              {online ? 'Salvo na nuvem' : 'Offline · salvo no dispositivo'}
+            </span>
+            {entriesFiltradas.length > 0 && (
+              <button
+                type="button"
+                onClick={handleExportMarkdown}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                title="Exportar entradas exibidas em Markdown para reuniões 1:1"
+              >
+                <Download className="w-3.5 h-3.5" /> Exportar (.md)
+              </button>
+            )}
+          </div>
+        </div>
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-8">
           Registre reflexões, conquistas e aprendizagens ao longo do ciclo. Mantido entre ciclos.
         </p>
