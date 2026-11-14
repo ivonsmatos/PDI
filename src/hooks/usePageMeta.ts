@@ -65,3 +65,4 @@ export function usePageMeta({
     }
   }, [title, description, canonicalPath, noindex, jsonLd]);
 }
+

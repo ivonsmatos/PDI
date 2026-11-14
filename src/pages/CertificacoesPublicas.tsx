@@ -143,3 +143,4 @@ export const CertificacoesPublicas: React.FC = () => {
     </PublicLayout>
   );
 };
+
