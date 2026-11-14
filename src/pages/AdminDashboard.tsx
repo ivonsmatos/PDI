@@ -285,7 +285,7 @@ export const AdminDashboard: React.FC = () => {
           <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Funil de Ativação e Uso</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Quantos usuários avançaram em cada etapa do produto.</p>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
               <BarChart data={stats.funil}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="etapa" tick={{ fontSize: 11 }} />
@@ -301,7 +301,7 @@ export const AdminDashboard: React.FC = () => {
           <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Atividade Recente (Últimos 14 dias)</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Contagem agregada de usuários ativos por dia.</p>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
               <BarChart data={stats.porDia}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="dia" tick={{ fontSize: 11 }} />
@@ -317,7 +317,7 @@ export const AdminDashboard: React.FC = () => {
           <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Distribuição por Área de Atuação</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Áreas profissionais mais presentes na plataforma.</p>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
               <BarChart data={stats.porArea} layout="vertical" margin={{ left: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} />
@@ -337,7 +337,7 @@ export const AdminDashboard: React.FC = () => {
           <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Distribuição por Nível de Carreira</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Senioridade informada pelos usuários.</p>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
               <BarChart data={stats.porNivel}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} />
@@ -353,7 +353,7 @@ export const AdminDashboard: React.FC = () => {
           <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Distribuição do Score de Saúde</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Quantos usuários estão em faixa crítica, de atenção ou saudável.</p>
           <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
               <BarChart data={stats.saudeFaixas}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="faixa" tick={{ fontSize: 11 }} />

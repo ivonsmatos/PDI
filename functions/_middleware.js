@@ -17,8 +17,8 @@ function isKnownRoute(pathname) {
   if (PUBLIC_STATIC_ROUTES.has(clean) || SPA_EXACT.has(clean)) return true;
   if (SPA_PREFIXES.some((prefix) => clean === prefix || clean.startsWith(prefix))) return true;
   if (clean.startsWith('/api/')) return true;
-  // Arquivos estáticos com extensão (ex.: .js, .css, .png, .svg, .xml, .txt)
-  if (/\.[a-zA-Z0-9]{1,8}$/.test(clean)) return true;
+  // Arquivos estáticos com extensão (ex.: .js, .css, .png, .svg, .xml, .txt, .webmanifest)
+  if (/\.[a-zA-Z0-9]{1,16}$/.test(clean)) return true;
   return false;
 }
 
