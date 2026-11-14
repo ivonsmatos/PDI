@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Download, FileText, Eye, Loader2 } from 'lucide-react';
+import { RadarSkillTick } from '../components/RadarSkillTick';
 
 const NIVEL_LABEL: Record<string, string> = {
   estagiario: 'Estagiário', junior: 'Júnior', pleno: 'Pleno',
@@ -61,7 +62,7 @@ export const Curriculo: React.FC = () => {
   const [gerandoPdf, setGerandoPdf] = useState(false);
 
   const radarData = inventario.hardSkills.map(s => ({
-    subject: s.skill.length > 14 ? s.skill.slice(0, 14) + '…' : s.skill,
+    subject: s.skill,
     atual: s.nivelAtual,
     meta: s.nivelDesejado,
     fullMark: 5,
@@ -227,16 +228,31 @@ export const Curriculo: React.FC = () => {
                   })}
                 </div>
               </div>
-              <div style={{ width: '200px', height: '200px', flexShrink: 0 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart data={radarData}>
-                    <PolarGrid stroke="#e2e8f0" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 9, fill: '#64748b' }} />
-                    <PolarRadiusAxis domain={[0, 5]} tick={false} axisLine={false} />
-                    <Radar name="meta" dataKey="meta" stroke="#c7d2fe" fill="#c7d2fe" fillOpacity={0.3} />
-                    <Radar name="atual" dataKey="atual" stroke="#6366f1" fill="#6366f1" fillOpacity={0.55} />
-                  </RadarChart>
-                </ResponsiveContainer>
+              <div style={{ width: '320px', flexShrink: 0 }}>
+                <div style={{ width: '320px', height: '250px' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart cx="50%" cy="50%" outerRadius="56%" data={radarData} margin={{ top: 24, right: 64, bottom: 24, left: 64 }}>
+                      <PolarGrid stroke="#cbd5e1" />
+                      <PolarAngleAxis
+                        dataKey="subject"
+                        tick={<RadarSkillTick fill="#475569" fontSize={9} maxLineLen={14} />}
+                      />
+                      <PolarRadiusAxis domain={[0, 5]} tick={false} axisLine={false} />
+                      <Radar name="Meta" dataKey="meta" stroke="#93c5fd" fill="#93c5fd" fillOpacity={0.35} isAnimationActive={false} />
+                      <Radar name="Atual" dataKey="atual" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.6} isAnimationActive={false} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '4px', fontSize: '10px', color: '#475569' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '99px', backgroundColor: '#4f46e5', display: 'inline-block' }} />
+                    Nível atual
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '99px', backgroundColor: '#93c5fd', display: 'inline-block' }} />
+                    Meta desejada
+                  </span>
+                </div>
               </div>
             </div>
           </div>

@@ -110,6 +110,44 @@ export const LandingPage: React.FC = () => {
     description:
       'Monte seu Plano de Desenvolvimento Individual (PDI), mapeie competências, acompanhe ações e gere seu currículo de evolução. Gratuito para uso individual.',
     canonicalPath: '/',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'O que é um Plano de Desenvolvimento Individual (PDI)?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'É um plano estruturado que conecta suas metas de carreira às competências que você precisa desenvolver, com ações práticas, prazos e evidências.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'O uso individual é realmente gratuito?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Sim. O planejamento, autoavaliação, diário, comparador e exportação em PDF são gratuitos para uso individual, sem exigir cartão de crédito.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Meus dados ficam públicos automaticamente?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Não. Seu PDI, diário e autoavaliação são privados por padrão. Você só gera um link público se quiser compartilhar — e pode revogá-lo quando desejar.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Os cursos sugeridos têm certificado gratuito?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Cada recurso indica claramente se o certificado é gratuito, se há declaração ou badge, ou se o acesso é parcial/condicionado pelo provedor oficial.',
+          },
+        },
+      ],
+    },
   });
 
   useEffect(() => {
@@ -129,12 +167,14 @@ export const LandingPage: React.FC = () => {
           <span className="text-xl font-black bg-gradient-to-r from-indigo-500 to-blue-400 bg-clip-text text-transparent">
             Meu PDI
           </span>
-          <div className={`hidden md:flex items-center gap-8 text-sm font-medium transition-colors ${
+          <div className={`hidden md:flex items-center gap-7 text-sm font-medium transition-colors ${
             scrolled ? 'text-slate-600' : 'text-white/80'
           }`}>
             <a href="#funcionalidades" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Funcionalidades</a>
-            <a href="#para-rh" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Para RH</a>
-            <a href="#depoimentos" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Depoimentos</a>
+            <Link to="/para-rh" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Para RH</Link>
+            <Link to="/o-que-e-pdi" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>O que é PDI</Link>
+            <Link to="/certificacoes-gratuitas" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Cursos e Certificados</Link>
+            <a href="#depoimentos" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Cenários</a>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <Link to="/login" className={`text-sm font-semibold transition-colors px-4 py-2 ${
@@ -163,9 +203,11 @@ export const LandingPage: React.FC = () => {
         {/* Mobile menu */}
         {mobileMenu && (
           <div className="md:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 px-4 py-4 space-y-3">
-            {[['#funcionalidades','Funcionalidades'],['#para-rh','Para RH'],['#depoimentos','Depoimentos']].map(([href,label]) => (
-              <a key={href} href={href} onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">{label}</a>
-            ))}
+            <a href="#funcionalidades" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Funcionalidades</a>
+            <Link to="/para-rh" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Para RH</Link>
+            <Link to="/o-que-e-pdi" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">O que é PDI</Link>
+            <Link to="/certificacoes-gratuitas" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Cursos e Certificados</Link>
+            <a href="#depoimentos" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Cenários</a>
             <Link to="/login" onClick={() => setMobileMenu(false)} className="block mt-2 text-center py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm">
               Criar conta grátis
             </Link>
@@ -779,6 +821,28 @@ export const LandingPage: React.FC = () => {
             <Link to="/o-que-e-pdi" className="text-sm font-bold text-indigo-600 hover:underline">
               Ler guia completo: O que é PDI e como montar o seu →
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Metodologia e Transparência ───────────────────────── */}
+      <section className="py-14 bg-white border-t border-slate-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="rounded-2xl bg-slate-50 border border-slate-200 p-6 sm:p-8 flex flex-col sm:flex-row items-start justify-between gap-6">
+            <div className="space-y-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">Metodologia e transparência</p>
+              <h2 className="text-xl font-extrabold text-slate-900">Como o Meu PDI funciona</h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                O Meu PDI é uma ferramenta web em português brasileiro desenvolvida para profissionais, gestores e áreas de RH no Brasil.
+                As matrizes de competências e o comparador de níveis baseiam-se em autoavaliação declarada e não substituem avaliações formais da empresa.
+                Os cursos externos são curados manualmente a partir de fontes oficiais e revisados periodicamente.
+              </p>
+            </div>
+            <div className="shrink-0 flex flex-col gap-2 text-xs font-semibold">
+              <Link to="/certificacoes-gratuitas" className="text-indigo-600 hover:underline">Ver catálogo curado →</Link>
+              <Link to="/privacidade" className="text-indigo-600 hover:underline">Política de Privacidade →</Link>
+              <a href="mailto:contato@meupdi.app.br" className="text-slate-600 hover:underline">contato@meupdi.app.br</a>
+            </div>
           </div>
         </div>
       </section>
