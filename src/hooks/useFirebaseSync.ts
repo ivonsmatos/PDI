@@ -68,7 +68,15 @@ export function useFirebaseSync() {
 
       if (curDiario !== prevDiario) {
         curDiario
-          .filter(e => !prevDiario.find(p => p.id === e.id))
+          .filter(e => {
+            const prev = prevDiario.find(p => p.id === e.id);
+            if (!prev) return true;
+            return (
+              prev.texto !== e.texto ||
+              (prev.objetivoId ?? '') !== (e.objetivoId ?? '') ||
+              JSON.stringify(prev.tags ?? []) !== JSON.stringify(e.tags ?? [])
+            );
+          })
           .forEach(e =>
             withRetry(() => saveDiarioEntry(uid, e)).catch(() =>
               addToast('Erro ao salvar entrada do diário.', 'error')
