@@ -2,8 +2,27 @@ import { useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePdiStore } from '../store/usePdiStore';
 import { useToastStore } from '../store/useToastStore';
-import { savePdiAtual, saveDiarioEntry, deleteDiarioEntry, saveCiclo } from '../lib/firestore';
+import { savePdiAtual, saveDiarioEntry, deleteDiarioEntry, saveCiclo, saveTelemetry } from '../lib/firestore';
+import { computeHealthScore } from '../lib/healthScore';
 import type { PdiState } from '../store/usePdiStore';
+
+function buildTelemetry(state: PdiState) {
+  const acoesConcluidasCount = Object.values(state.planoAcaoStatus).filter(v => v === 'concluido').length;
+  return {
+    areaAtuacao: state.usuario.areaAtuacao || '',
+    nivelCarreira: state.usuario.nivelCarreira || '',
+    wizardConcluido: state.wizardConcluido,
+    objetivosCount: state.objetivos.length,
+    acoesCount: state.planoDeAcao.length,
+    acoesConcluidasCount,
+    diarioCount: state.diario.length,
+    ciclosCount: state.historico.length,
+    hardSkillsCount: state.inventario.hardSkills.length,
+    softSkillsCount: state.inventario.softSkills.length,
+    scoreSaude: computeHealthScore(state),
+    ultimoAcesso: new Date().toISOString().slice(0, 10),
+  };
+}
 
 const DEBOUNCE_MS = 1500;
 const MAX_RETRIES = 2;
@@ -45,18 +64,21 @@ export function useFirebaseSync() {
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {
         withRetry(() =>
-          savePdiAtual(uid, {
-            stepAtual:       state.stepAtual,
-            usuario:         state.usuario as Record<string, string>,
-            inventario:      state.inventario as Record<string, unknown>,
-            objetivos:       state.objetivos,
-            planoDeAcao:     state.planoDeAcao,
-            campoDeForcas:   state.campoDeForcas as Record<string, unknown>,
-            wizardConcluido: state.wizardConcluido,
-            planoAcaoStatus: state.planoAcaoStatus,
-            trilhaProgresso: state.trilhaProgresso,
-            isDarkMode:      state.isDarkMode,
-          })
+          Promise.all([
+            savePdiAtual(uid, {
+              stepAtual:       state.stepAtual,
+              usuario:         state.usuario as Record<string, string>,
+              inventario:      state.inventario as Record<string, unknown>,
+              objetivos:       state.objetivos,
+              planoDeAcao:     state.planoDeAcao,
+              campoDeForcas:   state.campoDeForcas as Record<string, unknown>,
+              wizardConcluido: state.wizardConcluido,
+              planoAcaoStatus: state.planoAcaoStatus,
+              trilhaProgresso: state.trilhaProgresso,
+              isDarkMode:      state.isDarkMode,
+            }),
+            saveTelemetry(uid, buildTelemetry(state)),
+          ])
         ).catch(() => {
           addToast('Erro ao sincronizar dados. Verifique sua conexão.', 'error');
         });
@@ -114,6 +136,7 @@ export function useFirebaseSync() {
     const s = usePdiStore.getState();
     prevDiarioRef.current    = s.diario;
     prevHistoricoRef.current = s.historico;
+    saveTelemetry(uid, buildTelemetry(s)).catch(() => {});
 
     return () => {
       unsub();

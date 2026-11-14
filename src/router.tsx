@@ -20,6 +20,7 @@ const PlanoBoard    = lazy(() => import('./pages/PlanoBoard').then(m => ({ defau
 const Evolucao      = lazy(() => import('./pages/Evolucao').then(m => ({ default: m.Evolucao })));
 const Diario        = lazy(() => import('./pages/Diario').then(m => ({ default: m.Diario })));
 const Config        = lazy(() => import('./pages/Config').then(m => ({ default: m.Config })));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const Comparador    = lazy(() => import('./pages/Comparador').then(m => ({ default: m.Comparador })));
 const Curriculo     = lazy(() => import('./pages/Curriculo').then(m => ({ default: m.Curriculo })));
 const PerfilPublico = lazy(() => import('./pages/PerfilPublico').then(m => ({ default: m.PerfilPublico })));
@@ -93,6 +94,7 @@ const router = createBrowserRouter([
       { path: 'comparador',  element: lazyPage(<Comparador />)  },
       { path: 'curriculo',   element: lazyPage(<Curriculo />)   },
       { path: 'config',      element: lazyPage(<Config />)      },
+      { path: 'admin',       element: lazyPage(<AdminDashboard />) },
     ],
   },
   // Compatibilidade com links antigos

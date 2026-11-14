@@ -12,6 +12,19 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // Telemetria anonimizada (sem PII: sem nome, e-mail, causa ou diário)
+    match /telemetry/{uid} {
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && !('nome' in request.resource.data)
+        && !('email' in request.resource.data)
+        && !('causa' in request.resource.data);
+
+      allow read: if request.auth != null
+        && request.auth.token.email == 'contato@ivonmatos.com.br'
+        && request.auth.token.email_verified == true;
+    }
+
     // Perfis públicos compartilhados por ID aleatório de alta entropia
     // `list` fica bloqueado (apenas `get` direto pelo ID)
     match /publicProfiles/{profileId} {

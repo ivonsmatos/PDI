@@ -57,7 +57,7 @@ export async function loadCiclos(uid: string): Promise<PdiCiclo[]> {
     .sort((a, b) => a.dataSalvamento.localeCompare(b.dataSalvamento));
 }
 
-/** Remove os documentos do PDI do usuário no Firestore (pdi/atual, diário e ciclos). */
+/** Remove os documentos do PDI do usuário no Firestore (pdi/atual, diário, ciclos e telemetria). */
 export async function deleteAllUserData(uid: string, publicProfileId?: string | null): Promise<void> {
   const [diarioSnap, ciclosSnap] = await Promise.all([
     getDocs(collection(db, 'users', uid, 'diario')),
@@ -65,10 +65,36 @@ export async function deleteAllUserData(uid: string, publicProfileId?: string | 
   ]);
   await Promise.all([
     deleteDoc(doc(db, 'users', uid, 'pdi', 'atual')),
+    deleteDoc(doc(db, 'telemetry', uid)),
     ...diarioSnap.docs.map(d => deleteDoc(d.ref)),
     ...ciclosSnap.docs.map(d => deleteDoc(d.ref)),
     ...(publicProfileId ? [deleteDoc(doc(db, 'publicProfiles', publicProfileId))] : []),
   ]);
+}
+
+// ── Telemetria anonimizada (sem PII, para painel do Admin Geral) ─────────────
+export interface TelemetrySnapshot {
+  areaAtuacao: string;
+  nivelCarreira: string;
+  wizardConcluido: boolean;
+  objetivosCount: number;
+  acoesCount: number;
+  acoesConcluidasCount: number;
+  diarioCount: number;
+  ciclosCount: number;
+  hardSkillsCount: number;
+  softSkillsCount: number;
+  scoreSaude: number;
+  ultimoAcesso: string; // YYYY-MM-DD
+}
+
+export async function saveTelemetry(uid: string, data: TelemetrySnapshot): Promise<void> {
+  await setDoc(doc(db, 'telemetry', uid), data, { merge: true });
+}
+
+export async function loadAllTelemetry(): Promise<TelemetrySnapshot[]> {
+  const snap = await getDocs(collection(db, 'telemetry'));
+  return snap.docs.map(d => d.data() as TelemetrySnapshot);
 }
 
 // ── Perfil público (ID aleatório no Firestore, revogável) ─────────────────────

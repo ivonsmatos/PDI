@@ -11,8 +11,9 @@ import { useNotificacoesPrazo } from '../hooks/useNotificacoesPrazo';
 import {
   LayoutDashboard, Map, CheckSquare, TrendingUp,
   Moon, Sun, History, RefreshCw, Menu, X,
-  BookOpen, Settings, LogOut, Share2, GitCompareArrows, FileText, Award,
+  BookOpen, Settings, LogOut, Share2, GitCompareArrows, FileText, Award, ShieldCheck,
 } from 'lucide-react';
+import { isAdminUser } from '../lib/admin';
 import { generatePublicProfileId, type PublicProfileData } from '../lib/publicProfile';
 import { savePublicProfile } from '../lib/firestore';
 import { useToastStore } from '../store/useToastStore';
@@ -272,8 +273,8 @@ export const AppLayout: React.FC = () => {
             </NavLink>
           ))}
 
-          {/* Divisor + Configurações */}
-          <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+          {/* Divisor + Configurações + Admin */}
+          <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700 space-y-1">
             <NavLink
               to="/app/config"
               className={({ isActive }) =>
@@ -286,6 +287,20 @@ export const AppLayout: React.FC = () => {
             >
               <Settings className="w-5 h-5" /> Configurações
             </NavLink>
+            {isAdminUser(user?.email) && (
+              <NavLink
+                to="/app/admin"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'
+                      : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20'
+                  }`
+                }
+              >
+                <ShieldCheck className="w-5 h-5" /> Admin Geral
+              </NavLink>
+            )}
           </div>
 
           <div className="mt-auto pb-6 px-3 flex flex-col gap-2">
@@ -329,7 +344,7 @@ export const AppLayout: React.FC = () => {
                   {item.label}
                 </NavLink>
               ))}
-              <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+              <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700 space-y-1">
                 <NavLink
                   to="/app/config"
                   onClick={() => setMenuOpen(false)}
@@ -343,6 +358,21 @@ export const AppLayout: React.FC = () => {
                 >
                   <Settings className="w-5 h-5" /> Configurações
                 </NavLink>
+                {isAdminUser(user?.email) && (
+                  <NavLink
+                    to="/app/admin"
+                    onClick={() => setMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                        isActive
+                          ? 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300'
+                          : 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20'
+                      }`
+                    }
+                  >
+                    <ShieldCheck className="w-5 h-5" /> Admin Geral
+                  </NavLink>
+                )}
               </div>
               <div className="mt-auto pb-6">
                 <button
