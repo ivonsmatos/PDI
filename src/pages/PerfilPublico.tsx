@@ -10,6 +10,7 @@ import {
   decodeLegacyProfile, isFirestoreProfileId, type PublicProfileData,
 } from '../lib/publicProfile';
 import { loadPublicProfile } from '../lib/firestore';
+import { RadarSkillTick } from '../components/RadarSkillTick';
 
 /* ── Componente ─────────────────────────────────────────────────── */
 export const PerfilPublico: React.FC = () => {
@@ -162,12 +163,12 @@ export const PerfilPublico: React.FC = () => {
             <h2 className="font-bold text-slate-800 mb-4 text-sm uppercase tracking-widest">
               Radar de Hard Skills
             </h2>
-            <ResponsiveContainer width="100%" height={280}>
-              <RadarChart data={radarData}>
+            <ResponsiveContainer width="100%" height={310}>
+              <RadarChart cx="50%" cy="50%" outerRadius="60%" data={radarData} margin={{ top: 24, right: 56, bottom: 24, left: 56 }}>
                 <PolarGrid stroke="#e2e8f0" />
                 <PolarAngleAxis
                   dataKey="subject"
-                  tick={{ fontSize: 11, fill: '#64748b' }}
+                  tick={<RadarSkillTick fill="#475569" fontSize={11} maxLineLen={15} />}
                 />
                 <PolarRadiusAxis domain={[0, 5]} tick={false} axisLine={false} />
                 <Tooltip

@@ -1,6 +1,7 @@
 import React, { forwardRef, useMemo } from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 import type { PdiFields } from '../store/usePdiStore';
+import { RadarSkillTick } from './RadarSkillTick';
 
 const DICIONARIO_MENTORIA: Record<string, { titulo: string; sugestao: string }> = {
   "Inteligência Emocional": {
@@ -156,35 +157,6 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
     ? 'Plano parcialmente estruturado. Alguns objetivos não têm ações, ou faltam recursos definidos. Revise antes de executar.'
     : 'Plano com lacunas críticas. Volte ao wizard e preencha: ações por objetivo, recursos e fatores restritivos.';
 
-  // Custom tick para renderizar labels completos e quebrar em 2 linhas se necessário
-  const renderTick = (props: { payload?: { value?: string }; x?: number | string; y?: number | string; textAnchor?: string }) => {
-    const payload = props?.payload;
-    const x = Number(props?.x) || 0;
-    const y = Number(props?.y) || 0;
-    const textAnchor = (props?.textAnchor as 'start' | 'middle' | 'end' | 'inherit' | undefined) || 'middle';
-    const value: string = payload?.value || '';
-    const words = value.split(' ');
-    const lines: string[] = [];
-    let current = '';
-    const maxLen = 16;
-    words.forEach(w => {
-      if ((current + ' ' + w).trim().length > maxLen && current) {
-        lines.push(current.trim());
-        current = w;
-      } else {
-        current = (current + ' ' + w).trim();
-      }
-    });
-    if (current) lines.push(current);
-    return (
-      <text x={x} y={y} textAnchor={textAnchor} fill="#334155" fontSize={11} fontWeight={600}>
-        {lines.map((line, i) => (
-          <tspan key={i} x={x} dy={i === 0 ? 0 : 13}>{line}</tspan>
-        ))}
-      </text>
-    );
-  };
-
   return (
     <div ref={ref} style={pageStyle}>
       {/* CAPA */}
@@ -223,7 +195,7 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
             <div style={{ fontSize: '26px', fontWeight: 900, color: '#1e293b' }}>{planoDeAcao.length}</div>
           </div>
           <div style={{ flex: 1, padding: '14px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>Saúde do PDI</div>
+            <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>Saúde do plano</div>
             <div style={{ fontSize: '26px', fontWeight: 900, color: saudeCor }}>{scoreSaude}%</div>
           </div>
         </div>
@@ -241,12 +213,12 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
 
           <div style={{ width: '100%', height: '380px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="65%" data={dataRadar} margin={{ top: 30, right: 60, bottom: 30, left: 60 }}>
+              <RadarChart cx="50%" cy="50%" outerRadius="60%" data={dataRadar} margin={{ top: 32, right: 72, bottom: 32, left: 72 }}>
                 <PolarGrid stroke="#cbd5e1" />
-                <PolarAngleAxis dataKey="subject" tick={renderTick} />
+                <PolarAngleAxis dataKey="subject" tick={<RadarSkillTick fill="#334155" fontSize={11} maxLineLen={16} />} />
                 <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#94a3b8', fontSize: 10 }} />
-                <Radar name="Nível Atual" dataKey="Atual" stroke="#1e40af" fill="#1e40af" fillOpacity={0.65} />
-                <Radar name="Meta Desejada" dataKey="Meta" stroke="#60a5fa" fill="#60a5fa" fillOpacity={0.35} />
+                <Radar name="Nível Atual" dataKey="Atual" stroke="#1e40af" fill="#1e40af" fillOpacity={0.65} isAnimationActive={false} />
+                <Radar name="Meta Desejada" dataKey="Meta" stroke="#60a5fa" fill="#60a5fa" fillOpacity={0.35} isAnimationActive={false} />
                 <Legend verticalAlign="bottom" height={28} iconType="circle" wrapperStyle={{ fontSize: 12, fontWeight: 600, color: '#334155' }} />
               </RadarChart>
             </ResponsiveContainer>

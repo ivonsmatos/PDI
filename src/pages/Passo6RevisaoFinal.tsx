@@ -1,10 +1,13 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
 import type { RetrospectivaData } from '../store/usePdiStore';
+import { useToastStore } from '../store/useToastStore';
 import { computeHealthScore } from '../lib/healthScore';
-import { DownloadCloud, Sparkles, AlertTriangle, Layers, Calendar, Rocket, RefreshCw, FileText, Star, X } from 'lucide-react';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { DownloadCloud, Sparkles, AlertTriangle, Layers, Calendar, Rocket, RefreshCw, FileText, Star, X, Loader2 } from 'lucide-react';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AnimatePresence, motion } from 'framer-motion';
+import { RadarSkillTick } from '../components/RadarSkillTick';
+import { PdfReport } from '../components/PdfReport';
 
 // ── Modal de Retrospectiva ────────────────────────────────────────────────────
 interface RetroModalProps {
@@ -164,8 +167,10 @@ const DICIONARIO_MENTORIA: Record<string, { titulo: string; sugestao: string }> 
 export const Passo6RevisaoFinal: React.FC = () => {
   const store = usePdiStore();
   const { objetivos, planoDeAcao, inventario, campoDeForcas, salvarCiclo, resetAtual } = store;
-  const printRef = useRef<HTMLDivElement>(null);
+  const { addToast } = useToastStore();
+  const pdfRef = useRef<HTMLDivElement>(null);
   const [showRetroModal, setShowRetroModal] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
 
   // Score de saúde via lib centralizada
   const scoreSaude = useMemo(
@@ -181,7 +186,8 @@ export const Passo6RevisaoFinal: React.FC = () => {
       .sort((a, b) => (b.nivelDesejado - b.nivelAtual) - (a.nivelDesejado - a.nivelAtual))
       .slice(0, 8);
     return sorted.map(skill => ({
-      subject: skill.skill.length > 13 ? skill.skill.slice(0, 12) + '…' : skill.skill,
+      subject: skill.skill,
+      fullName: skill.skill,
       atual: skill.nivelAtual,
       meta: skill.nivelDesejado,
       fullMark: 5,
@@ -211,30 +217,46 @@ export const Passo6RevisaoFinal: React.FC = () => {
   };
 
   const handleExportPDF = async () => {
-    if (!printRef.current) return;
+    if (!pdfRef.current || exportingPdf) return;
+    setExportingPdf(true);
     try {
       const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
         import('html2canvas'),
         import('jspdf'),
       ]);
-      const canvas = await html2canvas(printRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth - 20;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let yOffset = 10;
-      let remaining = imgHeight;
-      while (remaining > 0) {
-        pdf.addImage(imgData, 'PNG', 10, yOffset - (imgHeight - remaining), imgWidth, imgHeight);
-        remaining -= (pageHeight - 20);
-        if (remaining > 0) { pdf.addPage(); yOffset = 10; }
+      const margin = 10;
+      const contentWidth = pageWidth - margin * 2;
+      let cursorY = margin;
+
+      const sections = Array.from(pdfRef.current.querySelectorAll<HTMLElement>('[data-pdf-section]'));
+      for (const section of sections) {
+        const canvas = await html2canvas(section, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+        const imgData = canvas.toDataURL('image/png');
+        const imgHeight = (canvas.height * contentWidth) / canvas.width;
+
+        if (cursorY > margin && cursorY + imgHeight > pageHeight - margin) {
+          pdf.addPage();
+          cursorY = margin;
+        }
+        pdf.addImage(imgData, 'PNG', margin, cursorY, contentWidth, imgHeight);
+        cursorY += imgHeight + 4;
       }
-      pdf.save(`PDI_${store.usuario.nome || 'MeuPDI'}.pdf`);
+
+      const nomeArquivo = (store.usuario.nome || 'MeuPDI')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9_-]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'MeuPDI';
+      pdf.save(`PDI_${nomeArquivo}.pdf`);
+      addToast('PDF do PDI gerado com sucesso!', 'success');
     } catch (err) {
       console.error('Erro ao gerar PDF:', err);
-      window.print();
+      addToast('Não foi possível gerar o PDF. Tente novamente.', 'error');
+    } finally {
+      setExportingPdf(false);
     }
   };
 
@@ -261,7 +283,7 @@ export const Passo6RevisaoFinal: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="text-left font-sans" ref={printRef}>
+      <div className="text-left font-sans">
         {/* HEADER */}
         <div className="flex flex-col md:flex-row justify-between items-center bg-slate-900 border border-slate-700 rounded-3xl p-6 md:p-8 mb-10 shadow-xl overflow-hidden relative">
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-indigo-500 rounded-full blur-3xl opacity-20 pointer-events-none" />
@@ -296,16 +318,23 @@ export const Passo6RevisaoFinal: React.FC = () => {
               <span>📡</span> Radar de Hard Skills
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Nível atual vs meta desejada.</p>
-            <div className="w-full h-[280px]">
+            <div className="w-full h-[320px]">
               {dataRadar.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={dataRadar}>
-                    <PolarGrid stroke="#e2e8f0" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 11 }} />
+                  <RadarChart cx="50%" cy="50%" outerRadius="60%" data={dataRadar} margin={{ top: 28, right: 64, bottom: 28, left: 64 }}>
+                    <PolarGrid stroke="#cbd5e1" />
+                    <PolarAngleAxis
+                      dataKey="subject"
+                      tick={<RadarSkillTick className="fill-slate-600 dark:fill-slate-300" fontSize={11} maxLineLen={16} />}
+                    />
                     <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#94a3b8', fontSize: 10 }} />
-                    <Radar name="Atual" dataKey="atual" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.6} />
-                    <Radar name="Meta Desejada" dataKey="meta" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.4} />
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Radar name="Nível atual" dataKey="atual" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.6} />
+                    <Radar name="Meta desejada" dataKey="meta" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.4} />
+                    <Legend verticalAlign="bottom" height={28} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
+                    <Tooltip
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      labelFormatter={(_, payload) => payload?.[0]?.payload?.fullName ?? ''}
+                    />
                   </RadarChart>
                 </ResponsiveContainer>
               ) : (
@@ -387,10 +416,13 @@ export const Passo6RevisaoFinal: React.FC = () => {
         {/* Botões */}
         <div className="flex flex-col sm:flex-row justify-center gap-3 max-w-2xl mx-auto">
           <button
+            type="button"
             onClick={handleExportPDF}
-            className="flex-1 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95"
+            disabled={exportingPdf}
+            className="flex-1 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 disabled:opacity-60 text-white font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95"
           >
-            <FileText className="w-5 h-5" /> Exportar PDF
+            {exportingPdf ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
+            {exportingPdf ? 'Gerando PDF…' : 'Exportar PDF'}
           </button>
           <button
             onClick={handleExportJSON}
@@ -405,6 +437,22 @@ export const Passo6RevisaoFinal: React.FC = () => {
             <RefreshCw className="w-5 h-5" /> Salvar Ciclo
           </button>
         </div>
+      </div>
+
+      {/* Relatório estruturado off-screen para exportação em PDF */}
+      <div
+        aria-hidden="true"
+        style={{ position: 'fixed', left: '-10000px', top: 0, pointerEvents: 'none', zIndex: -1 }}
+      >
+        <PdfReport
+          ref={pdfRef}
+          usuario={store.usuario}
+          inventario={inventario}
+          objetivos={objetivos}
+          planoDeAcao={planoDeAcao}
+          campoDeForcas={campoDeForcas}
+          scoreSaude={scoreSaude}
+        />
       </div>
     </>
   );

@@ -8,6 +8,7 @@ import {
 } from 'recharts';
 import { TrendingUp, Calendar, Target, Layers, Brain, Table2 } from 'lucide-react';
 import { useToastStore } from '../store/useToastStore';
+import { RadarSkillTick } from '../components/RadarSkillTick';
 
 export const Evolucao: React.FC = () => {
   const { historico, inventario, objetivos, planoDeAcao, planoAcaoStatus, usuario, salvarCiclo, resetAtual } = usePdiStore();
@@ -18,7 +19,7 @@ export const Evolucao: React.FC = () => {
   // ── Radar Hard Skills ──────────────────────────────────────────────────────
   const radarAtual = useMemo(() =>
     inventario.hardSkills.map(s => ({
-      subject: s.skill.length > 12 ? s.skill.slice(0, 12) + '…' : s.skill,
+      subject: s.skill,
       fullName: s.skill,
       atual: s.nivelAtual,
       meta: s.nivelDesejado,
@@ -31,7 +32,7 @@ export const Evolucao: React.FC = () => {
   const radarAnterior = useMemo(() => {
     if (!cicloAnterior) return [];
     return cicloAnterior.inventario.hardSkills.map(s => ({
-      subject: s.skill.length > 12 ? s.skill.slice(0, 12) + '…' : s.skill,
+      subject: s.skill,
       anterior: s.nivelAtual,
     }));
   }, [cicloAnterior]);
@@ -200,21 +201,25 @@ export const Evolucao: React.FC = () => {
               </div>
             ) : (
               <div
-                className="h-72"
+                className="h-80 sm:h-96"
                 role="img"
                 aria-label={`Radar de competências técnicas com ${radarMerged.length} habilidades comparando nível atual e meta desejada.`}
               >
                 {radarMerged.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart data={radarMerged}>
-                      <PolarGrid stroke="#e2e8f0" />
-                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10 }} />
-                      <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#94a3b8', fontSize: 9 }} />
-                      <Radar name="Atual" dataKey="atual" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.55} />
-                      <Radar name="Meta" dataKey="meta" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.3} />
+                    <RadarChart cx="50%" cy="50%" outerRadius="60%" data={radarMerged} margin={{ top: 28, right: 64, bottom: 28, left: 64 }}>
+                      <PolarGrid stroke="#cbd5e1" />
+                      <PolarAngleAxis
+                        dataKey="subject"
+                        tick={<RadarSkillTick className="fill-slate-600 dark:fill-slate-300" fontSize={11} maxLineLen={16} />}
+                      />
+                      <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#94a3b8', fontSize: 10 }} />
+                      <Radar name="Nível atual" dataKey="atual" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.55} />
+                      <Radar name="Meta desejada" dataKey="meta" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.3} />
                       {cicloAnterior && (
                         <Radar name="Ciclo anterior" dataKey="anterior" stroke="#f97316" fill="#f97316" fillOpacity={0.2} strokeDasharray="4 2" />
                       )}
+                      <Legend verticalAlign="bottom" height={28} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
                       <Tooltip
                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                         labelFormatter={(_, payload) => payload?.[0]?.payload?.fullName ?? ''}
