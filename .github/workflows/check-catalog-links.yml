@@ -1,0 +1,33 @@
+name: Verificar Links do Catálogo (Mensal)
+
+on:
+  schedule:
+    # Todo dia 1º de cada mês às 09:00 UTC (~06:00 BRT)
+    - cron: "0 9 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Verificar URLs do catálogo
+        run: |
+          node scripts/check-catalog-links.mjs | tee check-links.log
+          {
+            echo "## Verificação de Links do Catálogo"
+            echo '```text'
+            cat check-links.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
