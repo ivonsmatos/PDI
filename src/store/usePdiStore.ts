@@ -29,9 +29,17 @@ export type PlanoAcaoItem = {
   acao: string;
   prazoData: string;
   recursos: string;
+  evidenciaUrl?: string;
+  resultadoEsperado?: string;
+  notas?: string;
 };
 
-export type PlanoStatus = 'pendente' | 'em_andamento' | 'concluido';
+export type PlanoStatus = 'pendente' | 'em_andamento' | 'concluido' | 'bloqueado';
+
+export type PlanoStatusHistorico = {
+  status: PlanoStatus;
+  data: string; // ISO string
+};
 
 export type DiarioEntry = {
   id: string;
@@ -80,9 +88,13 @@ export interface PdiState extends PdiFields {
   historico: PdiCiclo[];
   wizardConcluido: boolean;
   planoAcaoStatus: Record<string, PlanoStatus>;
+  planoAcaoHistorico: Record<string, PlanoStatusHistorico[]>;
   trilhaProgresso: Record<string, boolean>;
   diario: DiarioEntry[];
   isDarkMode: boolean;
+  notificacoesAtivas: boolean;
+  uidProprietario: string | null;
+  publicProfileId: string | null;
 
   // Ações wizard
   setStepAtual: (step: number) => void;
@@ -92,23 +104,31 @@ export interface PdiState extends PdiFields {
   updateCampoDeForcas: (dados: Partial<PdiFields['campoDeForcas']>) => void;
   setStoreItem: <K extends keyof PdiFields>(key: K, value: PdiFields[K]) => void;
 
-  // Ações ciclo
+  // Ações ciclo e limpeza
   salvarCiclo: (retro?: RetrospectivaData) => void;
   resetAtual: () => void;
+  limparTudo: () => void;
   setWizardConcluido: (v: boolean) => void;
+  setUidProprietario: (uid: string | null) => void;
+  setPublicProfileId: (id: string | null) => void;
 
   // Ações plano de ação
   setPlanoItemStatus: (id: string, status: PlanoStatus) => void;
+  updatePlanoAcaoItem: (id: string, dados: Partial<PlanoAcaoItem>) => void;
+  removePlanoAcaoItem: (id: string) => void;
 
   // Ações trilha
   toggleTrilhaItem: (key: string) => void;
 
   // Ações diário
   addDiarioEntry: (entry: Omit<DiarioEntry, 'id'>) => void;
+  updateDiarioEntry: (id: string, dados: Partial<Omit<DiarioEntry, 'id'>>) => void;
   removeDiarioEntry: (id: string) => void;
+  restoreDiarioEntry: (entry: DiarioEntry) => void;
 
-  // Dark mode
+  // Preferências
   setIsDarkMode: (v: boolean) => void;
+  setNotificacoesAtivas: (v: boolean) => void;
 
   // Histórico (não é keyof PdiFields — precisa de método dedicado)
   setHistorico: (ciclos: PdiCiclo[]) => void;
@@ -152,9 +172,13 @@ export const usePdiStore = create<PdiState>()(
       historico: [],
       wizardConcluido: false,
       planoAcaoStatus: {},
+      planoAcaoHistorico: {},
       trilhaProgresso: {},
       diario: [],
       isDarkMode: prefersDark,
+      notificacoesAtivas: false,
+      uidProprietario: null,
+      publicProfileId: null,
       conquistasVistas: [],
 
       setStepAtual: (step) => set({ stepAtual: step }),
@@ -189,14 +213,69 @@ export const usePdiStore = create<PdiState>()(
           stepAtual: 1,
           wizardConcluido: false,
           planoAcaoStatus: {},
+          planoAcaoHistorico: {},
           trilhaProgresso: {},
           // diario é mantido entre ciclos — o usuário não perde o histórico pessoal
         }),
 
+      limparTudo: () => {
+        set({
+          ...initialState,
+          historico: [],
+          wizardConcluido: false,
+          planoAcaoStatus: {},
+          planoAcaoHistorico: {},
+          trilhaProgresso: {},
+          diario: [],
+          conquistasVistas: [],
+          notificacoesAtivas: false,
+          uidProprietario: null,
+          publicProfileId: null,
+        });
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.removeItem('pdi-storage');
+            localStorage.removeItem('pdi-notif-last-check');
+            Object.keys(localStorage).forEach(k => {
+              if (k.startsWith('pdi-checkin-') || k.startsWith('pdi-onboarding')) {
+                localStorage.removeItem(k);
+              }
+            });
+          } catch {
+            // ignora erro de acesso ao localStorage
+          }
+        }
+      },
+
+      setUidProprietario: (uid) => set({ uidProprietario: uid }),
+      setPublicProfileId: (id) => set({ publicProfileId: id }),
+
       setPlanoItemStatus: (id, status) =>
         set((state) => ({
           planoAcaoStatus: { ...state.planoAcaoStatus, [id]: status },
+          planoAcaoHistorico: {
+            ...state.planoAcaoHistorico,
+            [id]: [
+              ...(state.planoAcaoHistorico[id] ?? []),
+              { status, data: new Date().toISOString() },
+            ].slice(-20),
+          },
         })),
+
+      updatePlanoAcaoItem: (id, dados) =>
+        set((state) => ({
+          planoDeAcao: state.planoDeAcao.map(a => (a.id === id ? { ...a, ...dados } : a)),
+        })),
+
+      removePlanoAcaoItem: (id) =>
+        set((state) => {
+          const nextStatus = { ...state.planoAcaoStatus };
+          delete nextStatus[id];
+          return {
+            planoDeAcao: state.planoDeAcao.filter(a => a.id !== id),
+            planoAcaoStatus: nextStatus,
+          };
+        }),
 
       toggleTrilhaItem: (key) =>
         set((state) => ({
@@ -214,12 +293,25 @@ export const usePdiStore = create<PdiState>()(
           ],
         })),
 
+      updateDiarioEntry: (id, dados) =>
+        set((state) => ({
+          diario: state.diario.map(e => (e.id === id ? { ...e, ...dados } : e)),
+        })),
+
       removeDiarioEntry: (id) =>
         set((state) => ({
           diario: state.diario.filter(e => e.id !== id),
         })),
 
+      restoreDiarioEntry: (entry) =>
+        set((state) => ({
+          diario: [entry, ...state.diario.filter(e => e.id !== entry.id)]
+            .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()),
+        })),
+
       setIsDarkMode: (v) => set({ isDarkMode: v }),
+
+      setNotificacoesAtivas: (v) => set({ notificacoesAtivas: v }),
 
       setHistorico: (ciclos) => set({ historico: ciclos }),
 

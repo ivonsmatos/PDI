@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePdiStore } from '../store/usePdiStore';
 import type { PlanoStatus } from '../store/usePdiStore';
-import { computeHealthScore } from '../lib/healthScore';
+import { computeMetricas } from '../lib/healthScore';
+import { gerarTrilha, contarProgressoTrilha } from '../lib/trilha';
 import { STATUS_LABEL, STATUS_COLOR } from '../lib/constants';
+import { useToastStore } from '../store/useToastStore';
 import {
   Map, CheckSquare, TrendingUp, Target,
   Rocket, AlertTriangle, Calendar, ArrowRight, CheckCircle2,
@@ -28,6 +30,7 @@ const NEXT_STATUS_MAP: Record<PlanoStatus, PlanoStatus> = {
   pendente: 'em_andamento',
   em_andamento: 'concluido',
   concluido: 'pendente',
+  bloqueado: 'pendente',
 };
 
 export const Dashboard: React.FC = () => {
@@ -47,27 +50,25 @@ export const Dashboard: React.FC = () => {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
   const acoesVencidas = useMemo(() =>
-    planoDeAcao.filter(a =>
-      planoAcaoStatus[a.id] !== 'concluido' &&
-      a.prazoData &&
-      new Date(a.prazoData) < hoje
-    ),
+    planoDeAcao.filter(a => {
+      const st = planoAcaoStatus[a.id];
+      return st !== 'concluido' && st !== 'bloqueado' && a.prazoData && new Date(a.prazoData) < hoje;
+    }),
     [planoDeAcao, planoAcaoStatus] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  const totalTrilha = useMemo(() => {
-    const gaps = inventario.hardSkills.filter(s => s.nivelAtual < s.nivelDesejado).length;
-    const softs = inventario.softSkills.filter(s => s.pontoForteOuMelhoria === 'Melhoria').length;
-    return (gaps + softs) * 3;
-  }, [inventario]);
-  const trilhaConc = Object.values(trilhaProgresso).filter(Boolean).length;
+  const { total: totalTrilha, concluidas: trilhaConc } = useMemo(() => {
+    const trilha = gerarTrilha(inventario, usuario.areaAtuacao);
+    return contarProgressoTrilha(trilha, trilhaProgresso);
+  }, [inventario, usuario.areaAtuacao, trilhaProgresso]);
   const pctTrilha = totalTrilha > 0 ? Math.round((trilhaConc / totalTrilha) * 100) : 0;
 
-  // Score de saúde via lib centralizada
-  const scoreInfo = useMemo(
-    () => computeHealthScore({ objetivos, planoDeAcao, campoDeForcas }),
-    [objetivos, planoDeAcao, campoDeForcas]
+  // Métricas separadas (Completude, Execução, Saúde do plano, Risco)
+  const metricas = useMemo(
+    () => computeMetricas({ usuario, inventario, objetivos, planoDeAcao, campoDeForcas }, planoAcaoStatus),
+    [usuario, inventario, objetivos, planoDeAcao, campoDeForcas, planoAcaoStatus]
   );
+  const scoreInfo = metricas.saude;
 
   // Banner de plano incompleto
   const itensIncompletos = useMemo(() => {
@@ -79,7 +80,7 @@ export const Dashboard: React.FC = () => {
     return itens;
   }, [inventario, objetivos, planoDeAcao]);
 
-  const { score: scoreSaude, penalidades } = scoreInfo;
+  const { score: scoreSaude, penalidades, positivos } = scoreInfo;
 
   // Próximas ações (não concluídas, por data)
   const proximasAcoes = useMemo(() =>
@@ -207,7 +208,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
               <CheckSquare className="w-4 h-4 text-indigo-500" /> Plano de Ação
             </h3>
-            <Link to="/plano" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+            <Link to="/app/plano" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
               Ver tudo <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -234,7 +235,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
               <Map className="w-4 h-4 text-blue-500" /> Trilha de Desenvolvimento
             </h3>
-            <Link to="/trilha" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+            <Link to="/app/trilha" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
               Ver tudo <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -253,17 +254,19 @@ export const Dashboard: React.FC = () => {
           <p className="text-xs text-slate-400 mt-2">{trilhaConc} de {totalTrilha} atividades concluídas</p>
         </motion.div>
 
-        {/* Saúde do PDI com drill-down */}
+        {/* Saúde do plano com drill-down e separação de métricas */}
         <motion.div custom={7} variants={card} initial="hidden" animate="show"
           className={`rounded-2xl p-5 border shadow-sm ${saorBg}`}
         >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-500" /> Saúde do PDI
+              <AlertTriangle className="w-4 h-4 text-amber-500" /> Saúde do plano
             </h3>
             <button
+              type="button"
               onClick={() => setShowScoreDrill(!showScoreDrill)}
-              className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-0.5 hover:underline"
+              aria-expanded={showScoreDrill}
+              className="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-0.5 hover:underline"
             >
               {showScoreDrill ? 'Fechar' : 'Detalhar'}
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showScoreDrill ? 'rotate-180' : ''}`} />
@@ -272,11 +275,25 @@ export const Dashboard: React.FC = () => {
           <div className={`text-4xl font-black mb-1 ${saorColor}`}>
             {scoreSaude}<span className="text-xl">%</span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            {scoreSaude > 80 ? '✅ Plano equilibrado e viável!' :
-             scoreSaude > 50 ? '⚠️ Faltam métricas ou ações!' :
-             '🚨 Plano precisa de atenção — volte ao wizard'}
+          <p className="text-xs text-slate-600 dark:text-slate-300">
+            {scoreSaude > 80 ? '✅ Estrutura equilibrada e viável' :
+             scoreSaude > 50 ? '⚠️ Faltam recursos ou mapeamento' :
+             '🚨 Estrutura precisa de atenção — volte ao wizard'}
           </p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
+            Mede o equilíbrio estrutural do plano (objetivos, ações, recursos e forças). Não mede seu nível profissional nem o quanto já foi concluído.
+          </p>
+          <div className="mt-2.5 flex flex-wrap gap-2 text-[10px] font-semibold text-slate-600 dark:text-slate-300">
+            <span>Completude: {metricas.completudePct}% ({metricas.etapasPreenchidas}/{metricas.totalEtapas})</span>
+            <span>·</span>
+            <span>Execução: {metricas.execucaoPct}%</span>
+            {metricas.acoesVencidas > 0 && (
+              <>
+                <span>·</span>
+                <span className="text-rose-600 dark:text-rose-400">Risco: {metricas.acoesVencidas} vencida(s)</span>
+              </>
+            )}
+          </div>
 
           <AnimatePresence>
             {showScoreDrill && (
@@ -287,17 +304,24 @@ export const Dashboard: React.FC = () => {
                 className="overflow-hidden"
               >
                 <div className="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60 space-y-1.5">
-                  {penalidades.length === 0 ? (
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
-                      🎉 Nenhuma penalidade! Plano completo.
-                    </p>
-                  ) : (
-                    penalidades.map((p, i) => (
-                      <div key={i} className="flex items-center justify-between text-xs">
-                        <span className="text-slate-600 dark:text-slate-400 leading-tight">{p.label}</span>
-                        <span className="text-rose-500 font-bold shrink-0 ml-2">-{p.pts}pts</span>
-                      </div>
-                    ))
+                  {positivos.map((pos, i) => (
+                    <div key={`pos-${i}`} className="flex items-center justify-between text-xs">
+                      <span className="text-emerald-700 dark:text-emerald-400 leading-tight">✓ {pos}</span>
+                    </div>
+                  ))}
+                  {penalidades.map((p, i) => (
+                    <div key={`pen-${i}`} className="flex items-center justify-between text-xs">
+                      <span className="text-slate-600 dark:text-slate-400 leading-tight">− {p.label}</span>
+                      <span className="text-rose-600 dark:text-rose-400 font-bold shrink-0 ml-2">-{p.pts}pts</span>
+                    </div>
+                  ))}
+                  {metricas.acoesVencidas > 0 && (
+                    <Link
+                      to="/app/plano"
+                      className="inline-block text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline pt-1"
+                    >
+                      Resolver {metricas.acoesVencidas} ação(ões) vencida(s) no Plano →
+                    </Link>
                   )}
                 </div>
               </motion.div>
@@ -314,7 +338,7 @@ export const Dashboard: React.FC = () => {
           <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
             <Calendar className="w-4 h-4 text-indigo-500" /> Próximas Ações
           </h3>
-          <Link to="/plano" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+          <Link to="/app/plano" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
             Ver plano completo <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
@@ -335,10 +359,21 @@ export const Dashboard: React.FC = () => {
                       : 'bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-700'
                   }`}
                 >
-                  {/* Botão de avançar status */}
+                  {/* Botão explícito para alterar status (com Desfazer) */}
                   <button
-                    onClick={() => setPlanoItemStatus(acao.id, NEXT_STATUS_MAP[status])}
-                    title={`Atual: ${STATUS_LABEL[status]} — clique para avançar`}
+                    type="button"
+                    onClick={() => {
+                      const prev = status;
+                      const next = NEXT_STATUS_MAP[status];
+                      setPlanoItemStatus(acao.id, next);
+                      useToastStore.getState().addToast(
+                        `Status alterado para ${STATUS_LABEL[next]}`,
+                        'info',
+                        { label: 'Desfazer', onClick: () => setPlanoItemStatus(acao.id, prev) },
+                      );
+                    }}
+                    aria-label={`Alterar status de "${acao.acao}" (atual: ${STATUS_LABEL[status]})`}
+                    title={`Atual: ${STATUS_LABEL[status]} — clique para alterar`}
                     className="shrink-0 hover:scale-110 transition-transform"
                   >
                     {status === 'concluido'
@@ -381,10 +416,10 @@ export const Dashboard: React.FC = () => {
         className="grid grid-cols-2 sm:grid-cols-4 gap-4"
       >
         {[
-          { to: '/trilha',   label: 'Trilha',        desc: 'Atividades de desenvolvimento', icon: <Map className="w-5 h-5" />,        color: 'from-blue-600 to-cyan-600' },
-          { to: '/plano',    label: 'Plano',          desc: 'Gerencie suas ações',           icon: <CheckSquare className="w-5 h-5" />, color: 'from-indigo-600 to-blue-600' },
-          { to: '/evolucao', label: 'Evolução',       desc: 'Progresso ao longo do tempo',   icon: <TrendingUp className="w-5 h-5" />, color: 'from-emerald-600 to-teal-600' },
-          { to: '/diario',   label: 'Diário',         desc: 'Registre suas reflexões',       icon: <BookOpen className="w-5 h-5" />,   color: 'from-violet-600 to-purple-600' },
+          { to: '/app/trilha',   label: 'Trilha',     desc: 'Atividades de desenvolvimento', icon: <Map className="w-5 h-5" />,        color: 'from-blue-600 to-cyan-600' },
+          { to: '/app/plano',    label: 'Plano',      desc: 'Gerencie suas ações',           icon: <CheckSquare className="w-5 h-5" />, color: 'from-indigo-600 to-blue-600' },
+          { to: '/app/evolucao', label: 'Evolução',   desc: 'Progresso ao longo do tempo',   icon: <TrendingUp className="w-5 h-5" />, color: 'from-emerald-600 to-teal-600' },
+          { to: '/app/diario',   label: 'Diário',     desc: 'Registre suas reflexões',       icon: <BookOpen className="w-5 h-5" />,   color: 'from-violet-600 to-purple-600' },
         ].map((s) => (
           <Link key={s.to} to={s.to}
             className={`bg-gradient-to-br ${s.color} rounded-2xl p-4 text-white hover:opacity-90 transition-opacity shadow-lg`}

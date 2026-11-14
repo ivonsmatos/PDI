@@ -4,6 +4,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import type { PdiCiclo, DiarioEntry } from '../store/usePdiStore';
+import type { PublicProfileData } from './publicProfile';
 
 // ── Snapshot do PDI atual ──────────────────────────────────────────────────────
 export interface PdiSnapshot {
@@ -54,4 +55,40 @@ export async function loadCiclos(uid: string): Promise<PdiCiclo[]> {
   return snap.docs
     .map(d => d.data() as PdiCiclo)
     .sort((a, b) => a.dataSalvamento.localeCompare(b.dataSalvamento));
+}
+
+/** Remove os documentos do PDI do usuário no Firestore (pdi/atual, diário e ciclos). */
+export async function deleteAllUserData(uid: string, publicProfileId?: string | null): Promise<void> {
+  const [diarioSnap, ciclosSnap] = await Promise.all([
+    getDocs(collection(db, 'users', uid, 'diario')),
+    getDocs(collection(db, 'users', uid, 'ciclos')),
+  ]);
+  await Promise.all([
+    deleteDoc(doc(db, 'users', uid, 'pdi', 'atual')),
+    ...diarioSnap.docs.map(d => deleteDoc(d.ref)),
+    ...ciclosSnap.docs.map(d => deleteDoc(d.ref)),
+    ...(publicProfileId ? [deleteDoc(doc(db, 'publicProfiles', publicProfileId))] : []),
+  ]);
+}
+
+// ── Perfil público (ID aleatório no Firestore, revogável) ─────────────────────
+export async function savePublicProfile(profileId: string, data: PublicProfileData): Promise<void> {
+  await setDoc(doc(db, 'publicProfiles', profileId), {
+    ...data,
+    revogado: false,
+    expiraEm: data.expiraEm ?? null,
+  });
+}
+
+export async function loadPublicProfile(profileId: string): Promise<PublicProfileData | null> {
+  const snap = await getDoc(doc(db, 'publicProfiles', profileId));
+  if (!snap.exists()) return null;
+  const data = snap.data() as PublicProfileData;
+  if (data.revogado) return null;
+  if (data.expiraEm && Date.now() > data.expiraEm) return null;
+  return data;
+}
+
+export async function revokePublicProfile(profileId: string): Promise<void> {
+  await setDoc(doc(db, 'publicProfiles', profileId), { revogado: true }, { merge: true });
 }

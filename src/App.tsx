@@ -17,7 +17,7 @@ function App() {
 
   const handleConcluir = () => {
     setWizardConcluido(true);
-    navigate('/', { replace: true });
+    navigate('/app', { replace: true });
   };
 
   const renderStep = () => {

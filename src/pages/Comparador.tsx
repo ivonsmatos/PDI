@@ -4,8 +4,15 @@ import { Link } from 'react-router-dom';
 import { usePdiStore } from '../store/usePdiStore';
 import { matrizDeCompetencias } from '../data/matrizCompetencias';
 import {
-  TrendingUp, CheckCircle2, AlertCircle, XCircle,
-  ChevronRight, ArrowRight,
+  getCertificacoesPorSkill, getCertificacoesPorArea,
+  type Certificacao,
+} from '../data/certificacoesGratuitas';
+import {
+  ACESSO_INFO, CREDENCIAL_LABEL, CATALOGO_REVISADO_EM, formatarDataBR, reportarRecursoUrl,
+} from '../lib/recursos';
+import {
+  TrendingUp, CheckCircle2, AlertCircle, XCircle, HelpCircle,
+  ChevronRight, ArrowRight, Award,
 } from 'lucide-react';
 
 const NIVEIS_ORDEM = ['estagiario', 'junior', 'pleno', 'senior', 'especialista', 'gestor'] as const;
@@ -20,8 +27,9 @@ const NIVEL_LABEL: Record<string, string> = {
   gestor: 'Gestor',
 };
 
-type HardStatus = 'pronto' | 'em_dev' | 'gap';
-type SoftStatus = 'forte' | 'melhoria' | 'gap';
+/** 'nao_avaliada' = usuário ainda não se autoavaliou (≠ nível 0). 'gap' = avaliada com nível 0. */
+type HardStatus = 'pronto' | 'em_dev' | 'gap' | 'nao_avaliada';
+type SoftStatus = 'forte' | 'melhoria' | 'nao_avaliada';
 
 const card = {
   hidden: { opacity: 0, y: 16 },
@@ -59,7 +67,8 @@ export const Comparador: React.FC = () => {
     if (!dadosProximo?.hardSkills) return [];
     return dadosProximo.hardSkills.map((skill: string) => {
       const found = userHardMap[skill];
-      if (!found || found.nivelAtual === 0) return { skill, status: 'gap' as HardStatus, nivelAtual: 0 };
+      if (!found) return { skill, status: 'nao_avaliada' as HardStatus, nivelAtual: 0 };
+      if (found.nivelAtual === 0) return { skill, status: 'gap' as HardStatus, nivelAtual: 0 };
       if (found.nivelAtual >= 4) return { skill, status: 'pronto' as HardStatus, nivelAtual: found.nivelAtual };
       return { skill, status: 'em_dev' as HardStatus, nivelAtual: found.nivelAtual };
     });
@@ -69,10 +78,9 @@ export const Comparador: React.FC = () => {
     if (!dadosProximo?.softSkills) return [];
     return dadosProximo.softSkills.map((skill: string) => {
       const found = userSoftMap[skill];
-      if (!found) return { skill, status: 'gap' as SoftStatus };
-      if (found.pontoForteOuMelhoria === 'Forte') return { skill, status: 'forte' as SoftStatus };
-      if (found.pontoForteOuMelhoria === 'Melhoria') return { skill, status: 'melhoria' as SoftStatus };
-      return { skill, status: 'gap' as SoftStatus };
+      if (found?.pontoForteOuMelhoria === 'Forte') return { skill, status: 'forte' as SoftStatus };
+      if (found?.pontoForteOuMelhoria === 'Melhoria') return { skill, status: 'melhoria' as SoftStatus };
+      return { skill, status: 'nao_avaliada' as SoftStatus };
     });
   }, [dadosProximo, userSoftMap]);
 
@@ -80,7 +88,32 @@ export const Comparador: React.FC = () => {
     hardGap.filter(s => s.status === 'pronto').length +
     softGap.filter(s => s.status === 'forte').length;
   const totalCount = hardGap.length + softGap.length;
+  const naoAvaliadasCount =
+    hardGap.filter(s => s.status === 'nao_avaliada').length +
+    softGap.filter(s => s.status === 'nao_avaliada').length;
+  const avaliadasCount = totalCount - naoAvaliadasCount;
+  /** Sem nenhuma competência avaliada não há base para calcular — exibimos "dados insuficientes" em vez de 0%. */
+  const dadosInsuficientes = avaliadasCount === 0;
   const gapScore = totalCount > 0 ? Math.round((prontoCount / totalCount) * 100) : 0;
+
+  /** Certificações gratuitas para fechar os gaps (skills ainda não consolidadas) */
+  const certsParaGap = useMemo((): Certificacao[] => {
+    const skillsEmGap = hardGap.filter(s => s.status !== 'pronto').map(s => s.skill);
+    const vistas = new Set<string>();
+    const certs: Certificacao[] = [];
+    skillsEmGap.forEach(skill => {
+      getCertificacoesPorSkill(skill, area || undefined).forEach(c => {
+        if (!vistas.has(c.url)) { vistas.add(c.url); certs.push(c); }
+      });
+    });
+    // Completa com certs gerais da área se houver poucas específicas
+    if (certs.length < 4 && area) {
+      getCertificacoesPorArea(area).forEach(c => {
+        if (!vistas.has(c.url)) { vistas.add(c.url); certs.push(c); }
+      });
+    }
+    return certs.slice(0, 6);
+  }, [hardGap, area]);
 
   const gapColor =
     gapScore >= 70 ? 'text-emerald-500' : gapScore >= 40 ? 'text-amber-500' : 'text-rose-500';
@@ -152,28 +185,58 @@ export const Comparador: React.FC = () => {
         </p>
       </motion.div>
 
-      {/* Score de prontidão */}
+      {/* Cobertura de competências (antes: "prontidão") */}
       <motion.div
         custom={0} variants={card} initial="hidden" animate="show"
         className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-6"
       >
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-slate-700 dark:text-slate-200 text-sm">
-            Prontidão para {NIVEL_LABEL[proximoNivel]}
+            Cobertura de competências do nível {NIVEL_LABEL[proximoNivel]}
           </h3>
-          <span className={`text-2xl font-black ${gapColor}`}>{gapScore}%</span>
+          {dadosInsuficientes ? (
+            <span className="text-sm font-bold text-slate-500 dark:text-slate-400">Dados insuficientes</span>
+          ) : (
+            <span className={`text-2xl font-black ${gapColor}`}>{gapScore}%</span>
+          )}
         </div>
-        <div className="w-full h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-          <motion.div
-            className={`h-full rounded-full ${gapBar}`}
-            initial={{ width: 0 }}
-            animate={{ width: `${gapScore}%` }}
-            transition={{ duration: 1, ease: 'easeOut' }}
-          />
-        </div>
-        <p className="text-xs text-slate-400 mt-2">
-          {prontoCount} de {totalCount} competências do nível {NIVEL_LABEL[proximoNivel]} já consolidadas
-        </p>
+        {dadosInsuficientes ? (
+          <div className="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/40 rounded-xl p-3">
+            Nenhuma das {totalCount} competências do nível {NIVEL_LABEL[proximoNivel]} foi avaliada ainda — por isso não há
+            percentual. Isso <strong>não</strong> significa nível zero.{' '}
+            <Link to="/wizard" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
+              Fazer a autoavaliação
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div
+              className="w-full h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"
+              role="progressbar" aria-valuenow={gapScore} aria-valuemin={0} aria-valuemax={100}
+              aria-label={`Cobertura de competências do nível ${NIVEL_LABEL[proximoNivel]}`}
+            >
+              <motion.div
+                className={`h-full rounded-full ${gapBar}`}
+                initial={{ width: 0 }}
+                animate={{ width: `${gapScore}%` }}
+                transition={{ duration: 1, ease: 'easeOut' }}
+              />
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+              {prontoCount} de {totalCount} competências consolidadas
+              {naoAvaliadasCount > 0 && <> · {naoAvaliadasCount} ainda não avaliada{naoAvaliadasCount > 1 ? 's' : ''}</>}
+            </p>
+          </>
+        )}
+        <details className="mt-3 text-[11px] text-slate-500 dark:text-slate-400">
+          <summary className="cursor-pointer font-semibold">Como isso é calculado?</summary>
+          <p className="mt-1 leading-relaxed">
+            Comparamos a sua <strong>autoavaliação</strong> com a matriz de competências de referência do Meu PDI para{' '}
+            {NIVEL_LABEL[proximoNivel]} (6 habilidades técnicas e 4 comportamentais por nível, todas com o mesmo peso).
+            Conta como consolidada a habilidade técnica com nível 4 ou 5 (de 5) e a comportamental marcada como ponto forte.
+            É uma heurística para orientar o seu plano, não uma avaliação objetiva de senioridade.
+          </p>
+        </details>
       </motion.div>
 
       {/* Expectativas lado a lado */}
@@ -208,7 +271,7 @@ export const Comparador: React.FC = () => {
         className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-4"
       >
         <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4 text-sm">
-          Hard Skills — nível {NIVEL_LABEL[proximoNivel]}
+          Habilidades técnicas (hard skills) — nível {NIVEL_LABEL[proximoNivel]}
         </h3>
         <div className="space-y-1">
           {hardGap.map(({ skill, status, nivelAtual }) => (
@@ -221,10 +284,13 @@ export const Comparador: React.FC = () => {
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                 ) : status === 'em_dev' ? (
                   <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
-                ) : (
+                ) : status === 'gap' ? (
                   <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                ) : (
+                  <HelpCircle className="w-4 h-4 text-slate-400 shrink-0" />
                 )}
                 <span
+                  title={skill}
                   className={`text-sm truncate ${
                     status === 'pronto'
                       ? 'text-slate-700 dark:text-slate-200 font-medium'
@@ -251,14 +317,16 @@ export const Comparador: React.FC = () => {
                 ))}
                 <span
                   className={`text-[10px] font-bold ml-1.5 ${
-                    status === 'gap'
-                      ? 'text-slate-400'
+                    status === 'nao_avaliada'
+                      ? 'text-slate-500 dark:text-slate-400'
+                      : status === 'gap'
+                      ? 'text-rose-500'
                       : status === 'pronto'
                       ? 'text-emerald-500'
                       : 'text-amber-500'
                   }`}
                 >
-                  {status === 'gap' ? 'não avaliada' : status === 'pronto' ? 'pronto' : 'desenvolver'}
+                  {status === 'nao_avaliada' ? 'não avaliada' : status === 'gap' ? 'nível 0' : status === 'pronto' ? 'consolidada' : `nível ${nivelAtual}/5 · desenvolver`}
                 </span>
               </div>
             </div>
@@ -272,7 +340,7 @@ export const Comparador: React.FC = () => {
         className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-6"
       >
         <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4 text-sm">
-          Soft Skills — nível {NIVEL_LABEL[proximoNivel]}
+          Habilidades comportamentais (soft skills) — nível {NIVEL_LABEL[proximoNivel]}
         </h3>
         <div className="space-y-1">
           {softGap.map(({ skill, status }) => (
@@ -286,7 +354,7 @@ export const Comparador: React.FC = () => {
                 ) : status === 'melhoria' ? (
                   <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
                 ) : (
-                  <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                  <HelpCircle className="w-4 h-4 text-slate-400 shrink-0" />
                 )}
                 <span
                   className={`text-sm ${
@@ -306,7 +374,7 @@ export const Comparador: React.FC = () => {
                     ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
                     : status === 'melhoria'
                     ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
-                    : 'bg-slate-100 dark:bg-slate-700 text-slate-400'
+                    : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300'
                 }`}
               >
                 {status === 'forte' ? '✓ Forte' : status === 'melhoria' ? '⚠ Desenvolver' : '○ Não avaliada'}
@@ -316,17 +384,73 @@ export const Comparador: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* Cursos e credenciais para fechar as lacunas */}
+      {certsParaGap.length > 0 && (
+        <motion.div
+          custom={5} variants={card} initial="hidden" animate="show"
+          className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 overflow-hidden"
+        >
+          <div className="p-5 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
+              <Award className="w-4 h-4 text-emerald-500" /> Cursos e credenciais para fechar essas lacunas
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Recursos alinhados às competências que faltam para {NIVEL_LABEL[proximoNivel]}. Cada item indica o que é gratuito
+              e o tipo de credencial. Classificação revisada em {formatarDataBR(CATALOGO_REVISADO_EM)} — confirme no site oficial.
+            </p>
+          </div>
+          <div className="divide-y divide-slate-100 dark:divide-slate-700">
+            {certsParaGap.map(cert => (
+              <div key={cert.url} className="flex items-start justify-between gap-3 p-4">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
+                    <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{cert.nome}</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                      Fonte: {cert.provedor} · {CREDENCIAL_LABEL[cert.credencial]} · Idioma: {cert.idioma.toUpperCase()}
+                    </p>
+                    <span
+                      title={ACESSO_INFO[cert.acesso].descricao}
+                      className={`inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${ACESSO_INFO[cert.acesso].className}`}
+                    >
+                      {ACESSO_INFO[cert.acesso].label}
+                    </span>
+                    <a
+                      href={reportarRecursoUrl(cert.nome, cert.url)}
+                      className="block text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 underline mt-1"
+                    >
+                      Reportar link ou informação incorreta
+                    </a>
+                  </div>
+                </div>
+                <a
+                  href={cert.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Abrir ${cert.nome} no site oficial (nova aba)`}
+                  className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 shrink-0 hover:underline"
+                >
+                  Site oficial ↗
+                </a>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {/* CTA */}
       <motion.div
-        custom={5} variants={card} initial="hidden" animate="show"
+        custom={6} variants={card} initial="hidden" animate="show"
         className="bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-5 text-white shadow-lg"
       >
-        <h3 className="font-bold mb-1">Trabalhe os gaps no seu PDI</h3>
+        <h3 className="font-bold mb-1">Trabalhe as lacunas no seu PDI</h3>
         <p className="text-sm text-indigo-100 mb-4">
-          Adicione as competências em gap como objetivos do ciclo atual e crie ações concretas para desenvolvê-las.
+          Adicione as competências com lacuna como objetivos do ciclo atual e crie ações concretas para desenvolvê-las.
         </p>
         <Link
-          to="/plano"
+          to="/app/plano"
           className="inline-flex items-center gap-1.5 bg-white text-indigo-700 text-sm font-bold px-4 py-2 rounded-xl hover:bg-indigo-50 transition-colors"
         >
           Ir para o Plano de Ação <ChevronRight className="w-4 h-4" />

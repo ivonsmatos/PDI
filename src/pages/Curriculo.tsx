@@ -1,13 +1,12 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { usePdiStore } from '../store/usePdiStore';
+import { useToastStore } from '../store/useToastStore';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer,
 } from 'recharts';
-import { Download, FileText } from 'lucide-react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
+import { Download, FileText, Eye, Loader2 } from 'lucide-react';
 
 const NIVEL_LABEL: Record<string, string> = {
   estagiario: 'Estagiário', junior: 'Júnior', pleno: 'Pleno',
@@ -51,7 +50,15 @@ const CAT_COLOR: Record<string, { bg: string; text: string }> = {
 
 export const Curriculo: React.FC = () => {
   const { usuario, inventario, objetivos, planoDeAcao, planoAcaoStatus, historico } = usePdiStore();
+  const { addToast } = useToastStore();
   const printRef = useRef<HTMLDivElement>(null);
+
+  // Privacidade: e-mail fica desmarcado por padrão antes de exportar/exibir
+  const [incluirEmail, setIncluirEmail] = useState(false);
+  const [incluirProposito, setIncluirProposito] = useState(true);
+  const [incluirObjetivos, setIncluirObjetivos] = useState(true);
+  const [incluirContadores, setIncluirContadores] = useState(true);
+  const [gerandoPdf, setGerandoPdf] = useState(false);
 
   const radarData = inventario.hardSkills.map(s => ({
     subject: s.skill.length > 14 ? s.skill.slice(0, 14) + '…' : s.skill,
@@ -68,18 +75,36 @@ export const Curriculo: React.FC = () => {
 
   const handleDownloadPDF = async () => {
     const el = printRef.current;
-    if (!el) return;
-    const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width / 2, canvas.height / 2] });
-    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
-    pdf.save(`Curriculo_Competencias_${usuario.nome || 'PDI'}_${new Date().toISOString().slice(0, 10)}.pdf`);
+    if (!el || gerandoPdf) return;
+    setGerandoPdf(true);
+    try {
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ]);
+      const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [canvas.width / 2, canvas.height / 2] });
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+      const nomeLimpo = (usuario.nome || 'PDI')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9_-]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'PDI';
+      pdf.save(`Curriculo_Competencias_${nomeLimpo}_${new Date().toISOString().slice(0, 10)}.pdf`);
+      addToast('PDF gerado e enviado para download.', 'success');
+    } catch (err) {
+      console.error('[Curriculo] Falha ao gerar PDF:', err);
+      addToast('Não foi possível gerar o PDF. Tente novamente.', 'error');
+    } finally {
+      setGerandoPdf(false);
+    }
   };
 
   return (
     <div className="pb-24 lg:pb-0 max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
               <FileText className="w-6 h-6 text-indigo-500" /> Currículo de Competências
@@ -89,11 +114,42 @@ export const Curriculo: React.FC = () => {
             </p>
           </div>
           <button
+            type="button"
             onClick={handleDownloadPDF}
-            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
+            disabled={gerandoPdf}
+            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
           >
-            <Download className="w-4 h-4" /> Baixar PDF
+            {gerandoPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            {gerandoPdf ? 'Preparando PDF…' : 'Baixar PDF'}
           </button>
+        </div>
+
+        {/* Controle de visibilidade antes de exportar */}
+        <div className="mt-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4">
+          <p className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+            <Eye className="w-3.5 h-3.5 text-indigo-500" /> Visibilidade no currículo e no PDF
+          </p>
+          <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-700 dark:text-slate-200">
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={incluirEmail} onChange={e => setIncluirEmail(e.target.checked)} className="rounded text-indigo-600" />
+              E-mail ({usuario.email || 'não informado'})
+            </label>
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={incluirProposito} onChange={e => setIncluirProposito(e.target.checked)} className="rounded text-indigo-600" />
+              Propósito / Causa
+            </label>
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={incluirObjetivos} onChange={e => setIncluirObjetivos(e.target.checked)} className="rounded text-indigo-600" />
+              Objetivos estratégicos
+            </label>
+            <label className="inline-flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={incluirContadores} onChange={e => setIncluirContadores(e.target.checked)} className="rounded text-indigo-600" />
+              Contadores de progresso
+            </label>
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-2">
+            Este documento reflete a sua autoavaliação. O Meu PDI organiza seus registros, mas não autentica automaticamente as competências.
+          </p>
         </div>
       </motion.div>
 
@@ -114,29 +170,31 @@ export const Curriculo: React.FC = () => {
                 {AREA_LABEL[usuario.areaAtuacao] || usuario.areaAtuacao}
                 {usuario.nivelCarreira ? ` · ${NIVEL_LABEL[usuario.nivelCarreira] || usuario.nivelCarreira}` : ''}
               </p>
-              {usuario.email && (
+              {incluirEmail && usuario.email && (
                 <p style={{ fontSize: '12px', color: '#818cf8', margin: '4px 0 0' }}>{usuario.email}</p>
               )}
             </div>
-            <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                {[
-                  { label: 'Objetivos', value: objetivos.length },
-                  { label: 'Ações concluídas', value: acoesConc },
-                  { label: 'Ações planejadas', value: planoDeAcao.length },
-                  { label: 'Ciclos fechados', value: historico.length },
-                ].map(m => (
-                  <div key={m.label} style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '10px', padding: '8px 12px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '20px', fontWeight: 900 }}>{m.value}</div>
-                    <div style={{ fontSize: '9px', color: '#c7d2fe', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</div>
-                  </div>
-                ))}
+            {incluirContadores && (
+              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {[
+                    { label: 'Objetivos', value: objetivos.length },
+                    { label: 'Ações concluídas', value: acoesConc },
+                    { label: 'Ações planejadas', value: planoDeAcao.length },
+                    { label: 'Ciclos fechados', value: historico.length },
+                  ].map(m => (
+                    <div key={m.label} style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '10px', padding: '8px 12px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '20px', fontWeight: 900 }}>{m.value}</div>
+                      <div style={{ fontSize: '9px', color: '#c7d2fe', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.label}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Causa */}
-          {usuario.causa && (
+          {incluirProposito && usuario.causa && (
             <div style={{ marginTop: '20px', padding: '12px 16px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '10px', borderLeft: '3px solid #818cf8' }}>
               <div style={{ fontSize: '9px', color: '#c7d2fe', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px' }}>Propósito / Causa</div>
               <p style={{ fontSize: '12px', color: '#e0e7ff', margin: 0, lineHeight: 1.55 }}>{usuario.causa}</p>
@@ -220,7 +278,7 @@ export const Curriculo: React.FC = () => {
         )}
 
         {/* Objetivos estratégicos */}
-        {objetivos.length > 0 && (
+        {incluirObjetivos && objetivos.length > 0 && (
           <div style={{ border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', marginBottom: '16px' }}>
             <h2 style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', margin: '0 0 14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Objetivos Estratégicos

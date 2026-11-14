@@ -43,6 +43,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth deve ser usado dentro de AuthProvider');
@@ -63,6 +64,12 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 async function hydrateStore(uid: string) {
   const store = usePdiStore.getState();
   const { addToast } = useToastStore.getState();
+
+  // Garante isolamento local entre contas diferentes no mesmo navegador
+  if (store.uidProprietario && store.uidProprietario !== uid) {
+    store.limparTudo();
+  }
+  store.setUidProprietario(uid);
 
   try {
     const [pdiAtual, diario, ciclos] = await withTimeout(
@@ -151,7 +158,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await signOut(auth);
     } finally {
-      usePdiStore.getState().resetAtual();
+      usePdiStore.getState().limparTudo();
     }
   };
 

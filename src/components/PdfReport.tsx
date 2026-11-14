@@ -157,7 +157,7 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
     : 'Plano com lacunas críticas. Volte ao wizard e preencha: ações por objetivo, recursos e fatores restritivos.';
 
   // Custom tick para renderizar labels completos e quebrar em 2 linhas se necessário
-  const renderTick = (props: any) => {
+  const renderTick = (props: { payload?: { value?: string }; x?: number | string; y?: number | string; textAnchor?: string }) => {
     const payload = props?.payload;
     const x = Number(props?.x) || 0;
     const y = Number(props?.y) || 0;

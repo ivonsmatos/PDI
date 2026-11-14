@@ -6,16 +6,20 @@ import {
   ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Legend, LineChart, Line, Cell,
 } from 'recharts';
-import { TrendingUp, Calendar, Target, Layers, Brain } from 'lucide-react';
+import { TrendingUp, Calendar, Target, Layers, Brain, Table2 } from 'lucide-react';
+import { useToastStore } from '../store/useToastStore';
 
 export const Evolucao: React.FC = () => {
-  const { historico, inventario, objetivos, planoDeAcao, planoAcaoStatus, usuario } = usePdiStore();
+  const { historico, inventario, objetivos, planoDeAcao, planoAcaoStatus, usuario, salvarCiclo, resetAtual } = usePdiStore();
+  const { addToast } = useToastStore();
   const [abaRadar, setAbaRadar] = useState<'hard' | 'soft'>('hard');
+  const [verTabela, setVerTabela] = useState(false);
 
   // ── Radar Hard Skills ──────────────────────────────────────────────────────
   const radarAtual = useMemo(() =>
     inventario.hardSkills.map(s => ({
       subject: s.skill.length > 12 ? s.skill.slice(0, 12) + '…' : s.skill,
+      fullName: s.skill,
       atual: s.nivelAtual,
       meta: s.nivelDesejado,
       fullMark: 5,
@@ -126,53 +130,104 @@ export const Evolucao: React.FC = () => {
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
         className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-6"
       >
-        {/* Tabs */}
+        {/* Tabs + alternador tabela */}
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-indigo-500" /> Radar de Competências
           </h3>
-          <div className="flex gap-1 bg-slate-100 dark:bg-slate-700 rounded-xl p-1">
-            {(['hard', 'soft'] as const).map(t => (
-              <button key={t}
-                onClick={() => setAbaRadar(t)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  abaRadar === t
-                    ? 'bg-white dark:bg-slate-600 text-indigo-700 dark:text-indigo-300 shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400'
-                }`}
+          <div className="flex items-center gap-2 flex-wrap">
+            {abaRadar === 'hard' && inventario.hardSkills.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setVerTabela(!verTabela)}
+                aria-pressed={verTabela}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
               >
-                {t === 'hard' ? '💻 Hard Skills' : '🧠 Soft Skills'}
+                <Table2 className="w-3.5 h-3.5" />
+                {verTabela ? 'Ver gráfico' : 'Ver dados em tabela'}
               </button>
-            ))}
+            )}
+            <div className="flex gap-1 bg-slate-100 dark:bg-slate-700 rounded-xl p-1">
+              {(['hard', 'soft'] as const).map(t => (
+                <button key={t} type="button"
+                  onClick={() => setAbaRadar(t)}
+                  aria-pressed={abaRadar === t}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    abaRadar === t
+                      ? 'bg-white dark:bg-slate-600 text-indigo-700 dark:text-indigo-300 shadow-sm'
+                      : 'text-slate-500 dark:text-slate-300'
+                  }`}
+                >
+                  {t === 'hard' ? '💻 Hard Skills' : '🧠 Soft Skills'}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {abaRadar === 'hard' ? (
           <>
-            <p className="text-xs text-slate-400 mb-4">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
               {cicloAnterior ? 'Ciclo atual vs ciclo anterior.' : 'Nível atual vs nível desejado.'}
             </p>
-            <div className="h-72">
-              {radarMerged.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart data={radarMerged}>
-                    <PolarGrid stroke="#e2e8f0" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10 }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#94a3b8', fontSize: 9 }} />
-                    <Radar name="Atual" dataKey="atual" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.55} />
-                    <Radar name="Meta" dataKey="meta" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.3} />
-                    {cicloAnterior && (
-                      <Radar name="Ciclo anterior" dataKey="anterior" stroke="#f97316" fill="#f97316" fillOpacity={0.2} strokeDasharray="4 2" />
-                    )}
-                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                  </RadarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex items-center justify-center h-full text-slate-400 text-sm border-2 border-dashed rounded-xl border-slate-200 dark:border-slate-700">
-                  Nenhuma hard skill preenchida
-                </div>
-              )}
-            </div>
+            {verTabela && inventario.hardSkills.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                      <th scope="col" className="py-2 pr-3 font-semibold">Competência</th>
+                      <th scope="col" className="py-2 px-3 font-semibold">Nível atual</th>
+                      <th scope="col" className="py-2 px-3 font-semibold">Meta desejada</th>
+                      <th scope="col" className="py-2 pl-3 font-semibold">Diferença</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                    {inventario.hardSkills.map(s => {
+                      const diff = s.nivelDesejado - s.nivelAtual;
+                      return (
+                        <tr key={s.skill} className="text-slate-700 dark:text-slate-200">
+                          <td className="py-2 pr-3 font-medium">{s.skill}</td>
+                          <td className="py-2 px-3">{s.nivelAtual}/5</td>
+                          <td className="py-2 px-3">{s.nivelDesejado}/5</td>
+                          <td className={`py-2 pl-3 font-semibold ${diff > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                            {diff > 0 ? `-${diff}` : 'Meta atingida'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div
+                className="h-72"
+                role="img"
+                aria-label={`Radar de competências técnicas com ${radarMerged.length} habilidades comparando nível atual e meta desejada.`}
+              >
+                {radarMerged.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart data={radarMerged}>
+                      <PolarGrid stroke="#e2e8f0" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10 }} />
+                      <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#94a3b8', fontSize: 9 }} />
+                      <Radar name="Atual" dataKey="atual" stroke="#4f46e5" fill="#4f46e5" fillOpacity={0.55} />
+                      <Radar name="Meta" dataKey="meta" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.3} />
+                      {cicloAnterior && (
+                        <Radar name="Ciclo anterior" dataKey="anterior" stroke="#f97316" fill="#f97316" fillOpacity={0.2} strokeDasharray="4 2" />
+                      )}
+                      <Tooltip
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                        labelFormatter={(_, payload) => payload?.[0]?.payload?.fullName ?? ''}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-slate-400 text-sm border-2 border-dashed rounded-xl border-slate-200 dark:border-slate-700">
+                    Nenhuma hard skill preenchida
+                  </div>
+                )}
+              </div>
+            )}
           </>
         ) : (
           <>
@@ -375,9 +430,25 @@ export const Evolucao: React.FC = () => {
       {historico.length === 0 && (
         <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-8 text-center border border-dashed border-slate-200 dark:border-slate-700">
           <div className="text-3xl mb-2">📈</div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
-            Nenhum ciclo anterior salvo. Ao concluir um ciclo, a comparação temporal aparecerá aqui.
+          <p className="text-slate-600 dark:text-slate-300 text-sm font-medium mb-1">
+            Nenhum ciclo anterior salvo ainda.
           </p>
+          <p className="text-slate-500 dark:text-slate-400 text-xs max-w-md mx-auto mb-4">
+            Ao concluir um ciclo, salvamos uma foto com suas competências, objetivos, ações e saúde do plano para você comparar sua evolução no próximo ciclo (seu Diário é preservado).
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm('Salvar o ciclo atual no histórico e iniciar um novo ciclo? Seu Diário será mantido.')) {
+                salvarCiclo();
+                resetAtual();
+                addToast('Ciclo salvo no histórico!', 'success');
+              }
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-colors"
+          >
+            Concluir ciclo atual
+          </button>
         </div>
       )}
     </div>

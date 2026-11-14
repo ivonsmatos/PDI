@@ -13,8 +13,9 @@ import {
   Moon, Sun, History, RefreshCw, Menu, X,
   BookOpen, Settings, LogOut, Share2, GitCompareArrows, FileText,
 } from 'lucide-react';
-import { encodeProfile } from '../pages/PerfilPublico';
-import type { PublicProfileData } from '../pages/PerfilPublico';
+import { generatePublicProfileId, type PublicProfileData } from '../lib/publicProfile';
+import { savePublicProfile } from '../lib/firestore';
+import { useToastStore } from '../store/useToastStore';
 
 const AREA_LABELS: Record<string, string> = {
   tecnologia: '💻 Tecnologia / Desenvolvimento',
@@ -37,13 +38,13 @@ const NIVEL_LABELS: Record<string, string> = {
 };
 
 const navItems = [
-  { to: '/',           icon: <LayoutDashboard className="w-5 h-5" />,     label: 'Dashboard'   },
-  { to: '/trilha',     icon: <Map className="w-5 h-5" />,                  label: 'Trilha'      },
-  { to: '/plano',      icon: <CheckSquare className="w-5 h-5" />,          label: 'Plano'       },
-  { to: '/evolucao',   icon: <TrendingUp className="w-5 h-5" />,           label: 'Evolução'    },
-  { to: '/diario',     icon: <BookOpen className="w-5 h-5" />,             label: 'Diário'      },
-  { to: '/comparador', icon: <GitCompareArrows className="w-5 h-5" />,     label: 'Comparador'  },
-  { to: '/curriculo',  icon: <FileText className="w-5 h-5" />,             label: 'Currículo'   },
+  { to: '/app',            icon: <LayoutDashboard className="w-5 h-5" />,  label: 'Dashboard'   },
+  { to: '/app/trilha',     icon: <Map className="w-5 h-5" />,               label: 'Trilha'      },
+  { to: '/app/plano',      icon: <CheckSquare className="w-5 h-5" />,       label: 'Plano'       },
+  { to: '/app/evolucao',   icon: <TrendingUp className="w-5 h-5" />,        label: 'Evolução'    },
+  { to: '/app/diario',     icon: <BookOpen className="w-5 h-5" />,          label: 'Diário'      },
+  { to: '/app/comparador', icon: <GitCompareArrows className="w-5 h-5" />,  label: 'Comparador'  },
+  { to: '/app/curriculo',  icon: <FileText className="w-5 h-5" />,          label: 'Currículo'   },
 ];
 
 // bottom nav mostra só os 4 principais para não lotar
@@ -51,7 +52,7 @@ const bottomNavItems = navItems.slice(0, 4);
 
 export const AppLayout: React.FC = () => {
   const { usuario, wizardConcluido, salvarCiclo, resetAtual, isDarkMode, setIsDarkMode,
-    inventario, objetivos, planoAcaoStatus, historico } = usePdiStore();
+    inventario, objetivos, planoAcaoStatus, historico, publicProfileId, setPublicProfileId } = usePdiStore();
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [showHistorico, setShowHistorico] = useState(false);
@@ -98,8 +99,10 @@ export const AppLayout: React.FC = () => {
   };
 
   const handleShare = async () => {
+    if (!user?.uid) return;
     const acoesConcluidasCount = Object.values(planoAcaoStatus).filter(v => v === 'concluido').length;
     const profileData: PublicProfileData = {
+      ownerUid: user.uid,
       nome: usuario.nome || 'Profissional',
       area: AREA_LABELS[usuario.areaAtuacao] || usuario.areaAtuacao,
       nivel: NIVEL_LABELS[usuario.nivelCarreira] || usuario.nivelCarreira,
@@ -111,8 +114,16 @@ export const AppLayout: React.FC = () => {
       ciclosCount: historico.length,
       dataGeracao: new Date().toISOString(),
     };
-    const encoded = encodeProfile(profileData);
-    const url = `${window.location.origin}/p/${encoded}`;
+    const id = publicProfileId || generatePublicProfileId();
+    try {
+      await savePublicProfile(id, profileData);
+      if (!publicProfileId) setPublicProfileId(id);
+    } catch (err) {
+      console.error('[AppLayout] Erro ao publicar perfil:', err);
+      useToastStore.getState().addToast('Não foi possível gerar o link público. Verifique sua conexão.', 'error');
+      return;
+    }
+    const url = `${window.location.origin}/p/${id}`;
     if (navigator.share) {
       try { await navigator.share({ title: `PDI de ${usuario.nome}`, url }); setShareToast('shared'); }
       catch { /* cancelado */ }
@@ -150,6 +161,9 @@ export const AppLayout: React.FC = () => {
           <div className="flex items-center gap-3">
             {/* Mobile menu toggle */}
             <button
+              type="button"
+              aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
+              aria-expanded={menuOpen}
               className="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
               onClick={() => setMenuOpen(!menuOpen)}
             >
@@ -167,27 +181,34 @@ export const AppLayout: React.FC = () => {
               </span>
             )}
             <button
+              type="button"
               onClick={handleShare}
+              aria-label="Compartilhar perfil público"
               className="p-2 rounded-full w-9 h-9 flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-800 hover:text-indigo-600 transition-colors"
               title="Compartilhar perfil público"
             >
               <Share2 className="w-4 h-4" />
             </button>
             <button
+              type="button"
               onClick={handleNovoCiclo}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors border border-indigo-100 dark:border-indigo-800"
             >
               <RefreshCw className="w-3.5 h-3.5" /> Novo Ciclo
             </button>
             <button
+              type="button"
               onClick={() => setShowHistorico(true)}
+              aria-label="Abrir histórico de ciclos"
               className="p-2 rounded-full w-9 h-9 flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
               title="Histórico"
             >
               <History className="w-4 h-4" />
             </button>
             <button
+              type="button"
               onClick={() => setIsDarkMode(!isDarkMode)}
+              aria-label={isDarkMode ? 'Ativar modo claro' : 'Ativar modo escuro'}
               className="p-2 rounded-full w-9 h-9 flex items-center justify-center bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
               title={isDarkMode ? 'Modo claro' : 'Modo escuro'}
             >
@@ -196,7 +217,9 @@ export const AppLayout: React.FC = () => {
 
             {/* Avatar / logout */}
             <button
+              type="button"
               onClick={handleLogout}
+              aria-label="Sair da conta"
               title="Sair"
               className="flex items-center gap-1.5 ml-1 rounded-full hover:opacity-80 transition-opacity"
             >
@@ -226,7 +249,7 @@ export const AppLayout: React.FC = () => {
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
+              end={item.to === '/app'}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
@@ -243,7 +266,7 @@ export const AppLayout: React.FC = () => {
           {/* Divisor + Configurações */}
           <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
             <NavLink
-              to="/config"
+              to="/app/config"
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
@@ -283,7 +306,7 @@ export const AppLayout: React.FC = () => {
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  end={item.to === '/'}
+                  end={item.to === '/app'}
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
@@ -299,7 +322,7 @@ export const AppLayout: React.FC = () => {
               ))}
               <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
                 <NavLink
-                  to="/config"
+                  to="/app/config"
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
@@ -340,7 +363,7 @@ export const AppLayout: React.FC = () => {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/'}
+            end={item.to === '/app'}
             className={({ isActive }) =>
               `flex-1 flex flex-col items-center justify-center py-3 text-[10px] font-semibold gap-1 transition-colors ${
                 isActive
@@ -355,7 +378,7 @@ export const AppLayout: React.FC = () => {
         ))}
         {/* Config no bottom nav como ícone */}
         <NavLink
-          to="/config"
+          to="/app/config"
           className={({ isActive }) =>
             `flex-1 flex flex-col items-center justify-center py-3 text-[10px] font-semibold gap-1 transition-colors ${
               isActive

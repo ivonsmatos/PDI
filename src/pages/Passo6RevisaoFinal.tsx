@@ -277,11 +277,14 @@ export const Passo6RevisaoFinal: React.FC = () => {
               </span>
             </div>
           </div>
-          <div className="z-10 flex flex-col items-center justify-center p-4 bg-slate-800/80 rounded-2xl border border-slate-700 shadow-inner min-w-[160px]">
-            <span className="text-xs uppercase tracking-widest font-bold text-slate-400 mb-2">Saúde do PDI</span>
+          <div className="z-10 flex flex-col items-center justify-center p-4 bg-slate-800/80 rounded-2xl border border-slate-700 shadow-inner min-w-[180px]">
+            <span className="text-xs uppercase tracking-widest font-bold text-slate-400 mb-2">Saúde do plano</span>
             <div className={`text-5xl font-black ${textColorSaude}`}>{scoreSaude}<span className="text-2xl">%</span></div>
-            <p className="text-[10px] text-slate-500 mt-2 text-center max-w-[120px]">
-              {scoreSaude > 80 ? 'Plano equilibrado e viável!' : scoreSaude > 50 ? 'Faltam métricas ou ações!' : 'Perigo: Plano não executável'}
+            <p className="text-[10px] text-slate-400 mt-2 text-center max-w-[150px]">
+              {scoreSaude > 80 ? 'Estrutura equilibrada e viável' : scoreSaude > 50 ? 'Faltam recursos ou mapeamento' : 'Estrutura incompleta'}
+            </p>
+            <p className="text-[9px] text-slate-500 mt-1 text-center max-w-[160px] leading-tight">
+              Mede o equilíbrio do plano, não o progresso concluído.
             </p>
           </div>
         </div>

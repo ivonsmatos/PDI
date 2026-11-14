@@ -78,7 +78,7 @@ export const Passo2AutoAvaliacao: React.FC = () => {
   };
 
   const handleSoftSkillToggle = (atributo: string, avaliacao: 'Forte' | 'Melhoria') => {
-    let newSofts = [...inventario.softSkills];
+    const newSofts = [...inventario.softSkills];
     const index = newSofts.findIndex(s => s.atributo === atributo);
     
     if (index >= 0) {
@@ -95,7 +95,7 @@ export const Passo2AutoAvaliacao: React.FC = () => {
   };
 
   const handleHardSkillChange = (skill: string, type: 'nivelAtual' | 'nivelDesejado', value: number) => {
-    let newHards = [...inventario.hardSkills];
+    const newHards = [...inventario.hardSkills];
     const index = newHards.findIndex(s => s.skill === skill);
     
     if (index >= 0) {

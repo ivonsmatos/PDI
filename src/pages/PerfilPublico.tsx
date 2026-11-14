@@ -1,47 +1,70 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
   PolarRadiusAxis, ResponsiveContainer, Tooltip,
 } from 'recharts';
-import { ExternalLink, AlertTriangle } from 'lucide-react';
-
-/* ── Tipos ─────────────────────────────────────────────────────── */
-export type PublicProfileData = {
-  nome: string;
-  area: string;       // label legível, ex: "💻 Tecnologia / Desenvolvimento"
-  nivel: string;      // label legível, ex: "Pleno"
-  hardSkills: { skill: string; nivelAtual: number; nivelDesejado: number }[];
-  softFortes: string[];
-  softMelhoria: string[];
-  objetivosCount: number;
-  acoesConcluidasCount: number;
-  ciclosCount: number;
-  dataGeracao: string; // ISO string
-};
-
-/* ── Encode / Decode helpers (exportados para uso no AppLayout) ── */
-export function encodeProfile(data: PublicProfileData): string {
-  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-}
-
-export function decodeProfile(encoded: string): PublicProfileData | null {
-  try {
-    return JSON.parse(decodeURIComponent(escape(atob(encoded)))) as PublicProfileData;
-  } catch {
-    return null;
-  }
-}
+import { ExternalLink, AlertTriangle, Loader2 } from 'lucide-react';
+import {
+  decodeLegacyProfile, isFirestoreProfileId, type PublicProfileData,
+} from '../lib/publicProfile';
+import { loadPublicProfile } from '../lib/firestore';
 
 /* ── Componente ─────────────────────────────────────────────────── */
 export const PerfilPublico: React.FC = () => {
   const { encoded } = useParams<{ encoded: string }>();
+  const [perfil, setPerfil] = useState<PublicProfileData | null>(null);
+  const [carregando, setCarregando] = useState(true);
+  const [isLegado, setIsLegado] = useState(false);
 
-  const perfil = useMemo(
-    () => (encoded ? decodeProfile(encoded) : null),
-    [encoded],
-  );
+  // Evita indexação de perfis compartilhados por buscadores
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    return () => {
+      meta.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    let ativo = true;
+    const carregar = async () => {
+      if (!encoded) {
+        if (ativo) { setPerfil(null); setCarregando(false); }
+        return;
+      }
+      if (isFirestoreProfileId(encoded)) {
+        try {
+          const data = await loadPublicProfile(encoded);
+          if (ativo) { setPerfil(data); setIsLegado(false); }
+        } catch {
+          if (ativo) setPerfil(null);
+        } finally {
+          if (ativo) setCarregando(false);
+        }
+      } else {
+        const legado = decodeLegacyProfile(encoded);
+        if (ativo) {
+          setPerfil(legado);
+          setIsLegado(Boolean(legado));
+          setCarregando(false);
+        }
+      }
+    };
+    carregar();
+    return () => { ativo = false; };
+  }, [encoded]);
+
+  if (carregando) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+      </div>
+    );
+  }
 
   if (!perfil) {
     return (
@@ -79,6 +102,14 @@ export const PerfilPublico: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 py-10 px-4">
       <div className="max-w-2xl mx-auto space-y-6">
+
+        {/* Aviso de formato legado ou autoavaliação */}
+        {isLegado && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
+            Link no formato antigo (Base64): os dados estão codificados na própria URL e não podem ser revogados.
+            Gere um novo link no app para usar o compartilhamento com revogação.
+          </div>
+        )}
 
         {/* Cabeçalho */}
         <motion.div

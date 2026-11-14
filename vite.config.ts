@@ -8,11 +8,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['favicon.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
         name: 'Plano de Desenvolvimento Individual',
         short_name: 'Meu PDI',
         description: 'Um PWA para ajudar a estruturar e alcançar seus objetivos com um acompanhamento completo de competências e plano tático.',
+        lang: 'pt-BR',
+        start_url: '/app',
         theme_color: '#4f46e5',
         icons: [
           {

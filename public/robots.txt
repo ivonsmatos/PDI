@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /privacidade
+Disallow: /app
+Disallow: /app/
+Disallow: /wizard
+Disallow: /p/
+Disallow: /login
+
+Sitemap: https://meupdi.app.br/sitemap.xml
+

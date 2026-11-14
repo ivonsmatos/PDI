@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
 import type { PlanoAcaoItem } from '../store/usePdiStore';
 import { Plus, Trash2, Calendar, Target } from 'lucide-react';
@@ -11,23 +11,17 @@ export const Passo4PlanoAcao: React.FC = () => {
   const [novoPrazo, setNovoPrazo] = useState('');
   const [novosRecursos, setNovosRecursos] = useState('');
 
-  // Sincroniza com o store — corrige bug quando objetivos são criados antes de montar este componente
-  useEffect(() => {
-    if (objetivos.length > 0 && !objetivoSelecionado) {
-      setObjetivoSelecionado(objetivos[0].id);
-    }
-  }, [objetivos, objetivoSelecionado]);
-
+  const objetivoAtivo = objetivoSelecionado || objetivos[0]?.id || '';
 
   const hoje = new Date().toISOString().split('T')[0];
 
   const addAcao = () => {
-    if (!objetivoSelecionado || !novaAcao || !novoPrazo) return;
+    if (!objetivoAtivo || !novaAcao || !novoPrazo) return;
     if (novoPrazo < hoje) return; // data no passado — bloqueado pelo input min também
 
     const newAcao: PlanoAcaoItem = {
       id: Date.now().toString(),
-      objetivoId: objetivoSelecionado,
+      objetivoId: objetivoAtivo,
       acao: novaAcao,
       prazoData: novoPrazo,
       recursos: novosRecursos || 'Nenhum recurso extra necessário'
@@ -70,7 +64,7 @@ export const Passo4PlanoAcao: React.FC = () => {
           <div>
              <label className="block text-xs font-semibold text-gray-600 mb-1">Para qual objetivo?</label>
              <select 
-               value={objetivoSelecionado} 
+               value={objetivoAtivo}  
                onChange={e => setObjetivoSelecionado(e.target.value)}
                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
              >

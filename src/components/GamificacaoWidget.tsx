@@ -241,7 +241,7 @@ export const GamificacaoWidget: React.FC = () => {
 
               {/* Link comparador */}
               <Link
-                to="/comparador"
+                to="/app/comparador"
                 className="flex items-center justify-between p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors"
               >
                 <div className="flex items-center gap-2">

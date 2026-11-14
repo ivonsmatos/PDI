@@ -40,7 +40,7 @@ export function useFirebaseSync() {
     const uid = user.uid;
     const { addToast } = useToastStore.getState();
 
-    const unsub = usePdiStore.subscribe((state, _prev) => {
+    const unsub = usePdiStore.subscribe((state) => {
       // ── PDI atual (debounced) ──────────────────────────────────────────────────
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => {

@@ -166,7 +166,7 @@ export const HARD_SKILL_TEMPLATES: HardSkillTemplate[] = [
     area: 'Jurídico / Segurança',
     atividades: [
       { tipo: 'certificacao', titulo: 'EXIN Privacy & Data Protection Foundation (LGPD)', descricao: 'Certificação internacional de fundamentos de privacidade alinhada à LGPD/GDPR.', tempo: '15h', url: 'https://www.exin.com/certifications/exin-privacy-and-data-protection-foundation-exam', headhunterDica: 'LGPD é obrigatória em empresas com dados pessoais. Certificação é diferencial.' },
-      { tipo: 'curso', titulo: 'LGPD na Prática (ANPD — gratuito)', descricao: 'Curso oficial da Autoridade Nacional de Proteção de Dados, gratuito e com certificado.', tempo: '8h', url: 'https://www.gov.br/anpd/pt-br', headhunterDica: 'Mencione em entrevistas casos de adequação à LGPD que você liderou ou apoiou.' },
+      { tipo: 'curso', titulo: 'LGPD — cursos gratuitos de governo (Escola Virtual.Gov)', descricao: 'Busque por LGPD no catálogo da Escola Virtual de Governo (ENAP): cursos gratuitos com certificado.', tempo: '8h', url: 'https://www.escolavirtual.gov.br/', headhunterDica: 'Mencione em entrevistas casos de adequação à LGPD que você liderou ou apoiou.' },
       { tipo: 'pratica', titulo: 'Mapeie fluxos de dados pessoais (ROPA)', descricao: 'Crie um Registro de Operações de Processamento de Atividades da área onde atua. Entregável concreto de compliance.', tempo: '4h', headhunterDica: 'Documente o processo seguido e o resultado na experiência profissional.' },
     ],
   },
@@ -502,7 +502,7 @@ export const SOFT_ATIVIDADES: Record<string, Atividade[]> = {
   'Ética Profissional': [
     { tipo: 'leitura', titulo: 'Livro: A Coragem de ser Imperfeito — Brené Brown', descricao: 'Como integridade e vulnerabilidade constroem confiança genuína em ambientes profissionais.', tempo: '3h', headhunterDica: 'Ética e integridade são mencionadas em recomendações LinkedIn. Incentive quem conhece você a citar.' },
     { tipo: 'pratica', titulo: 'Checklist de ética antes de decisões de impacto', descricao: '3 perguntas: (1) É legal? (2) É justo? (3) Como ficaria se publicado amanhã? Simples e eficaz.', tempo: '5 min/decisão crítica' },
-    { tipo: 'curso', titulo: 'Ética nos Negócios (FGV — gratuito)', descricao: 'Fundamentos de ética corporativa, conflito de interesses e compliance.', tempo: '8h', url: 'https://educacao-executiva.fgv.br', headhunterDica: 'Compliance e ética são requisitos em empresas de capital aberto e multinacionais.' },
+    { tipo: 'curso', titulo: 'Ética e compliance (FGV Cursos Gratuitos)', descricao: 'Busque no catálogo gratuito da FGV cursos de ética corporativa, conflito de interesses e compliance.', tempo: '8h', url: 'https://cursosgratuitos.fgv.br/', headhunterDica: 'Compliance e ética são requisitos em empresas de capital aberto e multinacionais.' },
   ],
   'Foco em Resultados': [
     { tipo: 'pratica', titulo: 'OKR pessoal trimestral com revisão semanal', descricao: 'Defina 1 objetivo e 3 key results para o trimestre. Revise progresso toda segunda-feira em 15 minutos.', tempo: '15 min/semana', headhunterDica: 'Profissional orientado a resultados com métricas claras é o perfil mais buscado por headhunters.' },

@@ -1,0 +1,35 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Negar tudo por padrão
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Dados privados do usuário: apenas o próprio UID autenticado
+    match /users/{uid}/{subpath=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Perfis públicos compartilhados por ID aleatório de alta entropia
+    // `list` fica bloqueado (apenas `get` direto pelo ID)
+    match /publicProfiles/{profileId} {
+      allow get: if resource.data.revogado != true
+        && (resource.data.expiraEm == null || resource.data.expiraEm > request.time.toMillis());
+
+      allow create: if request.auth != null
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.nome is string
+        && request.resource.data.nome.size() <= 120;
+
+      allow update: if request.auth != null
+        && resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid;
+
+      allow delete: if request.auth != null
+        && resource.data.ownerUid == request.auth.uid;
+    }
+  }
+}
+

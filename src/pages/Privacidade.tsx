@@ -26,7 +26,7 @@ export const Privacidade: React.FC = () => {
             Privacidade, LGPD e Como Usar
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Última atualização: maio de 2026
+            Última atualização: novembro de 2026
           </p>
         </div>
 
@@ -54,10 +54,15 @@ export const Privacidade: React.FC = () => {
             <Item>
               <strong>Preferências</strong> — como modo escuro, área de atuação e nível de carreira.
             </Item>
+            <Item>
+              <strong>Métricas opcionais de acesso (mediante consentimento)</strong> — se você aceitar no
+              banner de privacidade, carregamos Google Analytics / Google Tag Manager apenas para entender
+              páginas mais acessadas de forma agregada. Nunca enviamos e-mail, diário ou competências.
+            </Item>
           </ul>
           <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-            Não coletamos localização, dispositivo, comportamento de navegação nem qualquer
-            dado sensível.
+            Se você recusar, nenhuma tag de analytics é carregada. Você pode alterar ou revogar sua escolha
+            limpando os dados do navegador ou pelo contato abaixo.
           </p>
         </Section>
 
@@ -69,7 +74,7 @@ export const Privacidade: React.FC = () => {
           <ul className="space-y-2 text-sm">
             <Item>Usamos seus dados <strong>exclusivamente</strong> para salvar e sincronizar seu PDI entre dispositivos.</Item>
             <Item><strong>Nunca</strong> vendemos, alugamos ou compartilhamos seus dados com terceiros.</Item>
-            <Item><strong>Nunca</strong> usamos seus dados para marketing, publicidade ou análise comercial.</Item>
+            <Item><strong>Nunca</strong> usamos seus dados de PDI (diário, objetivos, competências) para marketing ou publicidade.</Item>
             <Item><strong>Nunca</strong> enviamos e-mails promocionais ou notificações não solicitadas.</Item>
             <Item>O único e-mail que você pode receber é o de recuperação de senha, caso você solicite.</Item>
           </ul>
