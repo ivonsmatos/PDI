@@ -8,10 +8,12 @@ const App           = lazy(() => import('./App'));
 const LandingPage          = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })));
 const OQueEPdi             = lazy(() => import('./pages/OQueEPdi').then(m => ({ default: m.OQueEPdi })));
 const ComoFazerPdi         = lazy(() => import('./pages/ComoFazerPdi').then(m => ({ default: m.ComoFazerPdi })));
+const ExemploPdi           = lazy(() => import('./pages/ExemploPdi').then(m => ({ default: m.ExemploPdi })));
 const ParaRh               = lazy(() => import('./pages/ParaRh').then(m => ({ default: m.ParaRh })));
 const CertificacoesPublicas = lazy(() => import('./pages/CertificacoesPublicas').then(m => ({ default: m.CertificacoesPublicas })));
 const Sobre                = lazy(() => import('./pages/Sobre').then(m => ({ default: m.Sobre })));
 const Privacidade          = lazy(() => import('./pages/Privacidade').then(m => ({ default: m.Privacidade })));
+const NotFound             = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 const Dashboard     = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Trilha        = lazy(() => import('./pages/Trilha').then(m => ({ default: m.Trilha })));
 const PlanoBoard    = lazy(() => import('./pages/PlanoBoard').then(m => ({ default: m.PlanoBoard })));
@@ -45,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: '/como-fazer-um-pdi',
     element: lazyPage(<ComoFazerPdi />),
+  },
+  {
+    path: '/exemplo',
+    element: lazyPage(<ExemploPdi />),
   },
   {
     path: '/para-rh',
@@ -91,7 +97,7 @@ const router = createBrowserRouter([
   },
   // Compatibilidade com links antigos
   { path: '/dashboard', element: <Navigate to="/app" replace /> },
-  { path: '*',          element: <Navigate to="/" replace /> },
+  { path: '*',          element: lazyPage(<NotFound />) },
 ]);
 
 export default router;
