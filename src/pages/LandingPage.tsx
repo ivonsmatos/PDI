@@ -60,7 +60,6 @@ const TESTIMONIALS = [
     name: 'Rafael Mendes',
     role: 'Desenvolvedor → Tech Lead',
     company: 'Fintech, São Paulo',
-    photo: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=120&q=80',
     text: 'Em 3 meses com o Meu PDI, finalmente entendi o que me separava do nível Sênior. Montei o plano, executei e fui promovido 4 meses depois. O comparador de nível foi decisivo.',
     stars: 5,
   },
@@ -68,7 +67,6 @@ const TESTIMONIALS = [
     name: 'Camila Torres',
     role: 'Analista de R&S',
     company: 'Consultoria de Talentos',
-    photo: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=120&q=80',
     text: 'Quando um candidato chega com o link do PDI estruturado, ele já sai na frente. Consigo ver a evolução real, não só o que ele diz ter feito. Recomendo para todos os meus candidatos.',
     stars: 5,
   },
@@ -76,7 +74,6 @@ const TESTIMONIALS = [
     name: 'Lucas Ferreira',
     role: 'Gerente de Pessoas',
     company: 'Varejo Nacional',
-    photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=120&q=80',
     text: 'Uso com minha equipe de 12 pessoas. As conversas de carreira ficaram muito mais objetivas e estruturadas em cima de evidências, não só de intenção.',
     stars: 5,
   },
@@ -721,11 +718,6 @@ export const LandingPage: React.FC = () => {
                 </div>
                 <p className="text-slate-700 leading-relaxed flex-1 mb-6 text-[15px] italic">"{t.text}"</p>
                 <div className="flex items-center gap-3">
-                  <img
-                    src={t.photo}
-                    alt={t.name}
-                    className="w-12 h-12 rounded-full object-cover ring-2 ring-indigo-100"
-                  />
                   <div>
                     <p className="font-bold text-slate-900 text-sm">{t.name}</p>
                     <p className="text-xs text-slate-500">{t.role}</p>
