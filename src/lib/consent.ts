@@ -10,6 +10,7 @@ const GA_ID = 'G-5XXHW9CYWX';
 declare global {
   interface Window {
     dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
     __pdiAnalyticsLoaded?: boolean;
   }
 }
@@ -63,6 +64,7 @@ export function loadAnalyticsTags(): void {
   const gtag = (...args: unknown[]) => {
     window.dataLayer?.push(args);
   };
+  window.gtag = gtag;
   gtag('js', new Date());
   gtag('config', GA_ID, { anonymize_ip: true });
 }

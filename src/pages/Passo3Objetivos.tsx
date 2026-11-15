@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
 import type { ObjetivoCategoria, Objetivo } from '../store/usePdiStore';
 import { Plus, Trash2, Clock, Info } from 'lucide-react';
+import { trackEvent } from '../lib/analytics';
 
 const prazoLabels = {
   curto: { label: 'Curto Prazo', sub: 'até 3 meses', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
@@ -144,6 +145,7 @@ export const Passo3Objetivos: React.FC = () => {
         categoria: novaCategoria,
       },
     ]);
+    trackEvent('objective_created', { categoria: novaCategoria, prazo: novoPrazo });
     setNovaDescricao('');
     setNovaCategoria('');
     setNovoPrazo('');

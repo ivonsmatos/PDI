@@ -1,8 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { usePdiStore } from '../store/usePdiStore';
 import { matrizDeCompetencias } from '../data/matrizCompetencias';
+import { encontrarCompetenciasTransferiveis } from '../data/careerMetadata';
+import { trackEvent } from '../lib/analytics';
 import {
   getCertificacoesPorSkill, getCertificacoesPorArea,
   type Certificacao,
@@ -37,7 +39,25 @@ const card = {
 };
 
 export const Comparador: React.FC = () => {
-  const { usuario, inventario } = usePdiStore();
+  const { usuario, inventario, incrementMetric } = usePdiStore();
+  const countedRef = useRef(false);
+
+  useEffect(() => {
+    if (!countedRef.current) {
+      countedRef.current = true;
+      incrementMetric('usoComparador');
+    }
+  }, [incrementMetric]);
+
+  const transferiveis = useMemo(
+    () => encontrarCompetenciasTransferiveis(
+      usuario.areaAtuacao || 'tecnologia',
+      inventario.hardSkills,
+      inventario.softSkills,
+      usuario.areasComplementares ?? []
+    ),
+    [usuario.areaAtuacao, usuario.areasComplementares, inventario.hardSkills, inventario.softSkills]
+  );
 
   const area = usuario.areaAtuacao as keyof typeof matrizDeCompetencias | '';
   const nivel = usuario.nivelCarreira as Nivel | '';
@@ -429,11 +449,46 @@ export const Comparador: React.FC = () => {
                   href={cert.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackEvent('course_opened', { nome: cert.nome, origin: 'comparador' })}
                   aria-label={`Abrir ${cert.nome} no site oficial (nova aba)`}
                   className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 shrink-0 hover:underline"
                 >
                   Site oficial ↗
                 </a>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Competências Transferíveis */}
+      {transferiveis.length > 0 && (
+        <motion.div
+          custom={5.5} variants={card} initial="hidden" animate="show"
+          className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 overflow-hidden"
+        >
+          <div className="p-5 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-[#51266E]/10 to-[#017AA1]/10">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">
+              Catálogo de Competências Transferíveis
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Você já possui competências que podem ser aproveitadas em outras áreas para transição ou atuação híbrida:
+            </p>
+          </div>
+          <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {transferiveis.map(item => (
+              <div key={item.areaDestino} className="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 p-4 space-y-2">
+                <div className="text-xs font-extrabold text-[#51266E] dark:text-[#BAB1BD]">
+                  {item.titulo}
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{item.motivo}</p>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {item.competenciasAproveitaveis.map(c => (
+                    <span key={c} className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#017AA1]/10 text-[#017AA1] dark:text-[#539CBD]">
+                      {c}
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

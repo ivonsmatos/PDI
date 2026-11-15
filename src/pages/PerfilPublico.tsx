@@ -5,9 +5,9 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
   PolarRadiusAxis, ResponsiveContainer, Tooltip,
 } from 'recharts';
-import { ExternalLink, AlertTriangle, Loader2 } from 'lucide-react';
+import { ExternalLink, AlertTriangle, Loader2, Lock } from 'lucide-react';
 import {
-  decodeLegacyProfile, isFirestoreProfileId, type PublicProfileData,
+  decodeLegacyProfile, isFirestoreProfileId, hashProfilePassword, type PublicProfileData,
 } from '../lib/publicProfile';
 import { loadPublicProfile } from '../lib/firestore';
 import { RadarSkillTick } from '../components/RadarSkillTick';
@@ -18,6 +18,9 @@ export const PerfilPublico: React.FC = () => {
   const [perfil, setPerfil] = useState<PublicProfileData | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [isLegado, setIsLegado] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
+  const [senhaInput, setSenhaInput] = useState('');
+  const [senhaErro, setSenhaErro] = useState(false);
 
   // Evita indexação de perfis compartilhados por buscadores
   useEffect(() => {
@@ -98,7 +101,56 @@ export const PerfilPublico: React.FC = () => {
     day: '2-digit', month: 'long', year: 'numeric',
   });
 
+  if (perfil.senhaHash && !unlocked) {
+    const handleUnlock = async (e: React.FormEvent) => {
+      e.preventDefault();
+      const hash = await hashProfilePassword(senhaInput.trim());
+      if (hash === perfil.senhaHash) {
+        setUnlocked(true);
+        setSenhaErro(false);
+      } else {
+        setSenhaErro(true);
+      }
+    };
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <form onSubmit={handleUnlock} className="bg-white border border-slate-200 rounded-2xl p-6 max-w-sm w-full shadow-sm space-y-4">
+          <div className="w-12 h-12 rounded-xl bg-[#51266E]/10 text-[#51266E] flex items-center justify-center mx-auto">
+            <Lock className="w-6 h-6" />
+          </div>
+          <div className="text-center">
+            <h2 className="text-lg font-bold text-slate-800">Perfil protegido por senha</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              O profissional restringiu o acesso a este PDI. Digite a senha fornecida para visualizar.
+            </p>
+          </div>
+          <input
+            type="password"
+            value={senhaInput}
+            onChange={(e) => setSenhaInput(e.target.value)}
+            placeholder="Digite a senha de acesso"
+            className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+            required
+          />
+          {senhaErro && <p className="text-xs text-rose-600 font-semibold">Senha incorreta. Tente novamente.</p>}
+          <button
+            type="submit"
+            className="w-full py-2.5 rounded-xl bg-[#017AA1] text-white text-sm font-bold hover:bg-[#016384]"
+          >
+            Desbloquear perfil
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   const firstName = perfil.nome.split(' ')[0];
+  const visLabel: Record<string, string> = {
+    publico: 'Público',
+    recrutadores: 'Somente para recrutadores',
+    gestor: 'Compartilhado com gestor',
+    rh: 'Compartilhado com RH',
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 py-10 px-4">
@@ -125,8 +177,16 @@ export const PerfilPublico: React.FC = () => {
               </div>
               <h1 className="text-2xl font-extrabold text-slate-800">{perfil.nome}</h1>
               <p className="text-slate-500 text-sm mt-0.5">
-                {perfil.area} · <span className="font-semibold text-indigo-600">{perfil.nivel}</span>
+                {perfil.area}
+                {perfil.especialidade ? ` (${perfil.especialidade})` : ''}
+                {' · '}
+                <span className="font-semibold text-[#017AA1]">{perfil.nivel}</span>
               </p>
+              {perfil.visibilidade && (
+                <span className="inline-block mt-2 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#51266E]/10 text-[#51266E]">
+                  {visLabel[perfil.visibilidade] || perfil.visibilidade}
+                </span>
+              )}
             </div>
             <div className="shrink-0 text-right">
               <p className="text-[10px] text-slate-400 uppercase tracking-widest">Gerado em</p>
@@ -233,6 +293,30 @@ export const PerfilPublico: React.FC = () => {
                 </div>
               </div>
             )}
+          </motion.div>
+        )}
+
+        {/* Diário (somente se explicitamente autorizado pelo profissional) */}
+        {perfil.incluirDiario && perfil.diarioResumo && perfil.diarioResumo.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"
+          >
+            <h2 className="font-bold text-slate-800 mb-3 text-sm uppercase tracking-widest">
+              Registros Recentes do Diário
+            </h2>
+            <div className="space-y-2">
+              {perfil.diarioResumo.map((entry, idx) => (
+                <div key={idx} className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700">
+                  <span className="font-bold text-[#017AA1] block mb-0.5">
+                    {new Date(entry.data).toLocaleDateString('pt-BR')}
+                  </span>
+                  {entry.texto}
+                </div>
+              ))}
+            </div>
           </motion.div>
         )}
 

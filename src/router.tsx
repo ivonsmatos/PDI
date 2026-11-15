@@ -23,6 +23,7 @@ const Config        = lazy(() => import('./pages/Config').then(m => ({ default: 
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const Comparador    = lazy(() => import('./pages/Comparador').then(m => ({ default: m.Comparador })));
 const Curriculo     = lazy(() => import('./pages/Curriculo').then(m => ({ default: m.Curriculo })));
+const ModoRh        = lazy(() => import('./pages/ModoRh').then(m => ({ default: m.ModoRh })));
 const PerfilPublico = lazy(() => import('./pages/PerfilPublico').then(m => ({ default: m.PerfilPublico })));
 
 const PageLoader = () => (
@@ -93,6 +94,7 @@ const router = createBrowserRouter([
       { path: 'diario',      element: lazyPage(<Diario />)      },
       { path: 'comparador',  element: lazyPage(<Comparador />)  },
       { path: 'curriculo',   element: lazyPage(<Curriculo />)   },
+      { path: 'rh',          element: lazyPage(<ModoRh />)      },
       { path: 'config',      element: lazyPage(<Config />)      },
       { path: 'admin',       element: lazyPage(<AdminDashboard />) },
     ],

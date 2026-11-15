@@ -11,19 +11,11 @@ import { useNotificacoesPrazo } from '../hooks/useNotificacoesPrazo';
 import {
   LayoutDashboard, Map, CheckSquare, TrendingUp,
   Moon, Sun, History, RefreshCw, Menu, X,
-  BookOpen, Settings, LogOut, Share2, GitCompareArrows, FileText, Award, ShieldCheck,
+  BookOpen, Settings, LogOut, Share2, GitCompareArrows, FileText, Award, ShieldCheck, Users,
 } from 'lucide-react';
 import { isAdminUser } from '../lib/admin';
-import { generatePublicProfileId, type PublicProfileData } from '../lib/publicProfile';
-import { savePublicProfile } from '../lib/firestore';
-import { useToastStore } from '../store/useToastStore';
+import { SharePrivacyModal } from '../components/SharePrivacyModal';
 import { usePageMeta } from '../hooks/usePageMeta';
-import { AREA_EMOJI_LABEL_MAP as AREA_LABELS } from '../data/areas';
-
-const NIVEL_LABELS: Record<string, string> = {
-  estagiario: 'Estagiário', junior: 'Júnior', pleno: 'Pleno',
-  senior: 'Sênior', especialista: 'Especialista', gestor: 'Gestor',
-};
 
 const navItems = [
   { to: '/app',            icon: <LayoutDashboard className="w-5 h-5" />,  label: 'Dashboard'   },
@@ -33,6 +25,7 @@ const navItems = [
   { to: '/app/diario',     icon: <BookOpen className="w-5 h-5" />,          label: 'Diário'      },
   { to: '/app/comparador', icon: <GitCompareArrows className="w-5 h-5" />,  label: 'Comparador'  },
   { to: '/app/curriculo',  icon: <FileText className="w-5 h-5" />,          label: 'Currículo'   },
+  { to: '/app/rh',         icon: <Users className="w-5 h-5" />,             label: 'Modo RH'     },
   { to: '/certificacoes-gratuitas', icon: <Award className="w-5 h-5" />,    label: 'Cursos e recursos' },
 ];
 
@@ -40,13 +33,12 @@ const navItems = [
 const bottomNavItems = navItems.slice(0, 4);
 
 export const AppLayout: React.FC = () => {
-  const { usuario, wizardConcluido, salvarCiclo, resetAtual, isDarkMode, setIsDarkMode,
-    inventario, objetivos, planoAcaoStatus, historico, publicProfileId, setPublicProfileId } = usePdiStore();
+  const { usuario, wizardConcluido, salvarCiclo, resetAtual, isDarkMode, setIsDarkMode } = usePdiStore();
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [showHistorico, setShowHistorico] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [shareToast, setShareToast] = useState<'copied' | 'shared' | null>(null);
 
   usePageMeta({
     title: 'Área do Plano - Meu PDI',
@@ -94,40 +86,8 @@ export const AppLayout: React.FC = () => {
     }
   };
 
-  const handleShare = async () => {
-    if (!user?.uid) return;
-    const acoesConcluidasCount = Object.values(planoAcaoStatus).filter(v => v === 'concluido').length;
-    const profileData: PublicProfileData = {
-      ownerUid: user.uid,
-      nome: usuario.nome || 'Profissional',
-      area: AREA_LABELS[usuario.areaAtuacao] || usuario.areaAtuacao,
-      nivel: NIVEL_LABELS[usuario.nivelCarreira] || usuario.nivelCarreira,
-      hardSkills: inventario.hardSkills,
-      softFortes: inventario.softSkills.filter(s => s.pontoForteOuMelhoria === 'Forte').map(s => s.atributo),
-      softMelhoria: inventario.softSkills.filter(s => s.pontoForteOuMelhoria === 'Melhoria').map(s => s.atributo),
-      objetivosCount: objetivos.length,
-      acoesConcluidasCount,
-      ciclosCount: historico.length,
-      dataGeracao: new Date().toISOString(),
-    };
-    const id = publicProfileId || generatePublicProfileId();
-    try {
-      await savePublicProfile(id, profileData);
-      if (!publicProfileId) setPublicProfileId(id);
-    } catch (err) {
-      console.error('[AppLayout] Erro ao publicar perfil:', err);
-      useToastStore.getState().addToast('Não foi possível gerar o link público. Verifique sua conexão.', 'error');
-      return;
-    }
-    const url = `${window.location.origin}/p/${id}`;
-    if (navigator.share) {
-      try { await navigator.share({ title: `PDI de ${usuario.nome}`, url }); setShareToast('shared'); }
-      catch { /* cancelado */ }
-    } else {
-      await navigator.clipboard.writeText(url);
-      setShareToast('copied');
-    }
-    setTimeout(() => setShareToast(null), 3000);
+  const handleShare = () => {
+    setShowShareModal(true);
   };
 
   // Avatar: usa foto do Google ou inicial do nome
@@ -149,6 +109,7 @@ export const AppLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300 font-sans">
       <HistoricoModal open={showHistorico} onClose={() => setShowHistorico(false)} />
+      <SharePrivacyModal open={showShareModal} onClose={() => setShowShareModal(false)} />
       <CheckinSemanal />
 
       {/* Header */}
@@ -173,11 +134,6 @@ export const AppLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {shareToast && (
-              <span className="hidden sm:block text-xs font-semibold text-emerald-600 dark:text-emerald-400 animate-pulse">
-                {shareToast === 'copied' ? '✓ Link copiado!' : '✓ Compartilhado!'}
-              </span>
-            )}
             <button
               type="button"
               onClick={handleShare}

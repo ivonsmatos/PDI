@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Zap } from 'lucide-react';
+import { X, Zap, Compass } from 'lucide-react';
 import { matrizDeCompetencias } from '../data/matrizCompetencias';
 import { AREA_OPTIONS as AREA_LABELS } from '../data/areas';
+import { AreaRecommenderModal } from './AreaRecommenderModal';
+import { getEspecialidadesParaArea } from '../data/careerMetadata';
 import { usePdiStore } from '../store/usePdiStore';
 import type { HardSkill, SoftSkill } from '../store/usePdiStore';
 
@@ -28,6 +30,7 @@ export const TemplateSelector: React.FC<Props> = ({ open, onClose }) => {
   const [area, setArea] = useState<Area | ''>('');
   const [nivel, setNivel] = useState<Nivel | ''>('');
   const [applied, setApplied] = useState(false);
+  const [recommenderOpen, setRecommenderOpen] = useState(false);
 
   const previewData = area && nivel
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,7 +54,12 @@ export const TemplateSelector: React.FC<Props> = ({ open, onClose }) => {
       exemplo: '',
     }));
 
-    updateUsuario({ areaAtuacao: area, nivelCarreira: nivel });
+    const especialidades = getEspecialidadesParaArea(area);
+    updateUsuario({
+      areaAtuacao: area,
+      nivelCarreira: nivel,
+      especialidade: especialidades[0],
+    });
     setStoreItem('inventario', { hardSkills, softSkills });
 
     setApplied(true);
@@ -97,9 +105,18 @@ export const TemplateSelector: React.FC<Props> = ({ open, onClose }) => {
 
               {/* Seleção de área */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">
-                  Área de atuação
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                    Área de atuação
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setRecommenderOpen(true)}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-[#017AA1] hover:underline"
+                  >
+                    <Compass className="w-3.5 h-3.5" /> Não sei qual escolher
+                  </button>
+                </div>
                 <div className="grid grid-cols-2 gap-1.5 max-h-52 overflow-y-auto pr-1">
                   {AREA_LABELS.map(a => (
                     <button
@@ -182,6 +199,18 @@ export const TemplateSelector: React.FC<Props> = ({ open, onClose }) => {
           </motion.div>
         </motion.div>
       )}
+      <AreaRecommenderModal
+        open={recommenderOpen}
+        onClose={() => setRecommenderOpen(false)}
+        onApply={(res) => {
+          setArea(res.areaPrincipal as Area);
+          updateUsuario({
+            areaAtuacao: res.areaPrincipal,
+            especialidade: res.especialidade,
+            areasComplementares: res.areasTransicao.slice(0, 2).map(a => a.key),
+          });
+        }}
+      />
     </AnimatePresence>
   );
 };

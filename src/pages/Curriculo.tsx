@@ -9,6 +9,7 @@ import {
 import { Download, FileText, Eye, Loader2 } from 'lucide-react';
 import { RadarSkillTick } from '../components/RadarSkillTick';
 import { AREA_LABEL_MAP as AREA_LABEL } from '../data/areas';
+import { trackEvent } from '../lib/analytics';
 
 const NIVEL_LABEL: Record<string, string> = {
   estagiario: 'Estagiário', junior: 'Júnior', pleno: 'Pleno',
@@ -22,7 +23,7 @@ const CAT_COLOR: Record<string, { bg: string; text: string }> = {
 };
 
 export const Curriculo: React.FC = () => {
-  const { usuario, inventario, objetivos, planoDeAcao, planoAcaoStatus, historico, diario, publicProfileId } = usePdiStore();
+  const { usuario, inventario, objetivos, planoDeAcao, planoAcaoStatus, historico, diario, publicProfileId, incrementMetric } = usePdiStore();
   const { addToast } = useToastStore();
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +92,8 @@ export const Curriculo: React.FC = () => {
         .replace(/[^a-zA-Z0-9_-]+/g, '_')
         .replace(/^_+|_+$/g, '') || 'PDI';
       pdf.save(`Curriculo_Competencias_${nomeLimpo}_${new Date().toISOString().slice(0, 10)}.pdf`);
+      incrementMetric('exportacoesPdf');
+      trackEvent('pdf_exported', { origin: 'curriculo' });
       addToast('PDF gerado e enviado para download.', 'success');
     } catch (err) {
       console.error('[Curriculo] Falha ao gerar PDF:', err);

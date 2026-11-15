@@ -16,6 +16,8 @@ import {
   ACESSO_INFO, CREDENCIAL_LABEL, CATALOGO_REVISADO_EM, formatarDataBR,
   reportarRecursoUrl, inferirAcessoAtividade,
 } from '../lib/recursos';
+import { trackEvent } from '../lib/analytics';
+import { OBJETIVOS_CARREIRA } from '../data/careerMetadata';
 
 /** Selo de acesso (o que é gratuito / pago / a confirmar) */
 const SeloAcesso: React.FC<{ acesso: keyof typeof ACESSO_INFO }> = ({ acesso }) => (
@@ -49,6 +51,7 @@ const CertLink: React.FC<{ cert: Certificacao; tambemPara?: string[]; compact?: 
         href={cert.url}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackEvent('course_opened', { nome: cert.nome, origin: 'trilha' })}
         aria-label={`Abrir ${cert.nome} no site oficial (nova aba)`}
         className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 shrink-0 hover:underline"
       >
@@ -178,8 +181,16 @@ export const Trilha: React.FC = () => {
               Trilha personalizada para
             </p>
             <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-100">
-              {[areaLabel, nivelLabel].filter(Boolean).join(' · ')}
+              {[areaLabel, usuario.especialidade, nivelLabel].filter(Boolean).join(' · ')}
             </p>
+            {usuario.objetivoCarreira && (() => {
+              const obj = OBJETIVOS_CARREIRA.find(o => o.id === usuario.objetivoCarreira);
+              return obj ? (
+                <p className="text-xs text-indigo-700 dark:text-indigo-300 mt-1">
+                  <strong>Objetivo ({obj.label}):</strong> {obj.focoTrilha}
+                </p>
+              ) : null;
+            })()}
           </div>
           <div className="flex items-center gap-1 bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-700 rounded-xl px-3 py-1.5">
             <Lightbulb className="w-3.5 h-3.5 text-yellow-500" />

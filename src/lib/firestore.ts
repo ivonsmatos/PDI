@@ -9,7 +9,7 @@ import type { PublicProfileData } from './publicProfile';
 // ── Snapshot do PDI atual ──────────────────────────────────────────────────────
 export interface PdiSnapshot {
   stepAtual?: number;
-  usuario?: Record<string, string>;
+  usuario?: Record<string, unknown>;
   inventario?: Record<string, unknown>;
   objetivos?: unknown[];
   planoDeAcao?: unknown[];
@@ -77,6 +77,7 @@ export interface TelemetrySnapshot {
   areaAtuacao: string;
   nivelCarreira: string;
   wizardConcluido: boolean;
+  stepAtual?: number;
   objetivosCount: number;
   acoesCount: number;
   acoesConcluidasCount: number;
@@ -84,6 +85,11 @@ export interface TelemetrySnapshot {
   ciclosCount: number;
   hardSkillsCount: number;
   softSkillsCount: number;
+  evidenciasCount?: number;
+  tempoAtePrimeiroPdiMin?: number | null;
+  exportacoesPdf?: number;
+  usoComparador?: number;
+  usoPerfilPublico?: number;
   scoreSaude: number;
   ultimoAcesso: string; // YYYY-MM-DD
 }

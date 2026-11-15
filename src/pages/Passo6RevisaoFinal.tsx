@@ -3,11 +3,13 @@ import { usePdiStore } from '../store/usePdiStore';
 import type { RetrospectivaData } from '../store/usePdiStore';
 import { useToastStore } from '../store/useToastStore';
 import { computeHealthScore } from '../lib/healthScore';
-import { DownloadCloud, Sparkles, AlertTriangle, Layers, Calendar, Rocket, RefreshCw, FileText, Star, X, Loader2 } from 'lucide-react';
+import { DownloadCloud, Sparkles, AlertTriangle, Layers, Calendar, Rocket, RefreshCw, FileText, Star, X, Loader2, ShieldCheck } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AnimatePresence, motion } from 'framer-motion';
 import { RadarSkillTick } from '../components/RadarSkillTick';
 import { PdfReport } from '../components/PdfReport';
+import { revisarPdi } from '../lib/pdiReviewer';
+import { trackEvent } from '../lib/analytics';
 
 // ── Modal de Retrospectiva ────────────────────────────────────────────────────
 interface RetroModalProps {
@@ -251,6 +253,8 @@ export const Passo6RevisaoFinal: React.FC = () => {
         .replace(/[^a-zA-Z0-9_-]+/g, '_')
         .replace(/^_+|_+$/g, '') || 'MeuPDI';
       pdf.save(`PDI_${nomeArquivo}.pdf`);
+      store.incrementMetric('exportacoesPdf');
+      trackEvent('pdf_exported', { origin: 'revisao_final' });
       addToast('PDF do PDI gerado com sucesso!', 'success');
     } catch (err) {
       console.error('Erro ao gerar PDF:', err);
@@ -267,8 +271,17 @@ export const Passo6RevisaoFinal: React.FC = () => {
   const handleConfirmRetro = (retro: RetrospectivaData) => {
     setShowRetroModal(false);
     salvarCiclo(retro);
+    trackEvent('cycle_saved', {
+      objetivos_count: objetivos.length,
+      acoes_count: planoDeAcao.length,
+    });
     resetAtual();
   };
+
+  const reviewItems = useMemo(
+    () => revisarPdi({ objetivos, planoDeAcao, hardSkills: inventario.hardSkills }),
+    [objetivos, planoDeAcao, inventario.hardSkills]
+  );
 
   const sortedAcoes = [...planoDeAcao].sort((a, b) => new Date(a.prazoData).getTime() - new Date(b.prazoData).getTime());
 
@@ -330,13 +343,63 @@ export const Passo6RevisaoFinal: React.FC = () => {
           </div>
         </div>
 
+        {/* Assistente de Revisão do PDI */}
+        <div className="mb-8 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-[#017AA1]" /> Assistente de Revisão do Ciclo
+            </h3>
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+              reviewItems.length === 0
+                ? 'bg-emerald-100 text-emerald-700'
+                : 'bg-amber-100 text-amber-800'
+            }`}>
+              {reviewItems.length === 0 ? 'Nenhum ponto de atenção' : `${reviewItems.length} verificação(ões)`}
+            </span>
+          </div>
+          {reviewItems.length === 0 ? (
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Excelente! Seus objetivos, ações, prazos, recursos e metas estão consistentes para salvar o ciclo.
+            </p>
+          ) : (
+            <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+              {reviewItems.map(item => (
+                <div
+                  key={item.id}
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl border text-xs ${
+                    item.severity === 'error'
+                      ? 'bg-rose-50/70 border-rose-200 text-rose-900'
+                      : item.severity === 'warning'
+                        ? 'bg-amber-50/70 border-amber-200 text-amber-900'
+                        : 'bg-slate-50 border-slate-200 text-slate-700'
+                  }`}
+                >
+                  <div>
+                    <div className="font-bold">{item.titulo}</div>
+                    <div className="opacity-85 mt-0.5">{item.descricao}</div>
+                  </div>
+                  {item.passoSugerido && (
+                    <button
+                      type="button"
+                      onClick={() => store.setStepAtual(item.passoSugerido!)}
+                      className="shrink-0 px-2.5 py-1 rounded-lg bg-white border border-slate-200 font-semibold text-[#017AA1] hover:bg-slate-50"
+                    >
+                      Corrigir no Passo {item.passoSugerido}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
           {/* Radar */}
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
               <span>📡</span> Radar de Hard Skills
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Nível atual vs meta desejada.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Nível de proficiência vs. nível-alvo.</p>
             <div className="w-full h-[320px]">
               {dataRadar.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">

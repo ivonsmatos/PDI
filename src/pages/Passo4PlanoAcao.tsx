@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
-import type { PlanoAcaoItem } from '../store/usePdiStore';
+import type { PlanoAcaoItem, TipoMetaAcao } from '../store/usePdiStore';
 import { Plus, Trash2, Calendar, Target } from 'lucide-react';
+import { trackEvent } from '../lib/analytics';
+
+const TIPO_META_OPTIONS: { value: TipoMetaAcao; label: string; hint: string; badge: string }[] = [
+  { value: 'resultado', label: 'Resultado (Impacto)', hint: 'Reduzir custos, aumentar conversão, produtividade ou receita', badge: 'bg-emerald-100 text-emerald-700' },
+  { value: 'entrega', label: 'Entrega (Projeto)', hint: 'Implementar um projeto, processo ou funcionalidade', badge: 'bg-indigo-100 text-indigo-700' },
+  { value: 'evidencia', label: 'Evidência (Comprovação)', hint: 'Documento, indicador medido ou validação de gestor/par', badge: 'bg-purple-100 text-purple-700' },
+  { value: 'atividade', label: 'Atividade (Estudo)', hint: 'Concluir um curso, leitura ou mentoria', badge: 'bg-slate-100 text-slate-700' },
+];
 
 export const Passo4PlanoAcao: React.FC = () => {
   const { objetivos, planoDeAcao, setStoreItem } = usePdiStore();
@@ -10,6 +18,8 @@ export const Passo4PlanoAcao: React.FC = () => {
   const [novaAcao, setNovaAcao] = useState('');
   const [novoPrazo, setNovoPrazo] = useState('');
   const [novosRecursos, setNovosRecursos] = useState('');
+  const [tipoMeta, setTipoMeta] = useState<TipoMetaAcao>('entrega');
+  const [resultadoEsperado, setResultadoEsperado] = useState('');
 
   const objetivoAtivo = objetivoSelecionado || objetivos[0]?.id || '';
 
@@ -24,13 +34,17 @@ export const Passo4PlanoAcao: React.FC = () => {
       objetivoId: objetivoAtivo,
       acao: novaAcao,
       prazoData: novoPrazo,
-      recursos: novosRecursos || 'Nenhum recurso extra necessário'
+      recursos: novosRecursos || 'Nenhum recurso extra necessário',
+      tipoMeta,
+      resultadoEsperado: resultadoEsperado.trim() || undefined,
     };
 
     setStoreItem('planoDeAcao', [...planoDeAcao, newAcao]);
+    trackEvent('action_created', { tipo_meta: tipoMeta });
     setNovaAcao('');
     setNovoPrazo('');
     setNovosRecursos('');
+    setResultadoEsperado('');
   };
 
   const removeAcao = (id: string) => {
@@ -72,6 +86,31 @@ export const Passo4PlanoAcao: React.FC = () => {
                  <option key={obj.id} value={obj.id}>{obj.descricao}</option>
                ))}
              </select>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Tipo de meta (Impacto vs. Atividade)</label>
+              <select
+                value={tipoMeta}
+                onChange={e => setTipoMeta(e.target.value as TipoMetaAcao)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#017AA1] bg-white text-sm"
+              >
+                {TIPO_META_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label} - {opt.hint}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Resultado / entrega esperada (opcional)</label>
+              <input
+                type="text"
+                placeholder="Ex: Reduzir tempo de deploy em 30% ou entregar dashboard"
+                value={resultadoEsperado}
+                onChange={e => setResultadoEsperado(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#017AA1]"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -136,10 +175,24 @@ export const Passo4PlanoAcao: React.FC = () => {
                 <h4 className="font-semibold text-indigo-900">{obj.descricao}</h4>
               </div>
               <div className="divide-y divide-gray-100 bg-white">
-                {acoesDesteObj.map(acao => (
+                {acoesDesteObj.map(acao => {
+                  const metaInfo = TIPO_META_OPTIONS.find(m => m.value === (acao.tipoMeta ?? 'atividade'));
+                  return (
                   <div key={acao.id} className="p-4 flex items-start gap-4">
                      <div className="flex-grow">
-                       <p className="font-medium text-gray-800">{acao.acao}</p>
+                       <div className="flex flex-wrap items-center gap-2">
+                         <p className="font-medium text-gray-800">{acao.acao}</p>
+                         {metaInfo && (
+                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${metaInfo.badge}`}>
+                             {metaInfo.label}
+                           </span>
+                         )}
+                       </div>
+                       {acao.resultadoEsperado && (
+                         <p className="text-xs text-[#017AA1] font-medium mt-1">
+                           Impacto esperado: {acao.resultadoEsperado}
+                         </p>
+                       )}
                        <div className="flex items-center gap-4 mt-2 text-sm">
                          <span className="flex items-center gap-1 text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded">
                            <Calendar className="w-4 h-4" /> {new Date(acao.prazoData).toLocaleDateString('pt-BR')}
@@ -156,7 +209,8 @@ export const Passo4PlanoAcao: React.FC = () => {
                         <Trash2 className="w-5 h-5" />
                       </button>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           );

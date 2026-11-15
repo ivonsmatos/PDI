@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Loader2, Mail, Lock, User, Eye, EyeOff, Gift, Shield } from 'lucide-react';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { trackEvent } from '../lib/analytics';
 
 // SVG inline do Google (lucide-react não inclui ícone do Google)
 const GoogleIcon = () => (
@@ -51,6 +52,7 @@ export const Login: React.FC = () => {
         if (!nome.trim()) { setError('Digite seu nome.'); setLoading(false); return; }
         if (!lgpdConsent) { setError('Você precisa aceitar a Política de Privacidade para criar uma conta.'); setLoading(false); return; }
         await signup(nome.trim(), email, password);
+        trackEvent('sign_up_completed', { method: 'email' });
         navigate('/app', { replace: true });
       } else {
         await resetPassword(email);

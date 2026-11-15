@@ -3,6 +3,7 @@ import { usePdiStore } from '../store/usePdiStore';
 import { Moon, Sun, History } from 'lucide-react';
 import { OnboardingModal } from './OnboardingModal';
 import { HistoricoModal } from './HistoricoModal';
+import { trackEvent } from '../lib/analytics';
 
 interface WizardLayoutProps {
   children: React.ReactNode;
@@ -22,9 +23,13 @@ function validateStep(
 }
 
 export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir }) => {
-  const { stepAtual, nextStep, prevStep, usuario, objetivos, isDarkMode, setIsDarkMode } = usePdiStore();
+  const { stepAtual, nextStep, prevStep, usuario, objetivos, isDarkMode, setIsDarkMode, marcarWizardIniciado } = usePdiStore();
   const [showHistorico, setShowHistorico] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  useEffect(() => {
+    marcarWizardIniciado();
+  }, [marcarWizardIniciado]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
@@ -33,6 +38,11 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir
   const handleNextStep = () => {
     // Último passo: delega para o pai (App) que salva e redireciona
     if (stepAtual === 6) {
+      trackEvent('wizard_step_completed', { step: 6 });
+      trackEvent('pdi_created', {
+        area: usuario.areaAtuacao || 'nao_informada',
+        nivel: usuario.nivelCarreira || 'nao_informado',
+      });
       onConcluir?.();
       return;
     }
@@ -43,6 +53,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir
       return;
     }
     setValidationError(null);
+    trackEvent('wizard_step_completed', { step: stepAtual });
     nextStep();
   };
 

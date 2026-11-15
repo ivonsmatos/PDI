@@ -1,10 +1,22 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type CompetenciaEvidencia = {
+  id: string;
+  situacao: string;
+  acao: string;
+  resultado: string;
+  indicador?: string;
+  link?: string;
+  data?: string;
+  validadoPor?: string;
+};
+
 export type HardSkill = {
   skill: string;
   nivelAtual: number;
   nivelDesejado: number;
+  evidencias?: CompetenciaEvidencia[];
 };
 
 export type SoftSkill = {
@@ -23,12 +35,15 @@ export type Objetivo = {
   categoria: ObjetivoCategoria;
 };
 
+export type TipoMetaAcao = 'atividade' | 'entrega' | 'resultado' | 'evidencia';
+
 export type PlanoAcaoItem = {
   id: string;
   objetivoId: string;
   acao: string;
   prazoData: string;
   recursos: string;
+  tipoMeta?: TipoMetaAcao;
   evidenciaUrl?: string;
   resultadoEsperado?: string;
   notas?: string;
@@ -64,6 +79,13 @@ export interface PdiFields {
     causa: string;
     areaAtuacao: string;   // chave de matrizDeCompetencias, ex: 'tecnologia'
     nivelCarreira: string; // 'estagiario' | 'junior' | 'pleno' | 'senior' | 'especialista' | 'gestor'
+    areasComplementares?: string[];
+    areaPersonalizada?: string;
+    tipoMatriz?: 'generica' | 'especifica';
+    especialidade?: string;
+    objetivoCarreira?: string;
+    competenciasContexto?: string[];
+    areaSugeridaPlataforma?: string;
   };
   inventario: {
     hardSkills: HardSkill[];
@@ -137,6 +159,15 @@ export interface PdiState extends PdiFields {
   // Gamificação
   conquistasVistas: string[];
   marcarConquistaVista: (id: string) => void;
+
+  // Métricas de saúde do produto
+  wizardIniciadoEm?: string | null;
+  primeiroPdiCriadoEm?: string | null;
+  exportacoesPdf?: number;
+  usoComparador?: number;
+  usoPerfilPublico?: number;
+  marcarWizardIniciado: () => void;
+  incrementMetric: (key: 'exportacoesPdf' | 'usoComparador' | 'usoPerfilPublico') => void;
 }
 
 const initialState: PdiFields = {
@@ -181,6 +212,11 @@ export const usePdiStore = create<PdiState>()(
       uidProprietario: null,
       publicProfileId: null,
       conquistasVistas: [],
+      wizardIniciadoEm: null,
+      primeiroPdiCriadoEm: null,
+      exportacoesPdf: 0,
+      usoComparador: 0,
+      usoPerfilPublico: 0,
 
       setStepAtual: (step) => set({ stepAtual: step }),
       nextStep: () => set((state) => ({ stepAtual: Math.min(state.stepAtual + 1, 6) })),
@@ -190,7 +226,21 @@ export const usePdiStore = create<PdiState>()(
         set((state) => ({ campoDeForcas: { ...state.campoDeForcas, ...dados } })),
       setStoreItem: (key, value) => set({ [key]: value }),
 
-      setWizardConcluido: (v) => set({ wizardConcluido: v }),
+      setWizardConcluido: (v) =>
+        set((state) => ({
+          wizardConcluido: v,
+          primeiroPdiCriadoEm: v && !state.primeiroPdiCriadoEm ? new Date().toISOString() : state.primeiroPdiCriadoEm,
+        })),
+
+      marcarWizardIniciado: () =>
+        set((state) => ({
+          wizardIniciadoEm: state.wizardIniciadoEm ?? new Date().toISOString(),
+        })),
+
+      incrementMetric: (key) =>
+        set((state) => ({
+          [key]: (state[key] ?? 0) + 1,
+        })),
 
       salvarCiclo: (retro) => {
         const state = get();

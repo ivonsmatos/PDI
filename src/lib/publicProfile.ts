@@ -1,9 +1,19 @@
+export type PublicProfileVisibility = 'publico' | 'recrutadores' | 'gestor' | 'rh';
+
 export type PublicProfileData = {
   ownerUid?: string;
   nome: string;
   area: string;
   nivel: string;
-  hardSkills: { skill: string; nivelAtual: number; nivelDesejado: number }[];
+  areasComplementares?: string[];
+  especialidade?: string;
+  objetivoCarreira?: string;
+  hardSkills: {
+    skill: string;
+    nivelAtual: number;
+    nivelDesejado: number;
+    evidenciasCount?: number;
+  }[];
   softFortes: string[];
   softMelhoria: string[];
   objetivosCount: number;
@@ -12,7 +22,21 @@ export type PublicProfileData = {
   dataGeracao: string; // ISO string
   revogado?: boolean;
   expiraEm?: number | null;
+  visibilidade?: PublicProfileVisibility;
+  senhaHash?: string | null;
+  apenasCompetencias?: string[] | null;
+  incluirDiario?: boolean;
+  diarioResumo?: { data: string; texto: string }[];
+  consentimentoHistorico?: { data: string; acao: string; escopo: string }[];
 };
+
+export async function hashProfilePassword(password: string): Promise<string> {
+  const data = new TextEncoder().encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
 
 /** Gera ID aleatório URL-safe de 24 caracteres (~144 bits de entropia). */
 export function generatePublicProfileId(): string {

@@ -294,6 +294,27 @@ export const AdminDashboard: React.FC = () => {
       { etapa: 'Diário', usuarios: comDiario },
     ];
 
+    const naoConcluidos = filteredRows.filter(r => !r.wizardConcluido && typeof r.stepAtual === 'number');
+    const stepAbandonoCount: Record<number, number> = {};
+    naoConcluidos.forEach(r => {
+      const s = r.stepAtual!;
+      stepAbandonoCount[s] = (stepAbandonoCount[s] || 0) + 1;
+    });
+    const topAbandono = Object.entries(stepAbandonoCount).sort((a, b) => b[1] - a[1])[0];
+    const etapaMaiorAbandono = topAbandono ? `Passo ${topAbandono[0]} (${topAbandono[1]})` : 'Sem abandono registrado';
+
+    const temposPdi = filteredRows
+      .map(r => r.tempoAtePrimeiroPdiMin)
+      .filter((t): t is number => typeof t === 'number' && t >= 0);
+    const tempoMedioPrimeiroPdi = temposPdi.length > 0
+      ? `${(temposPdi.reduce((a, b) => a + b, 0) / temposPdi.length).toFixed(1)} min`
+      : 'Aguardando novos ciclos';
+
+    const totalEvidencias = filteredRows.reduce((a, r) => a + (r.evidenciasCount || 0), 0);
+    const usuariosPdf = filteredRows.filter(r => (r.exportacoesPdf || 0) > 0).length;
+    const usuariosComparador = filteredRows.filter(r => (r.usoComparador || 0) > 0).length;
+    const usuariosPerfilPub = filteredRows.filter(r => (r.usoPerfilPublico || 0) > 0).length;
+
     return {
       total,
       concluidos,
@@ -309,6 +330,13 @@ export const AdminDashboard: React.FC = () => {
       mediaObjetivos: total > 0 ? (totalObjetivos / total).toFixed(1) : '0.0',
       mediaAcoes: total > 0 ? (totalAcoes / total).toFixed(1) : '0.0',
       mediaDiario: total > 0 ? (totalDiario / total).toFixed(1) : '0.0',
+      acoesPorCiclo: totalCiclos > 0 ? (totalAcoes / totalCiclos).toFixed(1) : (total > 0 ? (totalAcoes / total).toFixed(1) : '0.0'),
+      etapaMaiorAbandono,
+      tempoMedioPrimeiroPdi,
+      totalEvidencias,
+      taxaExportacaoPdf: total > 0 ? Math.round((usuariosPdf / total) * 100) : 0,
+      taxaUsoComparador: total > 0 ? Math.round((usuariosComparador / total) * 100) : 0,
+      taxaUsoPerfilPublico: total > 0 ? Math.round((usuariosPerfilPub / total) * 100) : 0,
       saudeFaixas,
       porArea,
       porNivel,
@@ -507,6 +535,39 @@ export const AdminDashboard: React.FC = () => {
             </p>
           </div>
           <Activity className="w-8 h-8 text-indigo-500 shrink-0" />
+        </div>
+      </div>
+
+      {/* Saúde do Produto (Indicadores de Adoção e Valor) */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+          Saúde do Produto · Adoção, Atrito e Evidências
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40">
+            <span className="text-slate-400 block">Maior abandono</span>
+            <strong className="text-slate-800 dark:text-slate-100 text-sm">{stats.etapaMaiorAbandono}</strong>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40">
+            <span className="text-slate-400 block">Tempo até 1º PDI</span>
+            <strong className="text-slate-800 dark:text-slate-100 text-sm">{stats.tempoMedioPrimeiroPdi}</strong>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40">
+            <span className="text-slate-400 block">Ações / ciclo</span>
+            <strong className="text-slate-800 dark:text-slate-100 text-sm">{stats.acoesPorCiclo}</strong>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40">
+            <span className="text-slate-400 block">Evidências</span>
+            <strong className="text-[#51266E] dark:text-[#BAB1BD] text-sm">{stats.totalEvidencias}</strong>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40">
+            <span className="text-slate-400 block">Exportação PDF</span>
+            <strong className="text-[#017AA1] text-sm">{stats.taxaExportacaoPdf}%</strong>
+          </div>
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40">
+            <span className="text-slate-400 block">Comparador / Perfil</span>
+            <strong className="text-emerald-600 text-sm">{stats.taxaUsoComparador}% / {stats.taxaUsoPerfilPublico}%</strong>
+          </div>
         </div>
       </div>
 

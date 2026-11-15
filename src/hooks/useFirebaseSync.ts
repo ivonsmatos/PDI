@@ -8,10 +8,19 @@ import type { PdiState } from '../store/usePdiStore';
 
 function buildTelemetry(state: PdiState) {
   const acoesConcluidasCount = Object.values(state.planoAcaoStatus).filter(v => v === 'concluido').length;
+  const evidenciasCount = state.inventario.hardSkills.reduce((acc, s) => acc + (s.evidencias?.length ?? 0), 0);
+  let tempoAtePrimeiroPdiMin: number | null = null;
+  if (state.wizardIniciadoEm && state.primeiroPdiCriadoEm) {
+    const diff = new Date(state.primeiroPdiCriadoEm).getTime() - new Date(state.wizardIniciadoEm).getTime();
+    if (diff >= 0 && diff < 1000 * 60 * 60 * 24 * 7) {
+      tempoAtePrimeiroPdiMin = Math.round((diff / 60000) * 10) / 10;
+    }
+  }
   return {
     areaAtuacao: state.usuario.areaAtuacao || '',
     nivelCarreira: state.usuario.nivelCarreira || '',
     wizardConcluido: state.wizardConcluido,
+    stepAtual: state.stepAtual,
     objetivosCount: state.objetivos.length,
     acoesCount: state.planoDeAcao.length,
     acoesConcluidasCount,
@@ -19,6 +28,11 @@ function buildTelemetry(state: PdiState) {
     ciclosCount: state.historico.length,
     hardSkillsCount: state.inventario.hardSkills.length,
     softSkillsCount: state.inventario.softSkills.length,
+    evidenciasCount,
+    tempoAtePrimeiroPdiMin,
+    exportacoesPdf: state.exportacoesPdf ?? 0,
+    usoComparador: state.usoComparador ?? 0,
+    usoPerfilPublico: state.usoPerfilPublico ?? 0,
     scoreSaude: computeHealthScore(state).score,
     ultimoAcesso: new Date().toISOString().slice(0, 10),
   };
@@ -67,7 +81,7 @@ export function useFirebaseSync() {
           Promise.all([
             savePdiAtual(uid, {
               stepAtual:       state.stepAtual,
-              usuario:         state.usuario as Record<string, string>,
+              usuario:         state.usuario as Record<string, unknown>,
               inventario:      state.inventario as Record<string, unknown>,
               objetivos:       state.objetivos,
               planoDeAcao:     state.planoDeAcao,
