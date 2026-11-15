@@ -18,21 +18,7 @@ import { generatePublicProfileId, type PublicProfileData } from '../lib/publicPr
 import { savePublicProfile } from '../lib/firestore';
 import { useToastStore } from '../store/useToastStore';
 import { usePageMeta } from '../hooks/usePageMeta';
-
-const AREA_LABELS: Record<string, string> = {
-  tecnologia: '💻 Tecnologia / Desenvolvimento',
-  devops_infraestrutura: '⚙️ DevOps & Infraestrutura',
-  seguranca_informacao: '🔒 Segurança da Informação',
-  qualidade_qa: '🧪 Qualidade / QA',
-  ciencia_de_dados: '📊 Ciência de Dados / BI',
-  gestao_de_produto: '🗺️ Gestão de Produto',
-  recursos_humanos: '🤝 Recursos Humanos',
-  marketing: '📣 Marketing',
-  vendas: '🎯 Vendas',
-  gestao: '👥 Gestão & Liderança',
-  financas: '💰 Finanças',
-  design: '🎨 Design / UX-UI',
-};
+import { AREA_EMOJI_LABEL_MAP as AREA_LABELS } from '../data/areas';
 
 const NIVEL_LABELS: Record<string, string> = {
   estagiario: 'Estagiário', junior: 'Júnior', pleno: 'Pleno',

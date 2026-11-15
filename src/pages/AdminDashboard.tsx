@@ -7,21 +7,7 @@ import { ShieldCheck, Users, CheckCircle2, Activity, Target, RefreshCw, AlertTri
 import { useAuth } from '../contexts/AuthContext';
 import { isAdminUser } from '../lib/admin';
 import { loadAllTelemetry, type TelemetrySnapshot } from '../lib/firestore';
-
-const AREA_NOMES: Record<string, string> = {
-  tecnologia: 'Tecnologia',
-  devops_infraestrutura: 'DevOps / Infra',
-  seguranca_informacao: 'Segurança',
-  qualidade_qa: 'QA / Qualidade',
-  ciencia_de_dados: 'Dados / BI',
-  gestao_de_produto: 'Produto',
-  recursos_humanos: 'RH',
-  marketing: 'Marketing',
-  vendas: 'Vendas',
-  gestao: 'Gestão',
-  financas: 'Finanças',
-  design: 'Design / UX',
-};
+import { AREA_CURTO_MAP as AREA_NOMES } from '../data/areas';
 
 const NIVEL_NOMES: Record<string, string> = {
   estagiario: 'Estagiário',

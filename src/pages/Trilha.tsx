@@ -90,35 +90,7 @@ const TIPO_COLOR: Record<TipoAtividade, string> = {
   portfolio:    'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300',
 };
 
-/** Retorna rótulo legível da área de atuação */
-const AREA_LABEL: Record<string, string> = {
-  tecnologia: 'Tecnologia / Desenvolvimento',
-  devops_infraestrutura: 'DevOps & Infraestrutura',
-  seguranca_informacao: 'Segurança da Informação',
-  qualidade_qa: 'Qualidade / QA',
-  ciencia_de_dados: 'Ciência de Dados / BI',
-  gestao_de_produto: 'Gestão de Produto',
-  inovacao_transformacao_digital: 'Inovação & Transformação Digital',
-  administracao: 'Administração',
-  gestao: 'Gestão & Liderança',
-  financas: 'Finanças',
-  contabilidade: 'Contabilidade',
-  compras_procurement: 'Compras & Procurement',
-  logistica_supply_chain: 'Logística & Supply Chain',
-  recursos_humanos: 'Recursos Humanos',
-  marketing: 'Marketing',
-  vendas: 'Vendas',
-  customer_success: 'Customer Success',
-  comunicacao_relacoes_publicas: 'Comunicação & Relações Públicas',
-  design: 'Design / UX-UI',
-  saude: 'Saúde',
-  educacao: 'Educação',
-  direito: 'Direito',
-  engenharia: 'Engenharia',
-  sustentabilidade_esg: 'Sustentabilidade & ESG',
-  agronegocio: 'Agronegócio',
-  varejo: 'Varejo & E-commerce',
-};
+import { AREA_LABEL_MAP as AREA_LABEL } from '../data/areas';
 
 const NIVEL_LABEL: Record<string, string> = {
   estagiario: 'Estagiário',

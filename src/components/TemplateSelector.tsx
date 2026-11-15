@@ -2,26 +2,12 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap } from 'lucide-react';
 import { matrizDeCompetencias } from '../data/matrizCompetencias';
+import { AREA_OPTIONS as AREA_LABELS } from '../data/areas';
 import { usePdiStore } from '../store/usePdiStore';
 import type { HardSkill, SoftSkill } from '../store/usePdiStore';
 
 type Area = keyof typeof matrizDeCompetencias;
 type Nivel = 'estagiario' | 'junior' | 'pleno' | 'senior' | 'especialista' | 'gestor';
-
-const AREA_LABELS: { value: Area; label: string }[] = [
-  { value: 'tecnologia',                       label: '💻 Dev / Tecnologia' },
-  { value: 'devops_infraestrutura',            label: '⚙️ DevOps & Infra' },
-  { value: 'seguranca_informacao',             label: '🔒 Segurança da Informação' },
-  { value: 'qualidade_qa',                     label: '🧪 Qualidade / QA' },
-  { value: 'ciencia_de_dados',                 label: '📊 Ciência de Dados / BI' },
-  { value: 'gestao_de_produto',                label: '🗺️ Gestão de Produto' },
-  { value: 'recursos_humanos',                 label: '🤝 Recursos Humanos' },
-  { value: 'marketing',                        label: '📣 Marketing' },
-  { value: 'vendas',                           label: '🎯 Vendas' },
-  { value: 'gestao',                           label: '👥 Gestão & Liderança' },
-  { value: 'financas',                         label: '💰 Finanças' },
-  { value: 'design',                           label: '🎨 Design / UX-UI' },
-];
 
 const NIVEL_LABELS: { value: Nivel; label: string }[] = [
   { value: 'estagiario', label: 'Estagiário / Aprendiz' },

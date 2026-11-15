@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePdiStore } from '../store/usePdiStore';
 import { matrizDeCompetencias } from '../data/matrizCompetencias';
+import { AREA_OPTIONS as areaOptions } from '../data/areas';
 
 const atributosEmpregabilidade = [
   "Capacidade de estabelecer network",
@@ -12,40 +13,6 @@ const atributosEmpregabilidade = [
   "Proatividade",
   "Comunicação",
   "Visão Sistêmica"
-];
-
-const areaOptions = [
-  // Tecnologia
-  { value: 'tecnologia',               label: '💻 Tecnologia / Desenvolvimento' },
-  { value: 'devops_infraestrutura',     label: '⚙️ DevOps & Infraestrutura' },
-  { value: 'seguranca_informacao',      label: '🔒 Segurança da Informação' },
-  { value: 'qualidade_qa',             label: '🧪 Qualidade / QA' },
-  { value: 'ciencia_de_dados',         label: '📊 Ciência de Dados / BI' },
-  { value: 'gestao_de_produto',        label: '🗺️ Gestão de Produto' },
-  { value: 'inovacao_transformacao_digital', label: '🚀 Inovação & Transformação Digital' },
-  // Negócios
-  { value: 'administracao',            label: '🏢 Administração' },
-  { value: 'gestao',                   label: '👥 Gestão & Liderança' },
-  { value: 'financas',                 label: '💰 Finanças' },
-  { value: 'contabilidade',            label: '📒 Contabilidade' },
-  { value: 'compras_procurement',      label: '🛒 Compras & Procurement' },
-  { value: 'logistica_supply_chain',   label: '🚚 Logística & Supply Chain' },
-  // Pessoas & Marketing
-  { value: 'recursos_humanos',         label: '🤝 Recursos Humanos' },
-  { value: 'marketing',                label: '📣 Marketing' },
-  { value: 'vendas',                   label: '🎯 Vendas' },
-  { value: 'customer_success',         label: '⭐ Customer Success' },
-  { value: 'comunicacao_relacoes_publicas', label: '📡 Comunicação & Relações Públicas' },
-  // Design
-  { value: 'design',                   label: '🎨 Design / UX-UI' },
-  // Setores Especializados
-  { value: 'saude',                    label: '🏥 Saúde' },
-  { value: 'educacao',                 label: '🎓 Educação' },
-  { value: 'direito',                  label: '⚖️ Direito' },
-  { value: 'engenharia',               label: '🏗️ Engenharia' },
-  { value: 'sustentabilidade_esg',     label: '🌱 Sustentabilidade & ESG' },
-  { value: 'agronegocio',              label: '🌾 Agronegócio' },
-  { value: 'varejo',                   label: '🛍️ Varejo & E-commerce' },
 ];
 
 const nivelOptions = [

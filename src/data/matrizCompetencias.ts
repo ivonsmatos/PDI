@@ -1,6 +1,6 @@
 // Matriz de Competências por Área e Nível
 // Hard Skills: 6 por nível | Soft Skills: 4 por nível
-// Áreas: 23 trilhas de carreira
+// Áreas: 40 trilhas de carreira
 
 export const matrizDeCompetencias = {
 
@@ -885,6 +885,482 @@ export const matrizDeCompetencias = {
       expectativa: "Diretor Comercial ou de Operações de Varejo: define estratégia de expansão e rentabilidade.",
       hardSkills: ["Estratégia de Expansão e Novos Canais de Varejo", "Gestão de P&L Corporativo do Varejo", "Gestão de Times de Operações e Comercial", "Planejamento de Coleções / Calendário Comercial Anual", "Parcerias e Relacionamento com Grandes Marcas e Indústria", "ESG e Sustentabilidade no Varejo (Descarte, Embalagens)"],
       softSkills: ["Liderança Executiva Comercial", "Visão de Tendências de Consumo", "Negociação de Alto Nível com Indústria", "Desenvolvimento de Cultura de Resultado"]
+    }
+  },
+
+  /* ─────────────────── ARQUITETURA E CONSTRUÇÃO ─────────────────── */
+  arquitetura_construcao: {
+    estagiario: {
+      expectativa: "Apoio em levantamentos, detalhamentos e modelagem sob supervisão técnica.",
+      hardSkills: ["AutoCAD 2D", "SketchUp / Modelagem 3D Básica", "Leitura de Plantas e Cortes", "Noções de BIM (Revit Básico)", "Levantamento de Quantitativos Simples", "Normas ABNT Introdutórias (NBR 9050, NBR 6492)"],
+      softSkills: ["Atenção a Detalhes", "Curiosidade Técnica", "Organização de Pranchas", "Trabalho em Equipe"]
+    },
+    junior: {
+      expectativa: "Desenvolve projetos executivos de menor complexidade e acompanha visitas a obra.",
+      hardSkills: ["Revit / ArchiCAD (BIM Intermediário)", "Detalhamento Executivo e Marcenaria", "Compatibilização Básica de Projetos", "Orçamento de Obra (SINAPI/TCPO Básico)", "Renderização (Lumion/Enscape/V-Ray)", "Aprovação Legal em Prefeituras e Bombeiros"],
+      softSkills: ["Comunicação Clara com Clientes", "Gestão de Prazos", "Receptividade a Feedback", "Resolução Prática de Problemas"]
+    },
+    pleno: {
+      expectativa: "Conduz projetos completos e coordena interfaces com engenharia e fornecedores.",
+      hardSkills: ["Coordenação BIM (Navisworks/Solibri)", "Gestão de Obra e Cronograma Físico-Financeiro", "Especificação Técnica de Materiais e Sistemas", "Conforto Ambiental e Eficiência Energética", "Gestão de Contratos e Medições de Empreiteiros", "Compatibilização Multidisciplinar (Estrutura/MEP)"],
+      softSkills: ["Negociação com Fornecedores e Obra", "Autonomia", "Comunicação Assertiva", "Visão Estética e Funcional"]
+    },
+    senior: {
+      expectativa: "Lidera grandes empreendimentos, define partido arquitetônico e mitiga riscos técnicos.",
+      hardSkills: ["Arquitetura Corporativa, Comercial ou Residencial Complexa", "Gestão de Portfólio de Obras e CapEx", "Certificações Sustentáveis (LEED, AQUA, EDGE)", "Análise de Viabilidade Técnica e Legal de Terrenos", "Engenharia de Valor e Otimização Construtiva", "Gestão de Riscos e Aditivos de Obra"],
+      softSkills: ["Liderança Técnica de Equipe", "Influência com Incorporadoras e Clientes", "Tomada de Decisão sob Pressão", "Mentoria de Arquitetos"]
+    },
+    especialista: {
+      expectativa: "Referência técnica em BIM, sustentabilidade, patrimônio ou tecnologia construtiva.",
+      hardSkills: ["BIM Management e Padronização Corporativa (ISO 19650)", "Parametrização e Design Computacional (Grasshopper/Dynamo)", "Construção Modular, Steel Frame e Pré-fabricados", "Acústica, Luminotécnica ou Fachadas Avançadas", "Simulações Energéticas e Análise de Ciclo de Vida", "Inovação em Materiais e Construtechs"],
+      softSkills: ["Pensamento Analítico Avançado", "Inovação Contínua", "Comunicação Técnica Executiva", "Educação e Disseminação de Padrões"]
+    },
+    gestor: {
+      expectativa: "Dirige escritório ou diretoria técnica, equilibrando rentabilidade, prazo e qualidade.",
+      hardSkills: ["Gestão Financeira e Precificação de Projetos/Obras", "Desenvolvimento de Novos Negócios e Licitações", "Gestão de Equipes Multidisciplinares de Projeto e Obra", "Governança de Qualidade e Segurança do Trabalho (NR-18)", "Relacionamento com Investidores e Incorporadores", "Estratégia de Crescimento e Parcerias"],
+      softSkills: ["Liderança Estratégica", "Visão de Negócio Imobiliário", "Gestão de Conflitos", "Formação de Lideranças"]
+    }
+  },
+
+  /* ─────────────────── INDÚSTRIA E MANUFATURA ─────────────────── */
+  industria_manufatura: {
+    estagiario: {
+      expectativa: "Apoio à rotina de chão de fábrica, coleta de indicadores e aprendizado de processos.",
+      hardSkills: ["Noções de Lean Manufacturing (5S, Kaizen)", "Leitura de Desenho Técnico e Metrologia", "Excel Intermediário para Produção", "Noções de Segurança do Trabalho (NR-12/EPIs)", "Apontamento de Produção e Refugo", "Controle Estatístico Básico"],
+      softSkills: ["Disciplina Operacional", "Atenção à Segurança", "Trabalho em Equipe", "Curiosidade Industrial"]
+    },
+    junior: {
+      expectativa: "Executa análises de processo, apoio ao PCP e melhorias pontuais na linha.",
+      hardSkills: ["PCP (Planejamento e Controle da Produção)", "Ferramentas da Qualidade (Pareto, Ishikawa, 5 Porquês)", "Cronoanálise e Balanceamento de Linha", "ERP Industrial (SAP PP/MM ou TOTVS)", "Cálculo de OEE e Eficiência de Linha", "Mapeamento de Fluxo de Valor (VSM Básico)"],
+      softSkills: ["Comunicação com Operadores", "Organização", "Proatividade", "Resolução de Problemas"]
+    },
+    pleno: {
+      expectativa: "Lidera células ou projetos de melhoria contínua, reduzindo perdas e variabilidade.",
+      hardSkills: ["Lean Six Sigma (Green Belt)", "Manutenção Produtiva Total (TPM)", "FMEA e Controle Estatístico de Processo (CEP)", "Automação Industrial e CLP/SCADA Básico", "Gestão de Turno e Indicadores de Produtividade", "Redução de Setup (SMED)"],
+      softSkills: ["Liderança de Chão de Fábrica", "Influência sem Autoridade", "Análise Crítica", "Foco em Resultado"]
+    },
+    senior: {
+      expectativa: "Otimiza plantas industriais, conduz projetos de CapEx e eleva padrões de qualidade.",
+      hardSkills: ["Lean Six Sigma (Black Belt)", "Indústria 4.0 (MES, IIoT, Gêmeos Digitais)", "Gestão de Orçamento Industrial e Custo de Conversão", "Certificações ISO 9001, IATF 16949 ou ISO 14001", "Planejamento de Capacidade e Layout Fabril", "Gestão de Segurança Operacional e Riscos"],
+      softSkills: ["Liderança Multifuncional", "Tomada de Decisão sob Pressão", "Negociação com Sindicatos e Fornecedores", "Mentoria Técnica"]
+    },
+    especialista: {
+      expectativa: "Referência corporativa em excelência operacional, automação ou engenharia de processos.",
+      hardSkills: ["Arquitetura de Manufatura Inteligente (IIoT/IA)", "Modelagem e Simulação de Processos Industriais", "Robótica Colaborativa e Visão Computacional", "Descarbonização e Eficiência Energética Industrial", "Auditoria e Padronização Global de Manufatura", "Engenharia de Confiabilidade Avançada"],
+      softSkills: ["Pensamento Sistêmico", "Inovação Industrial", "Comunicação Executiva", "Influência Corporativa"]
+    },
+    gestor: {
+      expectativa: "Gerente ou Diretor Industrial: responde por P&L fabril, segurança, pessoas e entregas.",
+      hardSkills: ["Gestão Integral de Planta (P&L Fabril e EBITDA)", "S&OP e Integração com Supply Chain e Comercial", "Estratégia de Investimentos Industriais (CapEx)", "Governança de EHS (Saúde, Segurança e Meio Ambiente)", "Gestão de Múltiplos Turnos e Lideranças", "Transformação Cultural Lean"],
+      softSkills: ["Liderança Executiva", "Gestão de Crises Operacionais", "Visão Estratégica de Negócio", "Desenvolvimento de Gestores"]
+    }
+  },
+
+  /* ─────────────────── ENERGIA, ÓLEO E GÁS ─────────────────── */
+  energia_oleo_gas: {
+    estagiario: {
+      expectativa: "Apoio técnico em análises operacionais, dados de geração/produção e normas de SMS.",
+      hardSkills: ["Fundamentos de Sistemas Energéticos / O&G", "Excel e Análise de Dados Básicos", "Noções de SMS (Saúde, Meio Ambiente e Segurança)", "Leitura de Fluxogramas (PFD/P&ID Básico)", "Noções de Regulação (ANEEL/ANP)", "Relatórios Técnicos de Acompanhamento"],
+      softSkills: ["Cultura de Segurança", "Rigor Técnico", "Curiosidade", "Trabalho em Equipe"]
+    },
+    junior: {
+      expectativa: "Acompanha operações, manutenção e conformidade regulatória em campo ou escritório.",
+      hardSkills: ["Operação e Manutenção de Ativos Energéticos", "Análise de Dados Operacionais (PI System/Power BI)", "Gestão de Permissões de Trabalho e Análise de Risco (APR)", "Fundamentos de Subestações / Dutos / Plantas", "Contratos de Energia (ACL/ACR) Básicos", "Normas Técnicas (NR-10, NR-13, NR-35)"],
+      softSkills: ["Atenção a Procedimentos", "Comunicação em Campo", "Organização", "Resolução de Problemas"]
+    },
+    pleno: {
+      expectativa: "Conduz projetos de geração, transmissão, O&G ou eficiência com foco em confiabilidade.",
+      hardSkills: ["Engenharia de Confiabilidade e Integridade de Ativos", "Estudos Elétricos / Termodinâmicos / Reservatórios", "Comercialização e Leilões de Energia (CCEE)", "Gestão de Paradas Programadas (Turnaround)", "Licenciamento Ambiental e Relacionamento Regulatório", "Automação e Telemetria (SCADA)"],
+      softSkills: ["Gestão de Riscos", "Autonomia Técnica", "Colaboração Multidisciplinar", "Comunicação Objetiva"]
+    },
+    senior: {
+      expectativa: "Lidera empreendimentos de alto porte, otimiza portfólio de ativos e responde por SMS crítico.",
+      hardSkills: ["Estruturação de Projetos de Energia Renovável (Solar/Eólica/BESS)", "Gestão de Risco Operacional e Segurança de Processo (PSM)", "Modelagem Econômico-Financeira de Ativos (VPL/TIR)", "Gestão de Contratos EPC e O&M", "Estratégia Regulatória (ANEEL/ONS/ANP)", "Transição Energética e Hidrogênio / Biometano"],
+      softSkills: ["Liderança em Ambientes Críticos", "Tomada de Decisão sob Pressão", "Negociação com Órgãos e Parceiros", "Mentoria Técnica"]
+    },
+    especialista: {
+      expectativa: "Referência em tecnologia energética, transição de matriz ou integridade complexa.",
+      hardSkills: ["Sistemas de Armazenamento (BESS) e Smart Grids", "Captura de Carbono (CCUS) e Descarbonização", "Análise Avançada de Confiabilidade e IA Preditiva", "Engenharia Submarina / Refino / Alta Tensão Avançada", "Due Diligence Técnica para M&A de Ativos", "P&D Regulado (ANEEL/ANP)"],
+      softSkills: ["Visão Sistêmica do Setor", "Inovação Tecnológica", "Influência Técnica Executiva", "Pensamento Analítico Profundo"]
+    },
+    gestor: {
+      expectativa: "Dirige operações, engenharia ou unidade de negócios com foco em segurança, retorno e ESG.",
+      hardSkills: ["Gestão de P&L de Ativos de Geração/O&G", "Estratégia de Portfólio e PPA Corporativos", "Governança de SMS Zero Acidentes", "Gestão de CapEx Bilionário e Financiamento de Projetos", "Relações Institucionais e Governamentais", "Estratégia de Transição Energética Corporativa"],
+      softSkills: ["Liderança Executiva", "Gestão de Crise", "Visão Geopolítica e de Mercado", "Desenvolvimento de Lideranças"]
+    }
+  },
+
+  /* ─────────────────── TELECOMUNICAÇÕES ─────────────────── */
+  telecomunicacoes: {
+    estagiario: {
+      expectativa: "Apoio em monitoramento de rede, documentação de topologias e atendimento técnico.",
+      hardSkills: ["Fundamentos de Redes (TCP/IP, OSI, VLAN)", "Noções de Fibra Óptica (FTTH/GPON) e RF", "Monitoramento NOC Básico", "Linux e CLI de Roteadores Básico", "Documentação de Topologias e Inventário", "Noções de Regulação Anatel"],
+      softSkills: ["Curiosidade Técnica", "Atenção a Detalhes", "Trabalho em Equipe", "Comunicação Clara"]
+    },
+    junior: {
+      expectativa: "Executa configurações, troubleshooting de primeiro/segundo nível e ativação de links.",
+      hardSkills: ["Roteamento e Switching (OSPF, BGP Básico, MPLS)", "Redes Ópticas (DWDM, OLT/ONT, OTDR)", "Redes Móveis (4G/LTE, 5G NSA/SA Básico)", "Ferramentas de Monitoramento (Zabbix, Grafana, PRTG)", "Automação de Rede Básica (Python/Ansible)", "Gestão de Chamados e SLA"],
+      softSkills: ["Agilidade sob Pressão", "Organização", "Comunicação com Campo", "Resolução de Problemas"]
+    },
+    pleno: {
+      expectativa: "Projeta e otimiza redes de acesso, transporte ou core garantindo alta disponibilidade.",
+      hardSkills: ["Engenharia de Tráfego (BGP Avançado, MPLS, Segment Routing)", "Planejamento de RF e Otimização 4G/5G", "Core de Rede e Virtualização (NFV, SDN)", "Segurança de Redes de Telecom (DDoS, CGNAT, Firewall)", "Capacity Planning e Análise de Qualidade (QoS/QoE)", "Gestão de Projetos de Implantação de Rede"],
+      softSkills: ["Autonomia Técnica", "Colaboração entre Áreas", "Gestão de Incidentes", "Pensamento Analítico"]
+    },
+    senior: {
+      expectativa: "Arquiteta backbones, redes 5G ou infraestrutura crítica e lidera resposta a crises.",
+      hardSkills: ["Arquitetura de Backbone Nacional e Interconexão (IX/Peering)", "Redes 5G Standalone, Network Slicing e Edge Computing", "Automação de Rede em Escala (NetDevOps)", "Arquitetura de Alta Disponibilidade e Redundância", "Negociação de Capacidade, Trânsito IP e Torres", "Conformidade Regulatória Anatel e Qualidade"],
+      softSkills: ["Liderança Técnica", "Tomada de Decisão em Crises", "Comunicação Executiva", "Mentoria de Engenheiros"]
+    },
+    especialista: {
+      expectativa: "Referência em arquitetura de telecom, Open RAN, óptica avançada ou automação autônoma.",
+      hardSkills: ["Open RAN e Desagregação de Rede", "Sistemas Ópticos Coerentes de Ultra Capacidade", "Redes Privativas 5G Industriais e IoT Massivo", "AIOps e Redes Autônomas (Zero-Touch)", "Arquitetura IPv6 e Segurança BGP (RPKI)", "Due Diligence de Infraestrutura Telecom"],
+      softSkills: ["Inovação em Conectividade", "Influência Estratégica", "Visão Sistêmica", "Pensamento Analítico Profundo"]
+    },
+    gestor: {
+      expectativa: "Dirige engenharia, operações ou negócios de telecom equilibrando CapEx, cobertura e SLA.",
+      hardSkills: ["Gestão de CapEx/OpEx de Infraestrutura de Rede", "Estratégia de Expansão de Cobertura e Mercado", "Gestão de NOC, Campo e Fornecedores/Empreiteiras", "Governança de SLA, Churn Técnico e Experiência", "Parcerias de Compartilhamento de Infraestrutura (RAN Sharing)", "Estratégia Regulatória e Espectro"],
+      softSkills: ["Liderança Executiva", "Gestão de Crises Nacionais", "Visão de Negócio", "Desenvolvimento de Talentos"]
+    }
+  },
+
+  /* ─────────────────── TRANSPORTES E MOBILIDADE ─────────────────── */
+  transportes_mobilidade: {
+    estagiario: {
+      expectativa: "Apoio no acompanhamento de frota, planilhas operacionais e indicadores de pontualidade.",
+      hardSkills: ["Excel para Controle de Frota e Rotas", "Noções de Telemetria e Rastreamento", "Indicadores Operacionais (OTIF, Ocupação, Consumo)", "Noções de Legislação de Trânsito e ANTT/ARTESP", "Apoio a Escalas e Programação de Viagens", "Georreferenciamento Básico (QGIS/Maps)"],
+      softSkills: ["Organização", "Atenção a Prazos", "Comunicação Clara", "Trabalho em Equipe"]
+    },
+    junior: {
+      expectativa: "Monitora operações diárias, roteirização e manutenção preventiva de frota.",
+      hardSkills: ["Sistemas TMS e Gestão de Frotas", "Roteirização e Otimização de Malha", "Controle de Manutenção Preventiva e Pneus/Combustível", "Gestão de Sinistros e Segurança Viária", "Apuração de Custos por Km Rodado", "Atendimento a Ocorrências em Rota"],
+      softSkills: ["Agilidade na Decisão", "Empatia com Motoristas/Passageiros", "Resolução de Problemas", "Proatividade"]
+    },
+    pleno: {
+      expectativa: "Otimiza redes de transporte, reduz custos operacionais e implementa melhorias de serviço.",
+      hardSkills: ["Planejamento de Malha e Dimensionamento de Frota", "Análise de Dados de Mobilidade (BI/SQL/GIS)", "Gestão de Contratos de Terceiros e Agregados", "Segurança Viária e Programas de Direção Defensiva", "Modelagem de Demanda e Tarifa / Frete", "Mobilidade Urbana e Integração Multimodal"],
+      softSkills: ["Liderança Operacional", "Negociação com Parceiros", "Pensamento Sistêmico", "Foco em Eficiência"]
+    },
+    senior: {
+      expectativa: "Lidera operações regionais, projetos de expansão e transição para frotas mais limpas.",
+      hardSkills: ["Estratégia de Descarbonização (Elétricos, GNV, Biometano)", "Gestão de P&L de Operação de Transporte", "Torre de Controle e Automação Logística/Mobilidade", "Concessões Públicas e Parcerias Público-Privadas (PPPs)", "Gestão de Risco e Continuidade Operacional", "Pricing de Frete / Bilhetagem"],
+      softSkills: ["Liderança de Grandes Equipes", "Tomada de Decisão sob Pressão", "Influência Institucional", "Mentoria"]
+    },
+    especialista: {
+      expectativa: "Referência em engenharia de tráfego, eletrificação, MaaS ou otimização matemática.",
+      hardSkills: ["Pesquisa Operacional e Otimização de Rotas (VRP)", "Infraestrutura de Recarga e Eletrificação de Frotas", "MaaS (Mobility as a Service) e Bilhetagem Inteligente", "Simulação de Tráfego e Fluxo de Passageiros", "Telemetria Preditiva e IA em Segurança Viária", "Modelagem Econômica de Concessões"],
+      softSkills: ["Pensamento Analítico Avançado", "Inovação em Mobilidade", "Comunicação Executiva", "Visão de Futuro"]
+    },
+    gestor: {
+      expectativa: "Dirige operações de transporte ou mobilidade com foco em rentabilidade, segurança e nível de serviço.",
+      hardSkills: ["Estratégia Corporativa de Mobilidade e Logística", "Gestão de CapEx de Renovação de Frota", "Relações Governamentais, Sindicais e Regulatórias", "Governança de Segurança Viária e ESG", "Expansão de Corredores e Novos Contratos", "Transformação Digital de Operações"],
+      softSkills: ["Liderança Executiva", "Gestão de Crise", "Visão Estratégica", "Desenvolvimento de Lideranças"]
+    }
+  },
+
+  /* ─────────────────── TURISMO, HOTELARIA E EVENTOS ─────────────────── */
+  turismo_hotelaria_eventos: {
+    estagiario: {
+      expectativa: "Apoio em atendimento ao hóspede/participante, reservas e logística operacional.",
+      hardSkills: ["Atendimento ao Cliente e Hospitalidade", "Sistemas PMS/Reservas Básicos", "Apoio à Logística de Eventos e Check-in", "Comunicação em Inglês/Espanhol Básico", "Planilhas de Controle de Convidados e Fornecedores", "Noções de Etiqueta e Protocolo"],
+      softSkills: ["Simpatia e Empatia", "Organização", "Calma sob Pressão", "Trabalho em Equipe"]
+    },
+    junior: {
+      expectativa: "Conduz rotinas de recepção, produção de eventos ou vendas turísticas com autonomia.",
+      hardSkills: ["Gestão de Reservas, OTAs e Canais de Distribuição", "Produção Executiva de Eventos Corporativos/Sociais", "Orçamentação e Cotação de Fornecedores", "Idiomas Aplicados ao Atendimento (Inglês/Espanhol)", "Experiência do Hóspede / Participante (NPS)", "Noções de A&B (Alimentos e Bebidas) e Governança"],
+      softSkills: ["Resolução Rápida de Imprevistos", "Comunicação Encantadora", "Proatividade", "Flexibilidade de Horários"]
+    },
+    pleno: {
+      expectativa: "Coordena áreas hoteleiras, grandes eventos ou produtos turísticos com foco em receita.",
+      hardSkills: ["Revenue Management e Precificação Dinâmica (RevPAR, ADR)", "Gestão de Equipes de Recepção, Eventos ou Operações", "Planejamento Completo de Feiras, Congressos e Experiências", "Marketing Turístico e Parcerias Comerciais", "Gestão de Contratos, Alvarás e Segurança de Eventos", "Análise de P&L de Eventos e Diárias"],
+      softSkills: ["Liderança de Serviço", "Negociação com Fornecedores", "Gestão do Estresse", "Foco em Experiência"]
+    },
+    senior: {
+      expectativa: "Gerencia operações completas de hotéis, resorts, agências ou grandes produções.",
+      hardSkills: ["Gestão Geral de Hotelaria (GOPPAR, P&L Completo)", "Estratégia Comercial MICE (Meetings, Incentives, Conferences)", "Expansão de Destinos, Roteiros e Parcerias Internacionais", "Gestão de Crise e Reputação (TripAdvisor/Reviews)", "Eventos Sustentáveis e Acessíveis (ESG)", "Automação da Jornada do Hóspede"],
+      softSkills: ["Liderança Inspiradora", "Tomada de Decisão em Tempo Real", "Relacionamento Executivo", "Mentoria de Equipes"]
+    },
+    especialista: {
+      expectativa: "Referência em revenue management, curadoria de experiências ou hospitalidade de luxo.",
+      hardSkills: ["Revenue Management Avançado e Distribuição Global", "Design de Experiências Memoráveis e Hospitalidade de Luxo", "Estratégia de Turismo Sustentável e Regenerativo", "Tecnologia para Eventos (Híbridos, Credenciamento, Dados)", "Implantação e Pré-abertura de Empreendimentos Hoteleiros", "Consultoria de Padrões de Serviço (Forbes/AAA)"],
+      softSkills: ["Sensibilidade Cultural", "Inovação em Experiência", "Influência Estratégica", "Excelência em Detalhes"]
+    },
+    gestor: {
+      expectativa: "Dirige redes hoteleiras, operadoras ou empresas de eventos com foco em marca e retorno.",
+      hardSkills: ["Estratégia de Expansão, Franquias e Bandeiras Hoteleiras", "Gestão de Portfólio e Rentabilidade Multi-unidade", "Relações Institucionais com Trade Turístico e Destinos", "Gestão de Grandes Orçamentos e Patrocínios", "Transformação Digital e Fidelização", "Cultura de Hospitalidade de Alta Performance"],
+      softSkills: ["Liderança Executiva", "Visão de Tendências Globais", "Negociação de Alto Nível", "Desenvolvimento de Líderes"]
+    }
+  },
+
+  /* ─────────────────── GASTRONOMIA E ALIMENTAÇÃO ─────────────────── */
+  gastronomia_alimentacao: {
+    estagiario: {
+      expectativa: "Aprendizado de praças de cozinha, pré-preparo e boas práticas de higiene.",
+      hardSkills: ["Mise en Place e Cortes Básicos", "Boas Práticas de Fabricação e Higiene (RDC 216 ANVISA)", "Armazenamento, PVPS e Controle de Validade", "Operação Segura de Equipamentos de Cozinha", "Noções de Técnicas Clássicas de Cocção", "Organização e Limpeza de Praça"],
+      softSkills: ["Disciplina", "Agilidade", "Trabalho sob Pressão", "Respeito à Hierarquia de Cozinha"]
+    },
+    junior: {
+      expectativa: "Assume praça específica com padronização de receitas e ritmo de serviço.",
+      hardSkills: ["Execução de Fichas Técnicas e Padronização", "Domínio de Praça (Quente, Fria, Confeitaria, Bar)", "Controle de Desperdício e Porcionamento", "Segurança Alimentar (APPCC/Controle de Temperatura)", "Atendimento e Ritmo de Serviço (A la Carte/Buffet)", "Noções de Custos de Insumos"],
+      softSkills: ["Consistência na Entrega", "Comunicação em Serviço", "Resistência Física e Emocional", "Colaboração"]
+    },
+    pleno: {
+      expectativa: "Coordena turnos de cozinha ou salão, cria fichas técnicas e controla CMV.",
+      hardSkills: ["Engenharia de Cardápio e Cálculo de CMV", "Gestão de Estoque, Compras e Fornecedores Locais", "Criação de Receitas e Desenvolvimento de Pratos", "Liderança de Brigada em Turno de Pico", "Padronização para Delivery e Escala", "Auditoria Interna de Qualidade e Vigilância Sanitária"],
+      softSkills: ["Liderança de Brigada", "Criatividade com Viabilidade", "Gestão de Conflitos", "Organização Operacional"]
+    },
+    senior: {
+      expectativa: "Chef Executivo ou Gerente de A&B: responde por conceito, equipe e margem da operação.",
+      hardSkills: ["Gestão Financeira de Restaurantes / Cozinhas Industriais (DRE)", "Planejamento Sazonal de Cardápios e Fornecimento", "Treinamento Técnico Contínuo da Brigada", "Projetos de Cozinha, Fluxo e Equipamentos", "Estratégia de Marca Gastronômica e Experiência do Cliente", "Gestão de Múltiplos Pontos ou Catering"],
+      softSkills: ["Liderança Inspiradora", "Visão de Negócio Gastronômico", "Tomada de Decisão Rápida", "Mentoria de Cozinheiros"]
+    },
+    especialista: {
+      expectativa: "Referência em pesquisa gastronômica, P&D de alimentos, panificação ou nutrição aplicada.",
+      hardSkills: ["P&D de Alimentos, Fermentação e Técnicas Avançadas", "Gastronomia Funcional, Inclusiva e Restrições Alimentares", "Consultoria de Implantação e Turnaround de Operações", "Tecnologia de Alimentos e Vida Útil (Shelf Life)", "Curadoria de Terroir e Sustentabilidade Alimentar", "Padronização Industrial para Redes e Franquias"],
+      softSkills: ["Inovação Culinária", "Rigor Científico-Gastronômico", "Comunicação Didática", "Visão Cultural"]
+    },
+    gestor: {
+      expectativa: "Dirige grupos de restaurantes, redes de food service ou operações corporativas de alimentação.",
+      hardSkills: ["Expansão de Redes, Franquias e Dark Kitchens", "Gestão de P&L Multi-unidade e Supply Chain Alimentar", "Negociação Corporativa com Indústrias e Distribuidores", "Governança de Segurança Alimentar em Escala", "Estratégia de Marca, Delivery e Omnichannel", "Desenvolvimento de Chefs e Gerentes de Unidade"],
+      softSkills: ["Liderança Executiva", "Visão Estratégica de Food Service", "Negociação de Alto Nível", "Cultura de Excelência"]
+    }
+  },
+
+  /* ─────────────────── MÍDIA, AUDIOVISUAL E ENTRETENIMENTO ─────────────────── */
+  midia_audiovisual_entretenimento: {
+    estagiario: {
+      expectativa: "Apoio em decupagem, edição básica, captação e organização de arquivos de produção.",
+      hardSkills: ["Edição Básica (Premiere/DaVinci/CapCut)", "Organização de Mídia, Proxy e Backup", "Noções de Captação de Áudio e Vídeo", "Pesquisa de Referências e Roteiro Básico", "Legendas, Cortes para Redes Sociais e Formatos", "Direitos Autorais e Licenciamento Básico"],
+      softSkills: ["Criatividade", "Atenção ao Ritmo e Detalhes", "Curiosidade Cultural", "Trabalho em Equipe"]
+    },
+    junior: {
+      expectativa: "Produz, edita ou opera equipamentos em entregas recorrentes com qualidade técnica.",
+      hardSkills: ["Edição e Color Grading Intermediários (DaVinci/Premiere)", "Motion Graphics Básico (After Effects)", "Operação de Câmera, Iluminação e Captação de Som", "Roteirização para Vídeo, Podcast ou Entretenimento", "Fluxos de Publicação Multiplataforma (YouTube, Streaming, Reels)", "Noções de Produção e Cronograma de Diária"],
+      softSkills: ["Comunicação Visual", "Cumprimento de Prazos Apertados", "Receptividade a Críticas", "Proatividade"]
+    },
+    pleno: {
+      expectativa: "Dirige, produz ou finaliza projetos audiovisuais completos, liderando equipes de set.",
+      hardSkills: ["Direção de Fotografia / Direção Criativa / Produção Executiva", "Sound Design e Mixagem Profissional", "Orçamentação, Plano de Produção e Ordem do Dia", "Narrativa Transmídia e Retenção de Audiência", "Gestão de Fornecedores, Elenco e Locações", "Pós-produção Avançada e Entrega Broadcast/Streaming"],
+      softSkills: ["Liderança de Set", "Negociação Criativa e Financeira", "Resolução de Imprevistos", "Visão Narrativa"]
+    },
+    senior: {
+      expectativa: "Showrunner, Diretor ou Produtor Sênior: conduz séries, campanhas e grandes propriedades.",
+      hardSkills: ["Gestão Financeira de Produções e Editais/Leis de Incentivo", "Desenvolvimento de Formatos Originais e Bíblias", "Negociação de Distribuição, Licenciamento e Streaming", "Direção de Grandes Equipes Técnicas e Artísticas", "Estratégia de Audiência, Monetização e Propriedade Intelectual", "Uso Estratégico de IA Generativa em Pré e Pós-produção"],
+      softSkills: ["Liderança Artística", "Tomada de Decisão sob Pressão", "Influência com Executivos e Marcas", "Mentoria Criativa"]
+    },
+    especialista: {
+      expectativa: "Referência técnica ou autoral em VFX, pipeline virtual, som imersivo ou roteiro.",
+      hardSkills: ["Produção Virtual (Unreal Engine / LED Volume)", "VFX Avançado, Composição e Pipeline ACES", "Áudio Imersivo (Dolby Atmos) e Trilha Original", "Showrunning e Roteiro Seriado Avançado", "Arquitetura de Estúdios e Workflows em Nuvem", "Curadoria e Estratégia de Catálogo"],
+      softSkills: ["Excelência Autoral", "Inovação Tecnológica em Mídia", "Pensamento Crítico", "Comunicação Executiva"]
+    },
+    gestor: {
+      expectativa: "Dirige produtora, canal, estúdio ou área de conteúdo com foco em receita e relevância.",
+      hardSkills: ["Gestão de P&L de Estúdio / Canal / Produtora", "Captação de Recursos, Patrocínios e Coproduções Internacionais", "Estratégia de Portfólio de Propriedades Intelectuais (IP)", "Gestão de Talentos Artísticos e Contratos", "Distribuição Multiplataforma e Novos Modelos de Negócio", "Governança de Compliance e Direitos"],
+      softSkills: ["Liderança Executiva Criativa", "Visão de Indústria Cultural", "Negociação de Alto Nível", "Formação de Líderes"]
+    }
+  },
+
+  /* ─────────────────── PESQUISA, CIÊNCIA E ACADEMIA ─────────────────── */
+  pesquisa_ciencia_academia: {
+    estagiario: {
+      expectativa: "Iniciação científica: revisão bibliográfica, coleta de dados e apoio experimental.",
+      hardSkills: ["Revisão Bibliográfica e Bases Científicas (Scopus, PubMed, SciELO)", "Gestão de Referências (Zotero/Mendeley)", "Organização de Dados Experimentais e Caderno de Lab", "Estatística Descritiva Básica (R/Python/SPSS)", "Normas ABNT / APA para Redação Científica", "Boas Práticas de Laboratório e Ética em Pesquisa"],
+      softSkills: ["Rigor Científico", "Curiosidade Investigativa", "Paciência Metodológica", "Comunicação Escrita"]
+    },
+    junior: {
+      expectativa: "Executa protocolos de pesquisa, análises estatísticas e redige artigos iniciais.",
+      hardSkills: ["Desenho Experimental e Metodologia Científica", "Análise Estatística Inferencial (R/Python)", "Redação de Artigos Científicos em Inglês", "Submissão a Comitês de Ética (CEP/CEUA)", "Apresentação em Congressos e Pôsteres", "Reprodutibilidade e Versionamento de Dados/Código"],
+      softSkills: ["Pensamento Crítico", "Resiliência à Revisão por Pares", "Organização", "Colaboração em Grupo de Pesquisa"]
+    },
+    pleno: {
+      expectativa: "Conduz linhas de pesquisa com autonomia, capta fomento inicial e coorienta alunos.",
+      hardSkills: ["Elaboração de Projetos para Agências de Fomento (CNPq, FAPESP, CAPES)", "Revisão Sistemática e Metanálise", "Modelagem Avançada e Bioestatística / Ciência Aberta", "Peer Review de Periódicos Internacionais", "Docência no Ensino Superior e Orientação", "Transferência de Tecnologia e Propriedade Intelectual"],
+      softSkills: ["Autonomia Investigativa", "Comunicação Didática", "Mentoria de Alunos", "Gestão de Projetos Científicos"]
+    },
+    senior: {
+      expectativa: "Pesquisador Principal / Professor: lidera laboratório, grandes grants e redes internacionais.",
+      hardSkills: ["Captação de Grandes Recursos (Editais Temáticos, FINEP, Horizon)", "Liderança de Grupos de Pesquisa e Pós-Graduação", "Parcerias Pesquisa-Indústria e Spin-offs Científicas", "Estratégia de Publicação de Alto Impacto", "Avaliação de Programas e Bancas Doutorais", "Gestão de Infraestrutura Laboratorial"],
+      softSkills: ["Liderança Acadêmica", "Articulação Institucional", "Visão Científica de Longo Prazo", "Formação de Pesquisadores"]
+    },
+    especialista: {
+      expectativa: "Autoridade científica internacional, editor de periódicos ou líder de P&D de fronteira.",
+      hardSkills: ["Pesquisa de Fronteira e Inovação Disruptiva", "Patentes Internacionais e Licenciamento Tecnológico", "Conselhos Científicos e Editoria de Periódicos", "Infraestruturas de Big Science e Consórcios Globais", "Políticas Científicas Baseadas em Evidências", "Métodos Computacionais e Simulação de Alta Complexidade"],
+      softSkills: ["Influência Científica Global", "Pensamento Original", "Comunicação Pública da Ciência", "Ética Exemplar"]
+    },
+    gestor: {
+      expectativa: "Dirige instituto de pesquisa, pró-reitoria ou centro de P&D conectando ciência e sociedade.",
+      hardSkills: ["Gestão Orçamentária e Governança de Institutos de Pesquisa", "Política de Inovação, NITs e Ecossistemas de Ciência", "Avaliação Institucional e Captação Multissetorial", "Estratégia de Internacionalização Acadêmica", "Compliance Ético, Integridade Científica e LGPD", "Gestão de Carreira Docente e Pesquisadores"],
+      softSkills: ["Liderança Executiva Científica", "Diplomacia Institucional", "Visão Estratégica", "Desenvolvimento de Lideranças"]
+    }
+  },
+
+  /* ─────────────────── SETOR PÚBLICO E GOVERNO ─────────────────── */
+  setor_publico_governo: {
+    estagiario: {
+      expectativa: "Apoio administrativo, levantamento de dados públicos e acompanhamento de processos.",
+      hardSkills: ["Noções de Direito Administrativo e Constituição", "Elaboração de Ofícios, Notas Técnicas e Relatórios", "Pesquisa em Portais de Transparência e Dados Abertos", "Planilhas para Controle Orçamentário/Administrativo", "Sistemas de Protocolo Eletrônico (SEI!)", "Noções de Políticas Públicas"],
+      softSkills: ["Ética e Impessoalidade", "Organização", "Comunicação Clara", "Interesse pelo Interesse Público"]
+    },
+    junior: {
+      expectativa: "Analisa processos administrativos, acompanha contratos públicos e apoia políticas setoriais.",
+      hardSkills: ["Nova Lei de Licitações e Contratos (Lei 14.133/2021)", "Elaboração de Termos de Referência e ETPs", "Ciclo Orçamentário Público (PPA, LDO, LOA)", "Análise de Dados para Políticas Públicas (Power BI/Excel)", "Atendimento ao Cidadão e Governo Digital", "Conformidade com LGPD e Lei de Acesso à Informação (LAI)"],
+      softSkills: ["Rigor Normativo", "Transparência", "Resolução de Problemas", "Trabalho em Equipe"]
+    },
+    pleno: {
+      expectativa: "Coordena projetos governamentais, fiscaliza contratos complexos e mede impacto de políticas.",
+      hardSkills: ["Gestão e Fiscalização de Contratos e Convênios (MROSC)", "Avaliação de Políticas Públicas e Indicadores de Impacto", "Planejamento Estratégico Governamental (OKRs/BSC Público)", "Transformação Digital de Serviços Públicos", "Articulação Intersetorial e Controle Interno", "Compras Públicas Inovadoras"],
+      softSkills: ["Articulação Política e Técnica", "Negociação Institucional", "Autonomia", "Foco no Cidadão"]
+    },
+    senior: {
+      expectativa: "Lidera programas estruturantes, interface com órgãos de controle e modernização do Estado.",
+      hardSkills: ["Governança Pública e Relacionamento com TCU/TCE/CGU", "Modelagem de Parcerias Público-Privadas (PPPs) e Concessões", "Gestão Orçamentária de Grande Porte e Execução Fiscal", "Desenho de Regulação e Análise de Impacto Regulatório (AIR)", "Liderança de Equipes Estatutárias e Multidisciplinares", "Gestão de Crises e Comunicação Pública"],
+      softSkills: ["Liderança Pública", "Tomada de Decisão sob Pressão", "Integridade Inegociável", "Mentoria de Servidores"]
+    },
+    especialista: {
+      expectativa: "Referência técnica em políticas baseadas em evidências, govtech, regulação ou finanças públicas.",
+      hardSkills: ["Econometria e Avaliação Experimental de Políticas (RCTs)", "Arquitetura de Governo Digital e Interoperabilidade (Gov.br)", "IA Responsável e Dados no Setor Público", "Finanças Públicas Avançadas e Responsabilidade Fiscal", "Design de Regulação Econômica e Setorial", "Cooperação Internacional e Organismos Multilaterais"],
+      softSkills: ["Pensamento Sistêmico de Estado", "Inovação no Setor Público", "Influência Técnica Executiva", "Comunicação Clara"]
+    },
+    gestor: {
+      expectativa: "Secretário, Diretor ou Superintendente Público: responde por entregas, orçamento e legitimidade.",
+      hardSkills: ["Direção Estratégica de Órgãos e Autarquias", "Gestão de Orçamento Público e Prestação de Contas", "Relações Institucionais (Legislativo, Judiciário, Sociedade Civil)", "Governança de Riscos, Integridade e Compliance Público", "Modernização Administrativa e Cultura de Resultado", "Gestão de Programas Prioritários de Governo"],
+      softSkills: ["Liderança Executiva Pública", "Visão de Estado", "Negociação de Alto Nível", "Gestão de Crises"]
+    }
+  },
+
+  /* ─────────────────── SERVIÇOS FINANCEIROS E SEGUROS ─────────────────── */
+  servicos_financeiros_seguros: {
+    estagiario: {
+      expectativa: "Apoio operacional em análises de crédito, produtos financeiros, seguros ou atendimento.",
+      hardSkills: ["Matemática Financeira Básica", "Excel para Análises Financeiras", "Noções do Sistema Financeiro Nacional (BACEN/CVM/SUSEP)", "Fundamentos de Produtos Bancários e Seguros", "Noções de PLD/FT e Compliance Básico", "Apoio a Relatórios de Carteira"],
+      softSkills: ["Atenção a Detalhes", "Ética e Sigilo", "Curiosidade", "Organização"]
+    },
+    junior: {
+      expectativa: "Executa análises de risco, subscrição, suitability ou consultoria financeira básica.",
+      hardSkills: ["Análise de Crédito e Demonstrações Contábeis", "Subscrição e Precificação Básica de Seguros / Sinistros", "Certificações Regulatórias (CPA-10/CPA-20/CEA/SUSEP)", "SQL / Power BI para Métricas de Carteira e Inadimplência", "Prevenção à Lavagem de Dinheiro (PLD/KYC)", "Produtos de Renda Fixa, Variável e Previdência"],
+      softSkills: ["Rigor Analítico", "Comunicação Transparente com Cliente", "Responsabilidade", "Proatividade"]
+    },
+    pleno: {
+      expectativa: "Estrutura operações, gerencia carteiras ou modela riscos financeiros e atuariais.",
+      hardSkills: ["Modelagem de Risco de Crédito, Mercado ou Liquidez", "Cálculo Atuarial e Precificação de Seguros", "Open Finance, Pix e Meios de Pagamento", "Gestão de Carteiras e Asset Allocation", "Compliance Regulatório Avançado (BACEN/SUSEP/CVM)", "Automação de Análises (Python/SQL)"],
+      softSkills: ["Negociação Comercial e Técnica", "Pensamento Crítico", "Autonomia", "Foco em Rentabilidade e Risco"]
+    },
+    senior: {
+      expectativa: "Lidera mesas, produtos financeiros, subscrição complexa ou gestão de riscos corporativos.",
+      hardSkills: ["Estruturação de Produtos Financeiros, Crédito Corporativo e Seguros", "ALM (Asset Liability Management) e Gestão de Capital (Basileia/Solvência)", "Estratégia de Cobrança, Fraude e Recuperação de Crédito", "M&A, DCM/ECM e Mercado de Capitais", "Governança de Modelos de Risco e Auditoria", "Parcerias Bancassurance e Ecossistemas"],
+      softSkills: ["Liderança de Time", "Tomada de Decisão sob Pressão", "Influência com Executivos e Reguladores", "Mentoria"]
+    },
+    especialista: {
+      expectativa: "Referência em quant/risco, ciência atuarial avançada, tesouraria ou fintech/insurtech.",
+      hardSkills: ["Modelagem Quantitativa e Machine Learning em Crédito/Fraude", "Ciências Atuariais Avançadas e Resseguro", "Tesouraria Avançada e Derivativos", "Arquitetura de Core Bancário, Tokenização e Drex", "Stress Testing e Regulação Prudencial Complexa", "Estratégia de Pricing Dinâmico em Seguros"],
+      softSkills: ["Pensamento Analítico Profundo", "Inovação Financeira", "Comunicação Executiva", "Visão Sistêmica"]
+    },
+    gestor: {
+      expectativa: "Dirige área de negócios, riscos ou diretoria financeira/seguradora com foco em retorno e solidez.",
+      hardSkills: ["Gestão de P&L de Unidade Financeira / Seguradora (ROE, Sinistralidade)", "Estratégia de Crescimento, Canais e Aquisição", "Relacionamento com BACEN, CVM, SUSEP e Conselho", "Governança de Riscos Corporativos e Fraude", "Transformação Digital e Open Finance", "Formação de Executivos e Sucessão"],
+      softSkills: ["Liderança Executiva", "Visão Macroeconômica", "Gestão de Crise de Confiança", "Negociação de Alto Nível"]
+    }
+  },
+
+  /* ─────────────────── FARMACÊUTICA E BIOTECNOLOGIA ─────────────────── */
+  farmaceutica_biotecnologia: {
+    estagiario: {
+      expectativa: "Apoio em controle de qualidade, assuntos regulatórios, laboratório ou P&D inicial.",
+      hardSkills: ["Boas Práticas de Fabricação (BPF/GMP) e Laboratório (BPL)", "Noções de Regulação ANVISA", "Documentação Técnica (POPs e Registros)", "Técnicas Laboratoriais Básicas / Ensaios", "Planilhas de Estabilidade e Controle", "Farmacovigilância Introdutória"],
+      softSkills: ["Rigor e Precisão", "Ética Científica", "Atenção a Detalhes", "Trabalho em Equipe"]
+    },
+    junior: {
+      expectativa: "Executa análises físico-químicas/microbiológicas, dossiês regulatórios ou monitoria clínica.",
+      hardSkills: ["Controle e Garantia da Qualidade (HPLC, Validação Analítica)", "Assuntos Regulatórios (Registro e Pós-registro ANVISA)", "Pesquisa Clínica (Boas Práticas Clínicas - ICH/GCP)", "Farmacovigilância e Relatos de Eventos Adversos", "Investigação de Desvios e CAPA Básico", "Bioinformática / Biotecnologia Básica"],
+      softSkills: ["Disciplina Documental", "Pensamento Analítico", "Comunicação Clara", "Responsabilidade com o Paciente"]
+    },
+    pleno: {
+      expectativa: "Conduz validações, submissões regulatórias, ensaios clínicos ou desenvolvimento de formulações.",
+      hardSkills: ["Desenvolvimento Farmacotécnico e Escalonamento (Scale-up)", "Gestão de Estudos Clínicos (Fase I-IV)", "Auditorias de Qualidade e Fornecedores (GMP/ISO 13485)", "Estratégia Regulatória (ANVISA/FDA/EMA)", "Medical Affairs e Comunicação Científica", "Gestão de Riscos da Qualidade (ICH Q9)"],
+      softSkills: ["Colaboração Multifuncional", "Autonomia Técnica", "Resolução de Problemas Complexos", "Foco em Compliance"]
+    },
+    senior: {
+      expectativa: "Lidera áreas de P&D, qualidade, regulatório ou acesso ao mercado com impacto estratégico.",
+      hardSkills: ["Acesso ao Mercado e Avaliação de Tecnologias em Saúde (ATS/CONITEC/ANS)", "Gestão de Portfólio de Pipeline e Lançamentos", "Transferência de Tecnologia e Parcerias (PDPs/CDMO)", "Liderança de Inspeções Sanitárias (ANVISA/FDA)", "Bioprocessos, Terapias Avançadas e Biológicos", "Propriedade Intelectual e Patentes Farmacêuticas"],
+      softSkills: ["Liderança Científica", "Tomada de Decisão sob Incerteza", "Influência com Líderes de Opinião (KOLs)", "Mentoria"]
+    },
+    especialista: {
+      expectativa: "Referência em biotecnologia, farmacoeconomia, assuntos regulatórios globais ou medical affairs.",
+      hardSkills: ["Engenharia Genética, mRNA e Terapias Celulares", "Bioinformática Avançada e Descoberta de Fármacos com IA", "Farmacoeconomia e Modelos de Compartilhamento de Risco", "Estratégia Regulatória Global (ICH/EMA/FDA)", "Estabilidade Avançada e Qualidade por Design (QbD)", "Publicações Científicas de Alto Impacto"],
+      softSkills: ["Inovação Biomédica", "Pensamento Sistêmico", "Comunicação Executiva Científica", "Ética Exemplar"]
+    },
+    gestor: {
+      expectativa: "Dirige unidade farmacêutica, P&D, qualidade ou negócios de saúde com foco em pacientes e retorno.",
+      hardSkills: ["Estratégia de Portfólio, P&L e Ciclo de Vida de Produtos", "Governança Global de Qualidade, Compliance e Ética (Interfarma)", "Relações Governamentais e Acesso Público/Privado", "Alianças Estratégicas, Licenciamento e M&A Biotech", "Gestão de Operações Industriais e Cadeia Fria", "Desenvolvimento de Lideranças Científicas e Comerciais"],
+      softSkills: ["Liderança Executiva", "Visão de Saúde Global", "Gestão de Crise Sanitária/Reputacional", "Negociação de Alto Nível"]
+    }
+  },
+
+  /* ─────────────────── IMOBILIÁRIO E FACILITIES ─────────────────── */
+  imobiliario_facilities: {
+    estagiario: {
+      expectativa: "Apoio em vistorias, atendimento condominial/predial, cadastros e manutenção preventiva.",
+      hardSkills: ["Controle de Chamados e Manutenção Predial (CAFM/CMMS)", "Vistorias de Imóveis e Checklists", "Planilhas de Controle de Contratos e Despesas", "Noções de Contratos de Locação e Condomínios", "Apoio à Gestão de Fornecedores (Limpeza, Segurança, HVAC)", "Leitura Básica de Plantas"],
+      softSkills: ["Atendimento Cordial", "Organização", "Agilidade", "Trabalho em Equipe"]
+    },
+    junior: {
+      expectativa: "Executa rotinas de facilities, administração de carteira ou apoio a transações imobiliárias.",
+      hardSkills: ["Gestão de Manutenção Preventiva e Corretiva Predial", "Administração de Contratos de Locação, IPTU e Garantias", "Cotações e Acompanhamento de Serviços Terceirizados", "Normas de Segurança Predial (AVCB, NR-10, PMOC)", "CRM Imobiliário e Avaliação Comparativa de Imóveis", "Orçamento Operacional de Condomínio/Site"],
+      softSkills: ["Resolução Prática de Conflitos", "Comunicação Clara", "Proatividade", "Foco no Ocupante/Cliente"]
+    },
+    pleno: {
+      expectativa: "Gerencia operações de facilities de sites completos ou conduz negociações e incorporação.",
+      hardSkills: ["Gestão de Facilities Corporativos (Hard & Soft Services)", "Análise de Viabilidade Econômica de Empreendimentos", "Negociação de Contratos Comerciais (Built-to-Suit, Sale-Leaseback)", "Eficiência Energética, Água e Resíduos em Edifícios", "Gestão de CapEx de Reformas e Retrofit", "SLA e Indicadores de Terceiros (KPIs de Facilities)"],
+      softSkills: ["Negociação", "Liderança de Equipes Terceirizadas", "Autonomia", "Visão de Custo-Benefício"]
+    },
+    senior: {
+      expectativa: "Lidera portfólios imobiliários multi-site, incorporação ou workplace experience corporativo.",
+      hardSkills: ["Gestão de Portfólio Imobiliário Corporativo (CRE)", "Estruturação de Fundos Imobiliários / Securitização (CRI) Básica", "Estratégia de Workplace, Ocupação e Modelo Híbrido", "Certificações Prediais (LEED O+M, WELL, Fitwel)", "Due Diligence Técnica, Ambiental e Fundiária", "Gestão de Grandes Contratos e Facilities Regionais"],
+      softSkills: ["Liderança Multifuncional", "Influência com Diretoria e Proprietários", "Tomada de Decisão sob Pressão", "Mentoria"]
+    },
+    especialista: {
+      expectativa: "Referência em smart buildings, avaliação imobiliária, retrofit sustentável ou proptech.",
+      hardSkills: ["Smart Buildings, BMS e IoT Predial", "Avaliação Imobiliária Avançada (NBR 14653)", "Retrofit Corporativo e Descarbonização de Portfólio", "Modelagem Financeira Imobiliária Complexa", "Digital Twins para Operação e Manutenção", "Estratégia de Ocupação Baseada em Dados"],
+      softSkills: ["Pensamento Analítico", "Inovação Predial", "Comunicação Executiva", "Visão de Sustentabilidade"]
+    },
+    gestor: {
+      expectativa: "Dirige operações de real estate, incorporadora ou facilities corporativos em escala.",
+      hardSkills: ["Estratégia Patrimonial e Expansão Imobiliária", "Gestão de P&L, CapEx e OpEx de Portfólio Nacional", "Governança de Segurança, Compliance e Continuidade de Negócios", "Negociação de Grandes Aquisições, Parcerias e Terrenos", "Transformação Digital de Real Estate & Facilities", "Desenvolvimento de Gerentes Prediais e Comerciais"],
+      softSkills: ["Liderança Executiva", "Visão de Mercado Imobiliário", "Negociação de Alto Nível", "Gestão de Crises"]
+    }
+  },
+
+  /* ─────────────────── ESPORTES, FITNESS E BEM-ESTAR ─────────────────── */
+  esportes_fitness_bem_estar: {
+    estagiario: {
+      expectativa: "Apoio em prescrição supervisionada, avaliação física e acolhimento de alunos/atletas.",
+      hardSkills: ["Anatomia, Fisiologia e Biomecânica Aplicada", "Avaliação Física e Antropometria Básica", "Acompanhamento de Treinos e Correção Postural", "Primeiros Socorros e Segurança na Prática", "Atendimento e Retenção Inicial de Alunos", "Noções de Nutrição Esportiva e Sono"],
+      softSkills: ["Empatia e Acolhimento", "Comunicação Motivadora", "Postura Ética", "Trabalho em Equipe"]
+    },
+    junior: {
+      expectativa: "Prescreve programas individuais ou aulas coletivas com foco em aderência e evolução segura.",
+      hardSkills: ["Periodização e Prescrição de Treinamento Individualizado", "Aulas Coletivas / Modalidades Específicas", "Avaliação Funcional e Prevenção de Lesões", "Uso de Wearables e Apps de Monitoramento de Carga", "Gestão de Carteira de Alunos / Personal", "Ética Profissional (CREF/Conselhos)"],
+      softSkills: ["Escuta Ativa", "Motivação Sustentável", "Organização de Agenda", "Adaptabilidade ao Perfil do Aluno"]
+    },
+    pleno: {
+      expectativa: "Coordena programas de performance, saúde corporativa ou equipe técnica de unidade.",
+      hardSkills: ["Treinamento para Grupos Especiais e Reabilitação Funcional", "Análise de Dados de Performance e Recuperação (HRV, Carga)", "Gestão de Programas de Bem-Estar Corporativo (Wellbeing)", "Coordenação Técnica de Professores e Grade de Aulas", "Vendas Consultivas e Retenção/LTV de Alunos", "Eventos Esportivos e Desafios de Comunidade"],
+      softSkills: ["Liderança Técnica", "Comunicação Inspiradora", "Visão de Experiência do Cliente", "Resolução de Conflitos"]
+    },
+    senior: {
+      expectativa: "Lidera operações de academias, clubes, assessoria esportiva ou saúde integral de empresas.",
+      hardSkills: ["Gestão Completa de Unidade Fitness / Clube (P&L, Churn, Ticket)", "Integração Multidisciplinar (Treino, Nutrição, Saúde Mental)", "Desenvolvimento de Metodologia Própria de Treinamento", "Parcerias com Marcas, Patrocínios e Convênios Corporativos", "Expansão de Serviços Digitais / Híbridos", "Auditoria de Qualidade Técnica e Segurança"],
+      softSkills: ["Liderança de Equipes", "Visão de Negócio de Bem-Estar", "Tomada de Decisão", "Mentoria de Profissionais"]
+    },
+    especialista: {
+      expectativa: "Referência em fisiologia do exercício, alto rendimento, biomecânica ou saúde preventiva.",
+      hardSkills: ["Fisiologia do Alto Rendimento e Controle de Carga Avançado", "Biomecânica Aplicada e Análise Cinemática", "Programas de Longevidade e Medicina do Estilo de Vida", "Ciência de Dados Esportivos (Sports Analytics)", "Consultoria para Atletas Profissionais e Confederações", "Produção Científica e Formação de Treinadores"],
+      softSkills: ["Rigor Científico", "Inovação em Performance", "Influência Técnica", "Comunicação Clara"]
+    },
+    gestor: {
+      expectativa: "Dirige redes fitness, clubes esportivos ou programas corporativos de bem-estar em escala.",
+      hardSkills: ["Estratégia de Expansão, Franquias e Novos Negócios de Bem-Estar", "Gestão Financeira Multi-unidade e Precificação de Planos", "Ecossistema Digital, App e Comunidade", "Relações Institucionais com Federações, Patrocinadores e RHs", "Governança de Saúde, Segurança e Qualidade", "Cultura de Hospitalidade e Resultado"],
+      softSkills: ["Liderança Executiva", "Visão de Tendências de Saúde", "Negociação de Alto Nível", "Desenvolvimento de Líderes"]
     }
   }
 
