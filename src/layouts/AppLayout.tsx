@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { usePdiStore } from '../store/usePdiStore';
 import { useAuth } from '../contexts/AuthContext';
 import { useFirebaseSync } from '../hooks/useFirebaseSync';
@@ -32,18 +32,32 @@ const navItems = [
 // bottom nav mostra só os 4 principais para não lotar
 const bottomNavItems = navItems.slice(0, 4);
 
+const ROUTE_TITLES: Record<string, string> = {
+  '/app': 'Dashboard - Meu PDI',
+  '/app/trilha': 'Trilha de Desenvolvimento - Meu PDI',
+  '/app/plano': 'Plano de Ação - Meu PDI',
+  '/app/evolucao': 'Evolução - Meu PDI',
+  '/app/diario': 'Diário de Progresso - Meu PDI',
+  '/app/comparador': 'Comparador de Nível - Meu PDI',
+  '/app/curriculo': 'Currículo de Competências - Meu PDI',
+  '/app/rh': 'Modo RH - Meu PDI',
+  '/app/config': 'Configurações - Meu PDI',
+  '/app/admin': 'Painel Admin - Meu PDI',
+};
+
 export const AppLayout: React.FC = () => {
   const { usuario, wizardConcluido, salvarCiclo, resetAtual, isDarkMode, setIsDarkMode } = usePdiStore();
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showHistorico, setShowHistorico] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   usePageMeta({
-    title: 'Área do Plano - Meu PDI',
+    title: ROUTE_TITLES[location.pathname] || 'Área do Plano - Meu PDI',
     description: 'Painel privado de acompanhamento do seu Plano de Desenvolvimento Individual.',
-    canonicalPath: '/app',
+    canonicalPath: location.pathname,
     noindex: true,
   });
 

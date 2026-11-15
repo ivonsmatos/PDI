@@ -25,8 +25,8 @@ export const RadarSkillTick: React.FC<RadarTickProps> = ({
   className,
   maxLineLen = 16,
 }) => {
-  const value = payload?.value ?? '';
-  const words = value.split(/\s+/).filter(Boolean);
+  const value = (payload?.value ?? '').replace(/\s+/g, ' ').trim();
+  const words = value.split(' ').filter(Boolean);
   const lines: string[] = [];
   let current = '';
 
@@ -61,8 +61,8 @@ export const RadarSkillTick: React.FC<RadarTickProps> = ({
       fontWeight={600}
     >
       {displayLines.map((line, i) => (
-        <tspan key={i} x={nx} dy={i === 0 ? initialDy : lineHeight}>
-          {line}
+        <tspan key={i} x={nx} dy={i === 0 ? initialDy : lineHeight} xmlSpace="preserve">
+          {i < displayLines.length - 1 ? `${line} ` : line}
         </tspan>
       ))}
     </text>

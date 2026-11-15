@@ -144,6 +144,22 @@ export const PlanoBoard: React.FC = () => {
         </div>
       </div>
 
+      {/* Alerta de associação ações <-> objetivos */}
+      {(() => {
+        const objIds = new Set(objetivos.map(o => o.id));
+        const orfasCount = planoDeAcao.filter(a => !objIds.has(a.objetivoId)).length;
+        const semAcaoCount = objetivos.filter(o => !planoDeAcao.some(a => a.objetivoId === o.id)).length;
+        if (orfasCount === 0 && semAcaoCount === 0) return null;
+        return (
+          <div className="mb-5 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700 p-3.5 text-xs text-amber-900 dark:text-amber-200">
+            <strong>Atenção à associação entre ações e objetivos:</strong>{' '}
+            {orfasCount > 0 && `${orfasCount} ação(ões) sem objetivo válido vinculado. `}
+            {semAcaoCount > 0 && `${semAcaoCount} objetivo(s) sem nenhuma ação vinculada. `}
+            Use o seletor <em>&quot;Objetivo vinculado&quot;</em> nos cartões abaixo para corrigir e atualizar a Saúde do Plano.
+          </div>
+        );
+      })()}
+
       {/* Board - 4 colunas */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {COLUNAS.map((col) => {
@@ -180,11 +196,34 @@ export const PlanoBoard: React.FC = () => {
                       }`}
                     >
                       <div className="p-4">
-                        <p className={`text-sm font-semibold mb-2 ${
+                        <p className={`text-sm font-semibold mb-1.5 ${
                           col.status === 'concluido' ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-100'
                         }`}>
                           {acao.acao}
                         </p>
+
+                        <div className="mb-2">
+                          <label className="block text-[10px] font-semibold text-slate-400 mb-0.5">
+                            Objetivo vinculado
+                          </label>
+                          <select
+                            value={obj ? obj.id : ''}
+                            onChange={(e) => {
+                              updatePlanoAcaoItem(acao.id, { objetivoId: e.target.value });
+                              addToast('Objetivo vinculado atualizado.', 'success');
+                            }}
+                            className={`w-full text-[11px] font-medium px-2 py-1 rounded-lg border truncate ${
+                              obj
+                                ? 'border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-300'
+                                : 'border-rose-300 bg-rose-50 text-rose-700'
+                            }`}
+                          >
+                            {!obj && <option value="" disabled>Objetivo inexistente - selecione...</option>}
+                            {objetivos.map(o => (
+                              <option key={o.id} value={o.id}>{o.descricao}</option>
+                            ))}
+                          </select>
+                        </div>
 
                         <div className="flex items-center gap-2 flex-wrap mb-3">
                           {obj?.categoria && (

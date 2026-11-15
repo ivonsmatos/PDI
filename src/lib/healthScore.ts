@@ -33,7 +33,10 @@ export function computeHealthScore(
   const penalidades: { label: string; pts: number }[] = [];
   const positivos: string[] = [];
 
-  const objetivosComAcao = new Set(state.planoDeAcao.map(p => p.objetivoId));
+  const validObjIds = new Set(state.objetivos.map(o => o.id));
+  const objetivosComAcao = new Set(
+    state.planoDeAcao.map(p => p.objetivoId).filter(id => validObjIds.has(id))
+  );
   const semAcao = state.objetivos.length - objetivosComAcao.size;
   if (semAcao > 0) {
     const pts = semAcao * 20;
@@ -41,6 +44,13 @@ export function computeHealthScore(
     penalidades.push({ label: `${semAcao} objetivo(s) sem ação vinculada`, pts });
   } else {
     positivos.push('Todos os objetivos têm ações vinculadas');
+  }
+
+  const acoesOrfas = state.planoDeAcao.filter(p => !validObjIds.has(p.objetivoId)).length;
+  if (acoesOrfas > 0) {
+    const pts = acoesOrfas * 15;
+    score -= pts;
+    penalidades.push({ label: `${acoesOrfas} ação(ões) sem objetivo válido associado`, pts });
   }
 
   const semRecurso = state.planoDeAcao.filter(a => !a.recursos?.trim()).length;

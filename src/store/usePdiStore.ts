@@ -183,8 +183,12 @@ const initialState: PdiFields = {
 function computeScore(state: PdiFields): number {
   if (state.objetivos.length === 0) return 0;
   let score = 100;
-  const objetivosComAcao = new Set(state.planoDeAcao.map(p => p.objetivoId));
+  const validObjIds = new Set(state.objetivos.map(o => o.id));
+  const objetivosComAcao = new Set(
+    state.planoDeAcao.map(p => p.objetivoId).filter(id => validObjIds.has(id))
+  );
   score -= (state.objetivos.length - objetivosComAcao.size) * 20;
+  score -= state.planoDeAcao.filter(p => !validObjIds.has(p.objetivoId)).length * 15;
   score -= state.planoDeAcao.filter(a => !a.recursos?.trim()).length * 10;
   if ((state.campoDeForcas.restritivas ?? []).length === 0) score -= 15;
   if ((state.campoDeForcas.aliancas ?? '').trim().length < 10) score -= 10;

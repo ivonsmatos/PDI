@@ -12,7 +12,7 @@ const TIPO_META_OPTIONS: { value: TipoMetaAcao; label: string; hint: string; bad
 ];
 
 export const Passo4PlanoAcao: React.FC = () => {
-  const { objetivos, planoDeAcao, setStoreItem } = usePdiStore();
+  const { objetivos, planoDeAcao, setStoreItem, updatePlanoAcaoItem } = usePdiStore();
   
   const [objetivoSelecionado, setObjetivoSelecionado] = useState<string>('');
   const [novaAcao, setNovaAcao] = useState('');
@@ -193,13 +193,25 @@ export const Passo4PlanoAcao: React.FC = () => {
                            Impacto esperado: {acao.resultadoEsperado}
                          </p>
                        )}
-                       <div className="flex items-center gap-4 mt-2 text-sm">
+                       <div className="flex flex-wrap items-center gap-4 mt-2 text-sm">
                          <span className="flex items-center gap-1 text-orange-600 font-medium bg-orange-50 px-2 py-0.5 rounded">
                            <Calendar className="w-4 h-4" /> {new Date(acao.prazoData).toLocaleDateString('pt-BR')}
                          </span>
                          <span className="text-gray-500">
                            <span className="font-semibold text-gray-400">Recursos:</span> {acao.recursos}
                          </span>
+                       </div>
+                       <div className="mt-2.5 flex items-center gap-2 text-xs">
+                         <span className="font-semibold text-gray-500 shrink-0">Objetivo vinculado:</span>
+                         <select
+                           value={acao.objetivoId}
+                           onChange={(e) => updatePlanoAcaoItem(acao.id, { objetivoId: e.target.value })}
+                           className="rounded-lg border border-gray-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-700 max-w-md"
+                         >
+                           {objetivos.map(o => (
+                             <option key={o.id} value={o.id}>{o.descricao}</option>
+                           ))}
+                         </select>
                        </div>
                      </div>
                      <button 
@@ -215,6 +227,41 @@ export const Passo4PlanoAcao: React.FC = () => {
             </div>
           );
         })}
+        {(() => {
+          const objIds = new Set(objetivos.map(o => o.id));
+          const orfas = planoDeAcao.filter(a => !objIds.has(a.objetivoId));
+          if (orfas.length === 0) return null;
+          return (
+            <div className="border-2 border-rose-300 bg-rose-50/70 rounded-xl p-4 space-y-3">
+              <div className="text-sm font-bold text-rose-800">
+                Ações sem objetivo válido associado ({orfas.length})
+              </div>
+              <p className="text-xs text-rose-700">
+                Vincule cada ação abaixo a um objetivo ativo para que ela seja contabilizada no Dashboard e na Saúde do Plano:
+              </p>
+              {orfas.map(acao => (
+                <div key={acao.id} className="bg-white border border-rose-200 rounded-lg p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span className="text-sm font-medium text-slate-800">{acao.acao}</span>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value=""
+                      onChange={(e) => updatePlanoAcaoItem(acao.id, { objetivoId: e.target.value })}
+                      className="rounded-lg border border-rose-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700"
+                    >
+                      <option value="" disabled>Selecionar objetivo correto...</option>
+                      {objetivos.map(o => (
+                        <option key={o.id} value={o.id}>{o.descricao}</option>
+                      ))}
+                    </select>
+                    <button onClick={() => removeAcao(acao.id)} className="text-gray-400 hover:text-red-500 p-1">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

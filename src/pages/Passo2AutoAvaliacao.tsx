@@ -119,15 +119,24 @@ export const Passo2AutoAvaliacao: React.FC = () => {
   const handleHardSkillChange = (skill: string, type: 'nivelAtual' | 'nivelDesejado', value: number) => {
     const newHards = [...inventario.hardSkills];
     const index = newHards.findIndex(s => s.skill === skill);
+    const existing = index >= 0 ? newHards[index] : { skill, nivelAtual: 0, nivelDesejado: 0 };
+
+    if (type === 'nivelDesejado' && existing.nivelAtual > 0 && value < existing.nivelAtual) {
+      const ok = window.confirm(
+        `O nível-alvo (${value}) é menor que o seu nível de proficiência atual (${existing.nivelAtual}). Houve mudança de objetivo ou rebaixamento intencional?`
+      );
+      if (!ok) return;
+    }
+
+    const updated = { ...existing, [type]: value };
+    if (type === 'nivelAtual' && updated.nivelDesejado > 0 && updated.nivelDesejado < value) {
+      updated.nivelDesejado = value;
+    }
 
     if (index >= 0) {
-      newHards[index] = { ...newHards[index], [type]: value };
+      newHards[index] = updated;
     } else {
-      newHards.push({
-        skill,
-        nivelAtual: type === 'nivelAtual' ? value : 0,
-        nivelDesejado: type === 'nivelDesejado' ? value : 0,
-      });
+      newHards.push(updated);
     }
 
     setStoreItem('inventario', { ...inventario, hardSkills: newHards });

@@ -264,7 +264,20 @@ export const Passo6RevisaoFinal: React.FC = () => {
     }
   };
 
+  const reviewItems = useMemo(
+    () => revisarPdi({ objetivos, planoDeAcao, hardSkills: inventario.hardSkills }),
+    [objetivos, planoDeAcao, inventario.hardSkills]
+  );
+
   const handleSalvarCiclo = () => {
+    const errosCriticos = reviewItems.filter(i => i.severity === 'error');
+    if (errosCriticos.length > 0) {
+      addToast(
+        `Corrija ${errosCriticos.length} pendência(s) crítica(s) no Assistente de Revisão (ex: ações sem objetivo válido ou metas inválidas) antes de salvar o ciclo.`,
+        'warning'
+      );
+      return;
+    }
     setShowRetroModal(true);
   };
 
@@ -277,11 +290,6 @@ export const Passo6RevisaoFinal: React.FC = () => {
     });
     resetAtual();
   };
-
-  const reviewItems = useMemo(
-    () => revisarPdi({ objetivos, planoDeAcao, hardSkills: inventario.hardSkills }),
-    [objetivos, planoDeAcao, inventario.hardSkills]
-  );
 
   const sortedAcoes = [...planoDeAcao].sort((a, b) => new Date(a.prazoData).getTime() - new Date(b.prazoData).getTime());
 
