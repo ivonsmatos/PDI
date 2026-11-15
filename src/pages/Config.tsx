@@ -481,7 +481,7 @@ export const Config: React.FC = () => {
               <div className="text-left">
                 <p>Apagar TODOS os dados do PDI</p>
                 <p className="text-xs font-normal text-rose-100">
-                  Irreversível — remove dados locais e na nuvem (PDI atual, diário e ciclos). Sua conta de login permanece ativa.
+                  Irreversível - remove dados locais e na nuvem (PDI atual, diário e ciclos). Sua conta de login permanece ativa.
                 </p>
               </div>
             </button>

@@ -244,7 +244,7 @@ export const PerfilPublico: React.FC = () => {
           className="text-center py-4"
         >
           <p className="text-xs text-slate-400 mb-2">
-            Este perfil foi gerado pelo <span className="font-semibold text-indigo-600">Meu PDI</span> — plataforma de desenvolvimento profissional.
+            Este perfil foi gerado pelo <span className="font-semibold text-indigo-600">Meu PDI</span> - plataforma de desenvolvimento profissional.
           </p>
           <a
             href="/"

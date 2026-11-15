@@ -190,7 +190,7 @@ export const Dashboard: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Cards de métricas — agora 5 (com vencidas) */}
+      {/* Cards de métricas - agora 5 (com vencidas) */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
         {[
           {
@@ -331,7 +331,7 @@ export const Dashboard: React.FC = () => {
           <p className="text-xs text-slate-600 dark:text-slate-300">
             {scoreSaude > 80 ? '✅ Estrutura equilibrada e viável' :
              scoreSaude > 50 ? '⚠️ Faltam recursos ou mapeamento' :
-             '🚨 Estrutura precisa de atenção — volte ao wizard'}
+             '🚨 Estrutura precisa de atenção - volte ao wizard'}
           </p>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
             Mede o equilíbrio estrutural do plano (objetivos, ações, recursos e forças). Não mede seu nível profissional nem o quanto já foi concluído.
@@ -383,7 +383,7 @@ export const Dashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Próximas ações — com botões de status inline */}
+      {/* Próximas ações - com botões de status inline */}
       <motion.div custom={8} variants={card} initial="hidden" animate="show"
         className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-6"
       >
@@ -426,7 +426,7 @@ export const Dashboard: React.FC = () => {
                       );
                     }}
                     aria-label={`Alterar status de "${acao.acao}" (atual: ${STATUS_LABEL[status]})`}
-                    title={`Atual: ${STATUS_LABEL[status]} — clique para alterar`}
+                    title={`Atual: ${STATUS_LABEL[status]} - clique para alterar`}
                     className="shrink-0 hover:scale-110 transition-transform"
                   >
                     {status === 'concluido'

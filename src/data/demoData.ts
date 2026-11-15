@@ -55,7 +55,7 @@ export const DEMO_DATA: Omit<PdiFields, 'stepAtual'> = {
     {
       id: 'demo-ac-1',
       objetivoId: 'demo-obj-1',
-      acao: 'Estudar 1h/dia pelo curso AWS Certified Solutions Architect — Adrian Cantrill',
+      acao: 'Estudar 1h/dia pelo curso AWS Certified Solutions Architect - Adrian Cantrill',
       prazoData: new Date(Date.now() + 45 * 86400000).toISOString().slice(0, 10),
       recursos: 'Curso Adrian Cantrill (R$180), conta AWS free tier, 1h bloqueada no calendário toda manhã',
     },
@@ -83,7 +83,7 @@ export const DEMO_DATA: Omit<PdiFields, 'stepAtual'> = {
     {
       id: 'demo-ac-5',
       objetivoId: 'demo-obj-3',
-      acao: 'Agendar sessão semanal de 45min com dev júnior Carla — foco: arquitetura limpa',
+      acao: 'Agendar sessão semanal de 45min com dev júnior Carla - foco: arquitetura limpa',
       prazoData: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
       recursos: 'Livro Clean Architecture (Robert C. Martin), Google Meet',
     },
@@ -99,6 +99,6 @@ export const DEMO_DATA: Omit<PdiFields, 'stepAtual'> = {
       'Reuniões em excesso fragmentam o foco diário',
       'Síndrome do impostor ao apresentar ideias de arquitetura',
     ],
-    aliancas: 'Tech Lead Rafael — revisará ADRs e dará feedback semanal. Colega Bruna (Sênior) — parceira de estudos AWS e mentor informal. RH Juliana — garante acesso ao orçamento de capacitação.',
+    aliancas: 'Tech Lead Rafael - revisará ADRs e dará feedback semanal. Colega Bruna (Sênior) - parceira de estudos AWS e mentor informal. RH Juliana - garante acesso ao orçamento de capacitação.',
   },
 };

@@ -10,7 +10,7 @@ export type AcessoRecurso =
   | 'auditoria'                 // acesso gratuito parcial; certificado é pago
   | 'condicionado'              // gratuito só em campanha, vaga ou programa
   | 'pago'                      // curso ou exame pago
-  | 'nao_confirmado';           // condições não confirmadas — conferir no site
+  | 'nao_confirmado';           // condições não confirmadas - conferir no site
 
 /** Tipo de credencial que o recurso pode gerar */
 export type CredencialRecurso =
@@ -97,7 +97,7 @@ export function inferirAcessoAtividade(
   if (u.includes('udemy.com') || u.includes('alura.com')) return 'pago';
   if (tipo === 'certificacao') return 'pago';
   if (txt.includes('gratuit')) return 'gratuito';
-  if (tipo === 'leitura' || tipo === 'pratica') return null; // documentação/exercícios — sem selo
+  if (tipo === 'leitura' || tipo === 'pratica') return null; // documentação/exercícios - sem selo
   return 'nao_confirmado';
 }
 

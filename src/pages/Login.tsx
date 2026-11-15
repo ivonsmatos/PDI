@@ -21,7 +21,7 @@ export const Login: React.FC = () => {
   const navigate = useNavigate();
 
   usePageMeta({
-    title: 'Entrar — Meu PDI',
+    title: 'Entrar - Meu PDI',
     description: 'Acesse sua conta do Meu PDI com Google ou e-mail.',
     canonicalPath: '/login',
     noindex: true,
@@ -109,7 +109,7 @@ export const Login: React.FC = () => {
               <Gift className="w-3.5 h-3.5" /> 100% Gratuito, sempre
             </span>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800">
-              <Shield className="w-3.5 h-3.5" /> Dados protegidos — LGPD
+              <Shield className="w-3.5 h-3.5" /> Dados protegidos - LGPD
             </span>
           </div>
         </div>
@@ -211,7 +211,7 @@ export const Login: React.FC = () => {
               </div>
             )}
 
-            {/* Checkbox LGPD — só no signup */}
+            {/* Checkbox LGPD - só no signup */}
             {mode === 'signup' && (
               <label className="flex items-start gap-2.5 cursor-pointer group">
                 <div className="relative mt-0.5 shrink-0">
@@ -238,7 +238,7 @@ export const Login: React.FC = () => {
                   >
                     Política de Privacidade
                   </Link>
-                  . Seus dados são usados apenas para salvar seu PDI —{' '}
+                  . Seus dados são usados apenas para salvar seu PDI -{' '}
                   <strong className="text-slate-600 dark:text-slate-300">nunca para marketing</strong>.
                 </span>
               </label>
@@ -291,7 +291,7 @@ export const Login: React.FC = () => {
                   onClick={() => { setMode('signup'); reset(); }}
                   className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
                 >
-                  Criar agora — é grátis
+                  Criar agora - é grátis
                 </button>
               </>
             )}

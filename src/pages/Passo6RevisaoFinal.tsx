@@ -384,7 +384,7 @@ export const Passo6RevisaoFinal: React.FC = () => {
                 })
               ) : (
                 <div className="flex items-center justify-center p-8 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-dashed border-indigo-200 dark:border-slate-600">
-                  <span className="text-indigo-800/50 dark:text-indigo-400/50 text-sm text-center">Você se auto-avaliou como Forte em tudo — incrível! Continue assim.</span>
+                  <span className="text-indigo-800/50 dark:text-indigo-400/50 text-sm text-center">Você se auto-avaliou como Forte em tudo - incrível! Continue assim.</span>
                 </div>
               )}
               {(campoDeForcas.restritivas ?? []).length === 0 && (

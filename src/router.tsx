@@ -81,7 +81,7 @@ const router = createBrowserRouter([
     path: '/wizard',
     element: lazyPage(<App />),
   },
-  // App autenticado — base /app
+  // App autenticado - base /app
   {
     path: '/app',
     element: <AppLayout />,

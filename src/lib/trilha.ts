@@ -1,4 +1,4 @@
-// Geração da Trilha de Desenvolvimento — fonte única usada pela página Trilha e pelo Dashboard.
+// Geração da Trilha de Desenvolvimento - fonte única usada pela página Trilha e pelo Dashboard.
 import type { PdiFields } from '../store/usePdiStore';
 import {
   HARD_SKILL_TEMPLATES, SOFT_ATIVIDADES,
@@ -48,14 +48,14 @@ export type GrupoTrilha = {
   categoria: string;
   /** Atividades exclusivas deste grupo; `ai` = índice original (mantém a chave de progresso estável) */
   atividades: { atv: Atividade; ai: number; tambemPara: string[] }[];
-  /** Atividades que já aparecem em outro grupo — exibidas só como referência, não contam no total */
+  /** Atividades que já aparecem em outro grupo - exibidas só como referência, não contam no total */
   compartilhadas: { titulo: string; skillDona: string }[];
   certs: { cert: Certificacao; tambemPara: string[] }[];
 };
 
 /**
  * Um mesmo recurso (curso, projeto, certificação) pode casar com várias lacunas.
- * Exibe-o uma única vez — no primeiro grupo — indicando as demais competências que ele desenvolve.
+ * Exibe-o uma única vez - no primeiro grupo - indicando as demais competências que ele desenvolve.
  */
 function deduplicarTrilha(itens: GrupoBruto[]): GrupoTrilha[] {
   const chaveAtv = (a: Atividade) => (a.url ? `u:${a.url}` : `t:${a.titulo}`);
@@ -110,7 +110,7 @@ export function gerarTrilha(inventario: PdiFields['inventario'], area: string): 
       itens.push({
         id: `hard::${s.skill}`,
         skill: s.skill,
-        categoria: `Habilidade técnica — lacuna de ${s.nivelDesejado - s.nivelAtual} ${s.nivelDesejado - s.nivelAtual > 1 ? 'níveis' : 'nível'}`,
+        categoria: `Habilidade técnica - lacuna de ${s.nivelDesejado - s.nivelAtual} ${s.nivelDesejado - s.nivelAtual > 1 ? 'níveis' : 'nível'}`,
         atividades: getAtividadesHard(s.skill, s.nivelAtual, s.nivelDesejado),
         certs: getCertificacoesPorSkill(s.skill, area).slice(0, 3),
       });
@@ -128,7 +128,7 @@ export function gerarTrilha(inventario: PdiFields['inventario'], area: string): 
       itens.push({
         id: `soft::${s.atributo}`,
         skill: s.atributo,
-        categoria: 'Habilidade comportamental — a desenvolver',
+        categoria: 'Habilidade comportamental - a desenvolver',
         atividades,
         certs: [],
       });

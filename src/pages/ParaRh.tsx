@@ -6,7 +6,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 
 export const ParaRh: React.FC = () => {
   usePageMeta({
-    title: 'PDI para RH e gestores: desenvolvimento com evidências — Meu PDI',
+    title: 'PDI para RH e gestores: desenvolvimento com evidências - Meu PDI',
     description:
       'Estruture PDPs, conduza conversas 1:1 mais objetivas e acompanhe ciclos de desenvolvimento profissional com privacidade e controle do titular.',
     canonicalPath: '/para-rh',

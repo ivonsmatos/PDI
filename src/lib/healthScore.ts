@@ -19,7 +19,7 @@ export interface PdiMetricas {
 
 /**
  * Fonte única da verdade para o cálculo de saúde estrutural do plano.
- * Mede equilíbrio entre objetivos, ações, recursos e campo de forças —
+ * Mede equilíbrio entre objetivos, ações, recursos e campo de forças -
  * não mede progresso concluído nem nível profissional.
  */
 export function computeHealthScore(

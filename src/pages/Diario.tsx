@@ -92,7 +92,7 @@ export const Diario: React.FC = () => {
   const handleExportMarkdown = () => {
     if (entriesFiltradas.length === 0) return;
     const lines = [
-      '# Diário de Progresso — Meu PDI',
+      '# Diário de Progresso - Meu PDI',
       '',
       ...entriesFiltradas.flatMap((entry) => {
         const obj = entry.objetivoId ? objetivos.find(o => o.id === entry.objetivoId) : null;
@@ -170,7 +170,7 @@ export const Diario: React.FC = () => {
               onChange={e => setObjetivoId(e.target.value)}
               className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-500"
             >
-              <option value="">— Sem vínculo —</option>
+              <option value="">- Sem vínculo -</option>
               {objetivos.map(o => (
                 <option key={o.id} value={o.id}>{o.descricao}</option>
               ))}

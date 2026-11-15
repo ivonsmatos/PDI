@@ -42,7 +42,7 @@ export const ExemploPdi: React.FC = () => {
   const [tab, setTab] = useState<Tab>('dashboard');
 
   usePageMeta({
-    title: 'Exemplo de PDI pronto: veja painel, plano de ação e currículo — Meu PDI',
+    title: 'Exemplo de PDI pronto: veja painel, plano de ação e currículo - Meu PDI',
     description: 'Explore uma demonstração interativa com dados fictícios de um Plano de Desenvolvimento Individual no Meu PDI antes de criar sua conta.',
     canonicalPath: '/exemplo',
   });

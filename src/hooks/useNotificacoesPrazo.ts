@@ -53,7 +53,7 @@ export function useNotificacoesPrazo() {
     const exemplo = vencidas[0]?.acao ?? vencendo[0]?.acao ?? '';
 
     const timer = setTimeout(() => {
-      const n = new Notification('Meu PDI — Atenção ao prazo ⏰', {
+      const n = new Notification('Meu PDI - Atenção ao prazo ⏰', {
         body: `${partes.join(' · ')}.\nEx: "${exemplo.slice(0, 60)}${exemplo.length > 60 ? '…' : ''}"`,
         icon: '/pwa-192x192.png',
         badge: '/pwa-192x192.png',

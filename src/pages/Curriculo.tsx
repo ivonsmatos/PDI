@@ -528,7 +528,7 @@ export const Curriculo: React.FC = () => {
         {/* Rodapé */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
           <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0 }}>
-            Gerado em {dataGer} · <strong>Meu PDI</strong> — plataforma de desenvolvimento profissional
+            Gerado em {dataGer} · <strong>Meu PDI</strong> - plataforma de desenvolvimento profissional
           </p>
           <div style={{ display: 'flex', gap: '6px' }}>
             {[

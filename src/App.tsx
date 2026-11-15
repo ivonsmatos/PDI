@@ -13,7 +13,7 @@ import './index.css';
 
 function App() {
   usePageMeta({
-    title: 'Configurar PDI (Wizard) — Meu PDI',
+    title: 'Configurar PDI (Wizard) - Meu PDI',
     description: 'Monte seu Plano de Desenvolvimento Individual passo a passo.',
     canonicalPath: '/wizard',
     noindex: true,

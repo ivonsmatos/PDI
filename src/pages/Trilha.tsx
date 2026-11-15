@@ -161,7 +161,7 @@ export const Trilha: React.FC = () => {
       .filter(c => !jaMostradas.has(c.url));
   }, [trilha, usuario.areaAtuacao]);
 
-  /** Soft skills recomendadas pela matriz mas ainda não avaliadas — sugestões inteligentes */
+  /** Soft skills recomendadas pela matriz mas ainda não avaliadas - sugestões inteligentes */
   const softSugeridas = useMemo(() => {
     const avaliadas = new Set(inventario.softSkills.map(s => s.atributo));
     return softSkillsDaMatriz.filter(s => !avaliadas.has(s)).slice(0, 4);
@@ -190,7 +190,7 @@ export const Trilha: React.FC = () => {
           Gerada a partir das lacunas da sua autoavaliação. Marque as atividades conforme for concluindo.
         </p>
         <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-4">
-          Classificação de custo e credencial revisada em {formatarDataBR(CATALOGO_REVISADO_EM)}. Condições de provedores externos mudam — confirme no site oficial antes de se inscrever.
+          Classificação de custo e credencial revisada em {formatarDataBR(CATALOGO_REVISADO_EM)}. Condições de provedores externos mudam - confirme no site oficial antes de se inscrever.
         </p>
       </motion.div>
 
@@ -380,7 +380,7 @@ export const Trilha: React.FC = () => {
                   <p className="font-semibold mb-1">Também ajudam nesta competência (já listadas acima):</p>
                   <ul className="list-disc pl-4 space-y-0.5">
                     {grupo.compartilhadas.map(c => (
-                      <li key={c.titulo}>{c.titulo} <span className="text-slate-400">— em {c.skillDona}</span></li>
+                      <li key={c.titulo}>{c.titulo} <span className="text-slate-400">- em {c.skillDona}</span></li>
                     ))}
                   </ul>
                 </div>

@@ -63,7 +63,7 @@ export const AppLayout: React.FC = () => {
   const [shareToast, setShareToast] = useState<'copied' | 'shared' | null>(null);
 
   usePageMeta({
-    title: 'Área do Plano — Meu PDI',
+    title: 'Área do Plano - Meu PDI',
     description: 'Painel privado de acompanhamento do seu Plano de Desenvolvimento Individual.',
     canonicalPath: '/app',
     noindex: true,
@@ -79,7 +79,7 @@ export const AppLayout: React.FC = () => {
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, [isDarkMode]);
 
-  // Auth guard — redireciona para /login se não autenticado
+  // Auth guard - redireciona para /login se não autenticado
   useEffect(() => {
     if (!loading && !user) {
       navigate('/login', { replace: true });
@@ -252,7 +252,7 @@ export const AppLayout: React.FC = () => {
       </header>
 
       <div className="flex flex-1 max-w-7xl w-full mx-auto">
-        {/* Sidebar — desktop */}
+        {/* Sidebar - desktop */}
         <aside className="hidden lg:flex flex-col w-56 shrink-0 pt-6 px-3 gap-1 border-r border-slate-200 dark:border-slate-700">
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3 mb-2">
             Olá, {firstName} 👋
@@ -398,7 +398,7 @@ export const AppLayout: React.FC = () => {
 
       <ToastContainer />
 
-      {/* Bottom nav — mobile (4 itens principais) */}
+      {/* Bottom nav - mobile (4 itens principais) */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex">
         {bottomNavItems.map((item) => (
           <NavLink

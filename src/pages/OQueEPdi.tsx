@@ -50,7 +50,7 @@ export const OQueEPdi: React.FC = () => {
   );
 
   usePageMeta({
-    title: 'O que é PDI? Guia prático para criar seu plano de carreira — Meu PDI',
+    title: 'O que é PDI? Guia prático para criar seu plano de carreira - Meu PDI',
     description:
       'Entenda o que é um Plano de Desenvolvimento Individual (PDI), a diferença para PDP, o que colocar no plano e como acompanhar sua evolução profissional.',
     canonicalPath: '/o-que-e-pdi',
@@ -73,7 +73,7 @@ export const OQueEPdi: React.FC = () => {
         <section className="space-y-3">
           <h2 className="text-2xl font-extrabold text-slate-900">Para quem serve o PDI?</h2>
           <p className="text-slate-600 leading-relaxed">
-            O PDI atende profissionais em qualquer momento de carreira no Brasil — de estagiários e juniores buscando base técnica a plenos, seniores e gestores mirando promoção, transição de área ou consolidação de liderança — além de equipes de RH que conduzem ciclos de desenvolvimento.
+            O PDI atende profissionais em qualquer momento de carreira no Brasil - de estagiários e juniores buscando base técnica a plenos, seniores e gestores mirando promoção, transição de área ou consolidação de liderança - além de equipes de RH que conduzem ciclos de desenvolvimento.
           </p>
         </section>
 

@@ -11,7 +11,7 @@ export const CertificacoesPublicas: React.FC = () => {
   const [filtroAcesso, setFiltroAcesso] = useState<AcessoRecurso | 'todos'>('todos');
 
   usePageMeta({
-    title: 'Cursos e credenciais gratuitas curadas — Meu PDI',
+    title: 'Cursos e credenciais gratuitas curadas - Meu PDI',
     description:
       'Catálogo curado de cursos, trilhas e badges gratuitos com provedor oficial, status de acesso, idioma, tipo de credencial e data de verificação.',
     canonicalPath: '/certificacoes-gratuitas',

@@ -24,7 +24,7 @@ export const ConsentBanner: React.FC = () => {
         </p>
         <p>
           Usamos armazenamento local essencial para manter seu plano funcionando. Com a sua permissão,
-          carregamos métricas anônimas de acesso (Google Analytics/GTM) — nunca enviamos seu diário,
+          carregamos métricas anônimas de acesso (Google Analytics/GTM) - nunca enviamos seu diário,
           competências ou e-mail.{' '}
           <a href="/privacidade" className="text-indigo-600 dark:text-indigo-400 underline font-semibold">
             Política de privacidade

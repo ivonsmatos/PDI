@@ -77,7 +77,7 @@ export async function onRequest(context) {
     if (/^[A-Za-z0-9_-]{16,40}$/.test(profileId)) {
       const profile = await fetchPublicProfileMeta(profileId);
       if (profile && typeof HTMLRewriter !== 'undefined') {
-        const title = `${profile.nome} — Perfil de Competências | Meu PDI`;
+        const title = `${profile.nome} - Perfil de Competências | Meu PDI`;
         const desc = [profile.area, profile.nivel].filter(Boolean).join(' · ') || 'Perfil de competências compartilhado via Meu PDI.';
         const rewritten = new HTMLRewriter()
           .on('title', {

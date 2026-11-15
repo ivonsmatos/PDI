@@ -85,7 +85,7 @@ export const CheckinSemanal: React.FC = () => {
                 </button>
               </div>
               <p className="text-violet-100 text-xs">
-                É sexta — 3 perguntas rápidas para manter seu PDI vivo 🚀
+                É sexta - 3 perguntas rápidas para manter seu PDI vivo 🚀
               </p>
             </div>
 

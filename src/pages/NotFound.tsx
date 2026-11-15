@@ -6,7 +6,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 
 export const NotFound: React.FC = () => {
   usePageMeta({
-    title: 'Página não encontrada (404) — Meu PDI',
+    title: 'Página não encontrada (404) - Meu PDI',
     description: 'A página solicitada não foi encontrada no Meu PDI.',
     canonicalPath: '/404',
     noindex: true,

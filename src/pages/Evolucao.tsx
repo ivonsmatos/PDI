@@ -127,7 +127,7 @@ export const Evolucao: React.FC = () => {
         ))}
       </div>
 
-      {/* Radar Skills — aba Hard / Soft */}
+      {/* Radar Skills - aba Hard / Soft */}
       <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}
         className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-6"
       >
@@ -394,7 +394,7 @@ export const Evolucao: React.FC = () => {
               <div key={i} className="relative">
                 <div className="absolute -left-[35px] top-1 w-4 h-4 rounded-full bg-white dark:bg-slate-800 border-4 border-indigo-500" />
                 <div className="flex items-center gap-3 flex-wrap mb-1">
-                  <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{c.ciclo} — {c.data}</span>
+                  <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{c.ciclo} - {c.data}</span>
                   {c.score !== undefined && (
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                       c.score > 80 ? 'bg-emerald-100 text-emerald-700' :

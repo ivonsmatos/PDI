@@ -6,7 +6,7 @@ import { RadarSkillTick } from './RadarSkillTick';
 const DICIONARIO_MENTORIA: Record<string, { titulo: string; sugestao: string }> = {
   "Inteligência Emocional": {
     titulo: "Livro: Inteligência Emocional (Daniel Goleman)",
-    sugestao: "Antes de responder mensagens difíceis, espere 10 minutos. Nomeie a emoção que sentiu antes de agir. Pratique essa pausa consciente por 30 dias — ela muda o padrão de reatividade.",
+    sugestao: "Antes de responder mensagens difíceis, espere 10 minutos. Nomeie a emoção que sentiu antes de agir. Pratique essa pausa consciente por 30 dias - ela muda o padrão de reatividade.",
   },
   "Capacidade de lidar com ambiguidade": {
     titulo: "Prática: A Técnica da Única Métrica",
@@ -14,7 +14,7 @@ const DICIONARIO_MENTORIA: Record<string, { titulo: string; sugestao: string }> 
   },
   "Trabalho em Equipe": {
     titulo: "Ação Prática: 1:1 Informal",
-    sugestao: "Agende um café de 15 min com uma pessoa diferente do seu time a cada 2 semanas — só para ouvir. Você vai descobrir bloqueios que ninguém leva pra reunião formal.",
+    sugestao: "Agende um café de 15 min com uma pessoa diferente do seu time a cada 2 semanas - só para ouvir. Você vai descobrir bloqueios que ninguém leva pra reunião formal.",
   },
   "Comunicação": {
     titulo: "Livro: Comunicação Não-Violenta (Marshall Rosenberg)",
@@ -26,7 +26,7 @@ const DICIONARIO_MENTORIA: Record<string, { titulo: string; sugestao: string }> 
   },
   "Capacidade de estabelecer network": {
     titulo: "Hábito: Reconecte 2 contatos por mês",
-    sugestao: "Toda semana, envie uma mensagem genuína para alguém da sua rede — um artigo relevante, um parabéns por conquista. Networking é consistência, não intensidade.",
+    sugestao: "Toda semana, envie uma mensagem genuína para alguém da sua rede - um artigo relevante, um parabéns por conquista. Networking é consistência, não intensidade.",
   },
   "Capacidade de aprender": {
     titulo: "Método: Feynman Technique",
@@ -43,7 +43,7 @@ const DICIONARIO_MENTORIA: Record<string, { titulo: string; sugestao: string }> 
 };
 
 const FORTE_LEVERAGE: Record<string, string> = {
-  "Inteligência Emocional": "Use essa força para mediar conflitos no time. Ofereça-se para conversas difíceis que outros evitam — essa é a habilidade mais rara em ambientes sob pressão.",
+  "Inteligência Emocional": "Use essa força para mediar conflitos no time. Ofereça-se para conversas difíceis que outros evitam - essa é a habilidade mais rara em ambientes sob pressão.",
   "Capacidade de lidar com ambiguidade": "Ofereça-se para projetos early-stage e iniciativas sem playbook. É onde você brilha e quem resolve ambiguidade vira referência estratégica rapidamente.",
   "Trabalho em Equipe": "Assuma papel de facilitador em cerimônias e reuniões cross-time. Transforme isso em legado: documente rituais que funcionam.",
   "Comunicação": "Candidate-se para apresentações a lideranças e comitês. Escrita e fala clara é o acelerador de carreira mais subestimado.",
@@ -51,7 +51,7 @@ const FORTE_LEVERAGE: Record<string, string> = {
   "Capacidade de estabelecer network": "Use sua rede para destravar negócios e conectar pessoas. Mantenha um CRM pessoal simples dos contatos-chave.",
   "Capacidade de aprender": "Vire o 'early adopter' oficial de tecnologias e metodologias no seu time. Compartilhe descobertas em lightning talks internas.",
   "Capacidade de mudar (Adaptabilidade)": "Voluntarie-se para projetos de transformação e transições difíceis. Você é a pessoa certa quando tudo muda.",
-  "Proatividade": "Identifique 1 problema silencioso por mês e resolva antes que escale. Documente o antes/depois — isso vira seu portfólio tácito.",
+  "Proatividade": "Identifique 1 problema silencioso por mês e resolva antes que escale. Documente o antes/depois - isso vira seu portfólio tácito.",
 };
 
 type Props = {
@@ -240,7 +240,7 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
       {/* DIAGNÓSTICO DE HARD SKILLS */}
       {hardSkillsGap.length > 0 && (
         <div data-pdf-section style={sectionStyle}>
-          <h2 style={h2Style}>Diagnóstico de Hard Skills — Onde Atacar</h2>
+          <h2 style={h2Style}>Diagnóstico de Hard Skills - Onde Atacar</h2>
           <p style={subStyle}>Gaps ordenados por distância. Priorize os maiores ou os que destravam seus objetivos imediatos.</p>
 
           {hardSkillsGap.map((s, i) => {
@@ -268,7 +268,7 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
       {/* PONTOS FORTES */}
       {(softFortes.length > 0 || hardSkillsFortes.length > 0) && (
         <div data-pdf-section style={sectionStyle}>
-          <h2 style={h2Style}>Pontos Fortes — O que Alavancar</h2>
+          <h2 style={h2Style}>Pontos Fortes - O que Alavancar</h2>
           <p style={subStyle}>Estas são suas vantagens competitivas. Use-as a seu favor em projetos e decisões de carreira.</p>
 
           {softFortes.map((s, i) => (
@@ -308,8 +308,8 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
       {/* PONTOS A DESENVOLVER */}
       {softMelhorias.length > 0 && (
         <div data-pdf-section style={sectionStyle}>
-          <h2 style={h2Style}>Pontos a Desenvolver — Plano de Melhoria</h2>
-          <p style={subStyle}>Atributos que, uma vez fortalecidos, destravam seu próximo nível. Trate como prioridade — estão no caminho crítico.</p>
+          <h2 style={h2Style}>Pontos a Desenvolver - Plano de Melhoria</h2>
+          <p style={subStyle}>Atributos que, uma vez fortalecidos, destravam seu próximo nível. Trate como prioridade - estão no caminho crítico.</p>
 
           {softMelhorias.map((s, i) => {
             const dic = DICIONARIO_MENTORIA[s.atributo];
@@ -363,7 +363,7 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
                 )}
                 <p style={{ fontSize: '11px', color: acoesDoObj === 0 ? '#be123c' : '#64748b', fontWeight: 600 }}>
                   {acoesDoObj === 0
-                    ? '⚠️ Nenhuma ação vinculada — objetivo sem plano de execução.'
+                    ? '⚠️ Nenhuma ação vinculada - objetivo sem plano de execução.'
                     : `✓ ${acoesDoObj} ação${acoesDoObj > 1 ? 'ões' : ''} vinculada${acoesDoObj > 1 ? 's' : ''}.`}
                 </p>
               </div>
@@ -390,7 +390,7 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
                   <strong>Prazo:</strong> {a.prazoData ? new Date(a.prazoData).toLocaleDateString('pt-BR') : 'Sem prazo'}
                 </div>
                 <div style={{ fontSize: '12px', color: '#475569' }}>
-                  <strong>Recursos:</strong> {a.recursos || '— sem recursos definidos —'}
+                  <strong>Recursos:</strong> {a.recursos || '- sem recursos definidos -'}
                 </div>
               </div>
             );
@@ -425,7 +425,7 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
                 {campoDeForcas.restritivas.map((f, i) => <li key={i}>{f}</li>)}
               </ul>
             ) : (
-              <p style={{ ...pStyle, color: '#991b1b' }}>⚠️ Nenhuma barreira mapeada — cuidado com falso otimismo.</p>
+              <p style={{ ...pStyle, color: '#991b1b' }}>⚠️ Nenhuma barreira mapeada - cuidado com falso otimismo.</p>
             )}
           </div>
         </div>
@@ -481,10 +481,10 @@ export const PdfReport = forwardRef<HTMLDivElement, Props>(({
       <div data-pdf-section style={{ ...sectionStyle, background: 'linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%)', border: '1px solid #c7d2fe' }}>
         <h2 style={{ ...h2Style, color: '#312e81' }}>Mensagem do Mentor</h2>
         <p style={{ ...pStyle, color: '#3730a3', marginBottom: '10px' }}>
-          {usuario.nome?.split(' ')[0] || 'Profissional'}, este PDI não é um documento para arquivar — é um contrato com você mesmo.
+          {usuario.nome?.split(' ')[0] || 'Profissional'}, este PDI não é um documento para arquivar - é um contrato com você mesmo.
         </p>
         <p style={{ ...pStyle, color: '#3730a3', marginBottom: '10px' }}>
-          <strong>Revise a cada 30 dias</strong> este plano. Atualize o que mudou, marque o que evoluiu, reescreva o que perdeu sentido. Plano que não é revisitado morre em 90 dias — é lei.
+          <strong>Revise a cada 30 dias</strong> este plano. Atualize o que mudou, marque o que evoluiu, reescreva o que perdeu sentido. Plano que não é revisitado morre em 90 dias - é lei.
         </p>
         <p style={{ ...pStyle, color: '#3730a3' }}>
           Sua saúde de PDI hoje é <strong style={{ color: saudeCor }}>{scoreSaude}%</strong>. Fecha o próximo ciclo com no mínimo <strong>+15 pontos</strong>.

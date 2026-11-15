@@ -1,7 +1,7 @@
 // Catálogo curado de cursos, trilhas, badges e recursos educacionais.
 // Consolidado em 08/11/2026 com base em evidências oficiais de 10 provedores.
 // Cada item tem classificação explícita de acesso (`acesso`), tipo de credencial
-// (`credencial`), idioma e observações — ver src/lib/recursos.ts.
+// (`credencial`), idioma e observações - ver src/lib/recursos.ts.
 // Nunca afirmar "certificação gratuita" quando a fonte garante apenas o curso
 // ou badge de conclusão.
 
@@ -24,7 +24,7 @@ export type Certificacao = {
   parceiro?: string;
   url: string;
   tipoRecurso?: TipoRecursoCatalogo;
-  /** O que é gratuito (curso, certificado, exame) — ver ACESSO_INFO */
+  /** O que é gratuito (curso, certificado, exame) - ver ACESSO_INFO */
   acesso: AcessoRecurso;
   /** Tipo de credencial gerada */
   credencial: CredencialRecurso;
@@ -52,7 +52,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
     emoji: '🇧🇷',
     certificacoes: [
       {
-        nome: 'Todos os cursos — Escola Virtual',
+        nome: 'Todos os cursos - Escola Virtual',
         provedor: 'Fundação Bradesco',
         url: 'https://www.ev.org.br/cursos',
         tipoRecurso: 'catalogo',
@@ -78,7 +78,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['informática', 'hardware', 'software', 'fundamentos de ti', 'suporte'],
       },
       {
-        nome: 'Introdução à Análise de Dados — Microsoft Power BI',
+        nome: 'Introdução à Análise de Dados - Microsoft Power BI',
         provedor: 'Fundação Bradesco',
         url: 'https://www.ev.org.br/cursos/introducao-a-analise-de-dados-microsoft-power-bi',
         tipoRecurso: 'curso',
@@ -91,7 +91,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['power bi', 'análise de dados', 'bi', 'dados', 'dashboards'],
       },
       {
-        nome: 'Office 365 — Trilha de Conhecimento',
+        nome: 'Office 365 - Trilha de Conhecimento',
         provedor: 'Fundação Bradesco',
         url: 'https://www.ev.org.br/trilhas-de-conhecimento/office-365',
         tipoRecurso: 'trilha',
@@ -175,7 +175,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['negócios', 'liderança', 'dados', 'tecnologia', 'soft skills', 'gestão', 'finanças'],
       },
       {
-        nome: 'Cursos de idiomas — Santander Open Academy',
+        nome: 'Cursos de idiomas - Santander Open Academy',
         provedor: 'Santander Open Academy',
         url: 'https://www.santanderopenacademy.com/pt_br/sites/courses/languages.html',
         tipoRecurso: 'catalogo',
@@ -188,7 +188,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['inglês', 'idiomas', 'comunicação'],
       },
       {
-        nome: 'Fundamentos de inglês — University of Pennsylvania',
+        nome: 'Fundamentos de inglês - University of Pennsylvania',
         provedor: 'Santander Open Academy',
         parceiro: 'University of Pennsylvania',
         url: 'https://app.santanderopenacademy.com/pt-BR/course/english-essentials-for-professional-growth',
@@ -202,7 +202,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['inglês', 'english', 'idiomas', 'comunicação'],
       },
       {
-        nome: 'British Council English Online 2026 — 3rd Call',
+        nome: 'British Council English Online 2026 - 3rd Call',
         provedor: 'Santander Open Academy',
         parceiro: 'British Council',
         url: 'https://app.santanderopenacademy.com/pt-BR/program/british-council-english-online-2026-3rd-call',
@@ -216,7 +216,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['inglês', 'idiomas', 'british council'],
       },
       {
-        nome: 'Cursos livres gratuitos a distância — SENAI-SP',
+        nome: 'Cursos livres gratuitos a distância - SENAI-SP',
         provedor: 'SENAI-SP',
         url: 'https://www.sp.senai.br/cursos/cursos-livres/0?modalidade=3&gratuito=1',
         tipoRecurso: 'catalogo',
@@ -229,7 +229,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['indústria', 'logística', 'qualidade', 'tecnologia', 'gestão'],
       },
       {
-        nome: 'Cursos gratuitos — Estratégia e Gestão (SENAI-SP)',
+        nome: 'Cursos gratuitos - Estratégia e Gestão (SENAI-SP)',
         provedor: 'SENAI-SP',
         url: 'https://www.sp.senai.br/cursos-gratuitos-estrategia-e-gestao',
         tipoRecurso: 'catalogo',
@@ -339,7 +339,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['microsoft', 'azure', 'power bi', 'dados', 'ia', 'cloud'],
       },
       {
-        nome: 'Procurar cursos, roteiros e módulos — Microsoft Learn',
+        nome: 'Procurar cursos, roteiros e módulos - Microsoft Learn',
         provedor: 'Microsoft Learn',
         url: 'https://learn.microsoft.com/pt-br/training/browse/',
         tipoRecurso: 'catalogo',
@@ -482,7 +482,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
     emoji: '📣',
     certificacoes: [
       {
-        nome: 'Skillshop — catálogo de treinamentos Google',
+        nome: 'Skillshop - catálogo de treinamentos Google',
         provedor: 'Google Skillshop',
         url: 'https://skillshop.withgoogle.com/intl/pt-BR_ALL/',
         tipoRecurso: 'catalogo',
@@ -508,7 +508,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
         keywords: ['google ads', 'tráfego pago', 'mídia paga', 'anúncios', 'sem'],
       },
       {
-        nome: 'Google Skills — catálogo pt-BR',
+        nome: 'Google Skills - catálogo pt-BR',
         provedor: 'Google Skills',
         url: 'https://www.skills.google/catalog?locale=pt_BR',
         tipoRecurso: 'catalogo',
@@ -592,7 +592,7 @@ export const CERTIFICACOES_GRATUITAS: GrupoCertificacao[] = [
     emoji: '🔒',
     certificacoes: [
       {
-        nome: 'Catálogo de Aprendizagem — Cisco Networking Academy',
+        nome: 'Catálogo de Aprendizagem - Cisco Networking Academy',
         provedor: 'Cisco Networking Academy',
         url: 'https://www.netacad.com/pt/catalogs/learn',
         tipoRecurso: 'catalogo',

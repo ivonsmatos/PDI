@@ -17,7 +17,7 @@ export const Passo4PlanoAcao: React.FC = () => {
 
   const addAcao = () => {
     if (!objetivoAtivo || !novaAcao || !novoPrazo) return;
-    if (novoPrazo < hoje) return; // data no passado — bloqueado pelo input min também
+    if (novoPrazo < hoje) return; // data no passado - bloqueado pelo input min também
 
     const newAcao: PlanoAcaoItem = {
       id: Date.now().toString(),

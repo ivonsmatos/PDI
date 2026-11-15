@@ -7,7 +7,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 const PASSOS = [
   {
     step: '1. Defina o objetivo de carreira (3 a 6 meses)',
-    desc: 'Escolha uma direção concreta — como transição para liderança técnica, preparação para nível Sênior ou fortalecimento em análise de dados. Evite listas genéricas com 10 metas simultâneas.',
+    desc: 'Escolha uma direção concreta - como transição para liderança técnica, preparação para nível Sênior ou fortalecimento em análise de dados. Evite listas genéricas com 10 metas simultâneas.',
   },
   {
     step: '2. Mapeie lacunas de competências (técnicas e comportamentais)',
@@ -72,7 +72,7 @@ const COMO_FAZER_JSONLD = {
 
 export const ComoFazerPdi: React.FC = () => {
   usePageMeta({
-    title: 'Como fazer um PDI profissional: passo a passo e exemplos — Meu PDI',
+    title: 'Como fazer um PDI profissional: passo a passo e exemplos - Meu PDI',
     description: 'Aprenda como fazer um Plano de Desenvolvimento Individual em 5 passos, veja exemplos por nível (Júnior, Pleno e Sênior) e crie seu plano gratuitamente.',
     canonicalPath: '/como-fazer-um-pdi',
     jsonLd: COMO_FAZER_JSONLD,

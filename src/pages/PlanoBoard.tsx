@@ -144,7 +144,7 @@ export const PlanoBoard: React.FC = () => {
         </div>
       </div>
 
-      {/* Board — 4 colunas */}
+      {/* Board - 4 colunas */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {COLUNAS.map((col) => {
           const itensColuna = acoesFiltradas.filter(a => getStatus(a.id) === col.status);
@@ -223,7 +223,7 @@ export const PlanoBoard: React.FC = () => {
                         {vencida && (
                           <div className="mt-3 p-2.5 rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/40 space-y-2">
                             <p className="text-[11px] font-semibold text-rose-700 dark:text-rose-300">
-                              Prazo vencido — escolha uma ação:
+                              Prazo vencido - escolha uma ação:
                             </p>
                             {reagendandoId === acao.id ? (
                               <div className="flex items-center gap-1.5">

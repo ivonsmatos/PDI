@@ -40,7 +40,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
       <footer className="bg-slate-950 text-slate-400 py-10 px-6 border-t border-slate-800">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-sm">
           <div>
-            <p className="text-white font-bold">Meu PDI — Plano de Desenvolvimento Individual</p>
+            <p className="text-white font-bold">Meu PDI - Plano de Desenvolvimento Individual</p>
             <p className="text-xs text-slate-500 mt-1">Atendimento em português brasileiro para profissionais, gestores e RH no Brasil.</p>
           </div>
           <div className="flex flex-wrap gap-5 text-xs">

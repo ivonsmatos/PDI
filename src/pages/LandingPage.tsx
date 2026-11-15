@@ -90,7 +90,7 @@ const PROS = [
 
 const CONS = [
   { label: 'Desenvolvimento disperso e sem foco claro' },
-  { label: 'Conquistas não documentadas — invisíveis para o mercado' },
+  { label: 'Conquistas não documentadas - invisíveis para o mercado' },
   { label: 'Sem clareza sobre o que falta para subir de nível' },
   { label: 'Entrevistas baseadas em memória, não em evidências' },
   { label: 'Feedback de performance sem base objetiva' },
@@ -132,7 +132,7 @@ export const LandingPage: React.FC = () => {
           name: 'Meus dados ficam públicos automaticamente?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Não. Seu PDI, diário e autoavaliação são privados por padrão. Você só gera um link público se quiser compartilhar — e pode revogá-lo quando desejar.',
+            text: 'Não. Seu PDI, diário e autoavaliação são privados por padrão. Você só gera um link público se quiser compartilhar - e pode revogá-lo quando desejar.',
           },
         },
         {
@@ -244,7 +244,7 @@ export const LandingPage: React.FC = () => {
             <p className="text-lg sm:text-xl text-slate-300 leading-relaxed mb-10 max-w-lg">
               A ferramenta gratuita que profissionais usam para planejar,
               acompanhar e <strong className="text-white">evidenciar</strong> seu
-              desenvolvimento de carreira — com estrutura real e humanidade.
+              desenvolvimento de carreira - com estrutura real e humanidade.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
@@ -504,7 +504,7 @@ export const LandingPage: React.FC = () => {
             to="/login"
             className="inline-flex items-center gap-2.5 mt-16 px-10 py-5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold rounded-2xl shadow-2xl shadow-indigo-200 transition-all hover:scale-[1.02] text-lg"
           >
-            Criar meu PDI agora — grátis <ArrowRight className="w-5 h-5" />
+            Criar meu PDI agora - grátis <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </section>
@@ -522,7 +522,7 @@ export const LandingPage: React.FC = () => {
             </h3>
             <p className="text-indigo-200 text-lg leading-relaxed">
               O Comparador de Nível cruza suas competências atuais com a matriz do próximo nível
-              e mostra exatamente quais skills desenvolver — sem achismo.
+              e mostra exatamente quais skills desenvolver - sem achismo.
             </p>
           </div>
           <Link
@@ -550,7 +550,7 @@ export const LandingPage: React.FC = () => {
             </h2>
             <p className="text-slate-500 text-lg max-w-2xl mx-auto leading-relaxed">
               De plataformas brasileiras como <strong className="text-slate-700">Fundação Bradesco, Santander, SENAI-SP e FGV</strong> a
-              ecossistemas globais. A Trilha e o Comparador indicam a modalidade real de acesso e credencial —{' '}
+              ecossistemas globais. A Trilha e o Comparador indicam a modalidade real de acesso e credencial -{' '}
               <Link to="/certificacoes-gratuitas" className="text-indigo-600 font-semibold hover:underline">
                 ver catálogo completo
               </Link>.
@@ -650,7 +650,7 @@ export const LandingPage: React.FC = () => {
               </h2>
               <p className="text-slate-500 text-lg mb-8 leading-relaxed">
                 Quando um profissional usa o Meu PDI, você acessa um histórico real de
-                desenvolvimento — não apenas o que ele diz, mas o que ele <strong className="text-slate-700">efetivamente fez</strong>.
+                desenvolvimento - não apenas o que ele diz, mas o que ele <strong className="text-slate-700">efetivamente fez</strong>.
               </p>
 
               <div className="space-y-4 mb-8">
@@ -671,7 +671,7 @@ export const LandingPage: React.FC = () => {
                     icon: <TrendingUp className="w-5 h-5 text-violet-600" />,
                     bg: 'bg-violet-50 border-violet-100',
                     title: 'Evidências concretas de evolução',
-                    desc: 'O diário e histórico de ciclos mostram como a pessoa realmente se desenvolveu — não só o que ela "sabe fazer".',
+                    desc: 'O diário e histórico de ciclos mostram como a pessoa realmente se desenvolveu - não só o que ela "sabe fazer".',
                   },
                   {
                     icon: <Users className="w-5 h-5 text-indigo-600" />,
@@ -808,7 +808,7 @@ export const LandingPage: React.FC = () => {
               },
               {
                 q: 'Meus dados ficam públicos automaticamente?',
-                a: 'Não. Seu PDI, diário e autoavaliação são privados por padrão. Você só gera um link público se quiser compartilhar — e pode revogá-lo quando desejar.',
+                a: 'Não. Seu PDI, diário e autoavaliação são privados por padrão. Você só gera um link público se quiser compartilhar - e pode revogá-lo quando desejar.',
               },
               {
                 q: 'Os cursos sugeridos têm certificado gratuito?',

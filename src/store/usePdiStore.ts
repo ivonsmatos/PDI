@@ -131,7 +131,7 @@ export interface PdiState extends PdiFields {
   setIsDarkMode: (v: boolean) => void;
   setNotificacoesAtivas: (v: boolean) => void;
 
-  // Histórico (não é keyof PdiFields — precisa de método dedicado)
+  // Histórico (não é keyof PdiFields - precisa de método dedicado)
   setHistorico: (ciclos: PdiCiclo[]) => void;
 
   // Gamificação
@@ -148,7 +148,7 @@ const initialState: PdiFields = {
   campoDeForcas: { impulsionadoras: [], restritivas: [], aliancas: '' },
 };
 
-/** Calcula health score dado o estado atual — mesma lógica do Dashboard e Passo6 */
+/** Calcula health score dado o estado atual - mesma lógica do Dashboard e Passo6 */
 function computeScore(state: PdiFields): number {
   if (state.objetivos.length === 0) return 0;
   let score = 100;
@@ -216,7 +216,7 @@ export const usePdiStore = create<PdiState>()(
           planoAcaoStatus: {},
           planoAcaoHistorico: {},
           trilhaProgresso: {},
-          // diario é mantido entre ciclos — o usuário não perde o histórico pessoal
+          // diario é mantido entre ciclos - o usuário não perde o histórico pessoal
         }),
 
       limparTudo: () => {

@@ -47,7 +47,7 @@ export const Sobre: React.FC = () => {
               <Scale className="w-4 h-4 text-indigo-600" /> Matriz de competências e autoavaliação
             </h2>
             <p className="text-sm text-slate-600 leading-relaxed">
-              As escalas de 0 a 5 e o comparador de nível utilizam matrizes referenciais por área e senioridade combinadas à autoavaliação do usuário. O resultado é uma ferramenta de apoio à reflexão e ao planejamento — não substitui avaliação formal de desempenho nem certificação independente.
+              As escalas de 0 a 5 e o comparador de nível utilizam matrizes referenciais por área e senioridade combinadas à autoavaliação do usuário. O resultado é uma ferramenta de apoio à reflexão e ao planejamento - não substitui avaliação formal de desempenho nem certificação independente.
             </p>
           </section>
 

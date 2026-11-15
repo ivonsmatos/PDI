@@ -87,7 +87,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({ children, onConcluir
       </header>
 
       <main className="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col">
-        {/* Stepper — 2 linhas de 3 */}
+        {/* Stepper - 2 linhas de 3 */}
         <div className="mb-10 space-y-3">
           {([steps.slice(0, 3), steps.slice(3)] as const).map((row, rowIdx) => {
             // progresso da linha: row 0 = steps 1-3, row 1 = steps 4-6

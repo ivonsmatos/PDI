@@ -343,7 +343,7 @@ export const AdminDashboard: React.FC = () => {
             <ShieldCheck className="w-6 h-6 text-indigo-500" /> Painel do Admin Geral
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Métricas agregadas e <strong>100% anonimizadas</strong> — nenhum nome, e-mail, objetivo ou texto de diário é consultado ou exibido.
+            Métricas agregadas e <strong>100% anonimizadas</strong> - nenhum nome, e-mail, objetivo ou texto de diário é consultado ou exibido.
           </p>
         </div>
         <button

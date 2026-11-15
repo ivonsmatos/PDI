@@ -7,7 +7,7 @@ export const Privacidade: React.FC = () => {
   const navigate = useNavigate();
 
   usePageMeta({
-    title: 'Privacidade e LGPD — Meu PDI',
+    title: 'Privacidade e LGPD - Meu PDI',
     description: 'Saiba quais dados o Meu PDI coleta, como funciona o consentimento de analytics, o perfil compartilhável e seus direitos na LGPD.',
     canonicalPath: '/privacidade',
   });
@@ -42,7 +42,7 @@ export const Privacidade: React.FC = () => {
           <p>
             O Meu PDI é gratuito e assim pretende permanecer. Não há planos pagos,
             cobrança de assinatura ou funcionalidades escondidas atrás de paywall.
-            Você cria sua conta, monta seu plano de desenvolvimento e usa à vontade —
+            Você cria sua conta, monta seu plano de desenvolvimento e usa à vontade -
             sem pagar nada.
           </p>
         </Section>
@@ -52,17 +52,17 @@ export const Privacidade: React.FC = () => {
           <p className="mb-3">Coletamos somente o necessário para que a ferramenta funcione:</p>
           <ul className="space-y-2 text-sm">
             <Item>
-              <strong>Nome e e-mail</strong> — para identificar sua conta e personalizar a experiência.
+              <strong>Nome e e-mail</strong> - para identificar sua conta e personalizar a experiência.
             </Item>
             <Item>
-              <strong>Dados do seu PDI</strong> — objetivos, plano de ação, autoavaliação de competências,
+              <strong>Dados do seu PDI</strong> - objetivos, plano de ação, autoavaliação de competências,
               diário de bordo e histórico de ciclos. Tudo o que você digita fica salvo na sua conta.
             </Item>
             <Item>
-              <strong>Preferências</strong> — como modo escuro, área de atuação e nível de carreira.
+              <strong>Preferências</strong> - como modo escuro, área de atuação e nível de carreira.
             </Item>
             <Item>
-              <strong>Métricas opcionais de acesso (mediante consentimento)</strong> — se você aceitar no
+              <strong>Métricas opcionais de acesso (mediante consentimento)</strong> - se você aceitar no
               banner de privacidade, carregamos Google Analytics / Google Tag Manager apenas para entender
               páginas mais acessadas de forma agregada. Nunca enviamos e-mail, diário ou competências.
             </Item>
@@ -88,7 +88,7 @@ export const Privacidade: React.FC = () => {
         </Section>
 
         {/* LGPD */}
-        <Section icon={<UserCheck className="w-5 h-5 text-purple-500" />} title="Seus direitos — LGPD (Lei 13.709/2018)">
+        <Section icon={<UserCheck className="w-5 h-5 text-purple-500" />} title="Seus direitos - LGPD (Lei 13.709/2018)">
           <p className="mb-3">
             A Lei Geral de Proteção de Dados garante que você tem controle total sobre
             suas informações. Você pode, a qualquer momento:
@@ -97,7 +97,7 @@ export const Privacidade: React.FC = () => {
             <Item><strong>Acessar</strong> todos os dados que temos sobre você.</Item>
             <Item><strong>Corrigir</strong> dados incompletos, inexatos ou desatualizados.</Item>
             <Item><strong>Excluir</strong> sua conta e todos os seus dados permanentemente.</Item>
-            <Item><strong>Portabilidade</strong> — solicitar seus dados em formato legível.</Item>
+            <Item><strong>Portabilidade</strong> - solicitar seus dados em formato legível.</Item>
             <Item><strong>Revogar consentimento</strong> a qualquer momento, sem ônus.</Item>
           </ul>
           <p className="mt-4 text-sm">
@@ -182,7 +182,7 @@ export const Privacidade: React.FC = () => {
 
         <div className="mt-10 p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 text-sm text-slate-600 dark:text-slate-400">
           <strong className="text-indigo-700 dark:text-indigo-300">Dica para headhunters e gestores:</strong>{' '}
-          As seções de Trilha e Evolução mostram evidências concretas do desenvolvimento —
+          As seções de Trilha e Evolução mostram evidências concretas do desenvolvimento -
           certificações, projetos e progressão de competências documentadas. Ideal para
           apresentar em processos seletivos e avaliações de desempenho.
         </div>

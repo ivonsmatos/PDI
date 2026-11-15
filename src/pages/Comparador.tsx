@@ -92,7 +92,7 @@ export const Comparador: React.FC = () => {
     hardGap.filter(s => s.status === 'nao_avaliada').length +
     softGap.filter(s => s.status === 'nao_avaliada').length;
   const avaliadasCount = totalCount - naoAvaliadasCount;
-  /** Sem nenhuma competência avaliada não há base para calcular — exibimos "dados insuficientes" em vez de 0%. */
+  /** Sem nenhuma competência avaliada não há base para calcular - exibimos "dados insuficientes" em vez de 0%. */
   const dadosInsuficientes = avaliadasCount === 0;
   const gapScore = totalCount > 0 ? Math.round((prontoCount / totalCount) * 100) : 0;
 
@@ -202,7 +202,7 @@ export const Comparador: React.FC = () => {
         </div>
         {dadosInsuficientes ? (
           <div className="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-700/40 rounded-xl p-3">
-            Nenhuma das {totalCount} competências do nível {NIVEL_LABEL[proximoNivel]} foi avaliada ainda — por isso não há
+            Nenhuma das {totalCount} competências do nível {NIVEL_LABEL[proximoNivel]} foi avaliada ainda - por isso não há
             percentual. Isso <strong>não</strong> significa nível zero.{' '}
             <Link to="/wizard" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
               Fazer a autoavaliação
@@ -246,7 +246,7 @@ export const Comparador: React.FC = () => {
           className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4 border border-slate-200 dark:border-slate-700"
         >
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
-            Nível atual — {NIVEL_LABEL[nivel]}
+            Nível atual - {NIVEL_LABEL[nivel]}
           </p>
           <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
             {dadosAtual?.expectativa}
@@ -257,7 +257,7 @@ export const Comparador: React.FC = () => {
           className="bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl p-4 border border-indigo-100 dark:border-indigo-800"
         >
           <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-2">
-            Próximo nível — {NIVEL_LABEL[proximoNivel]} 🎯
+            Próximo nível - {NIVEL_LABEL[proximoNivel]} 🎯
           </p>
           <p className="text-sm text-indigo-700 dark:text-indigo-300 leading-relaxed">
             {dadosProximo?.expectativa}
@@ -271,7 +271,7 @@ export const Comparador: React.FC = () => {
         className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-4"
       >
         <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4 text-sm">
-          Habilidades técnicas (hard skills) — nível {NIVEL_LABEL[proximoNivel]}
+          Habilidades técnicas (hard skills) - nível {NIVEL_LABEL[proximoNivel]}
         </h3>
         <div className="space-y-1">
           {hardGap.map(({ skill, status, nivelAtual }) => (
@@ -340,7 +340,7 @@ export const Comparador: React.FC = () => {
         className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm mb-6"
       >
         <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4 text-sm">
-          Habilidades comportamentais (soft skills) — nível {NIVEL_LABEL[proximoNivel]}
+          Habilidades comportamentais (soft skills) - nível {NIVEL_LABEL[proximoNivel]}
         </h3>
         <div className="space-y-1">
           {softGap.map(({ skill, status }) => (
@@ -396,7 +396,7 @@ export const Comparador: React.FC = () => {
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Recursos alinhados às competências que faltam para {NIVEL_LABEL[proximoNivel]}. Cada item indica o que é gratuito
-              e o tipo de credencial. Classificação revisada em {formatarDataBR(CATALOGO_REVISADO_EM)} — confirme no site oficial.
+              e o tipo de credencial. Classificação revisada em {formatarDataBR(CATALOGO_REVISADO_EM)} - confirme no site oficial.
             </p>
           </div>
           <div className="divide-y divide-slate-100 dark:divide-slate-700">

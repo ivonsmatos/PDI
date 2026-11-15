@@ -102,7 +102,7 @@ async function hydrateStore(uid: string) {
     if (diario.length > 0)  usePdiStore.setState({ diario });
     if (ciclos.length > 0)  usePdiStore.setState({ historico: ciclos });
   } catch (err) {
-    console.warn('[PDI] Falha ao carregar dados do Firestore — usando cache local', err);
+    console.warn('[PDI] Falha ao carregar dados do Firestore - usando cache local', err);
     addToast('Sincronização lenta. Usando dados locais.', 'warning');
   }
 }

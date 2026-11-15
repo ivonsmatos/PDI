@@ -51,14 +51,14 @@ export const TemplateSelector: React.FC<Props> = ({ open, onClose }) => {
   const handleApply = () => {
     if (!area || !nivel || !previewData) return;
 
-    // Hard Skills — pré-preenchidas com nivelAtual=0 e nivelDesejado=3
+    // Hard Skills - pré-preenchidas com nivelAtual=0 e nivelDesejado=3
     const hardSkills: HardSkill[] = (previewData.hardSkills as string[]).map(skill => ({
       skill,
       nivelAtual: 0,
       nivelDesejado: 3,
     }));
 
-    // Soft Skills — pré-marcadas como Melhoria (ponto de partida para avaliação)
+    // Soft Skills - pré-marcadas como Melhoria (ponto de partida para avaliação)
     const softSkills: SoftSkill[] = (previewData.softSkills as string[]).map(atributo => ({
       atributo,
       pontoForteOuMelhoria: '' as const,
@@ -106,7 +106,7 @@ export const TemplateSelector: React.FC<Props> = ({ open, onClose }) => {
 
             <div className="p-5 space-y-4">
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Escolha sua área e nível atual. As competências da sua função serão pré-carregadas na auto-avaliação — você só ajusta os níveis.
+                Escolha sua área e nível atual. As competências da sua função serão pré-carregadas na auto-avaliação - você só ajusta os níveis.
               </p>
 
               {/* Seleção de área */}
@@ -163,7 +163,7 @@ export const TemplateSelector: React.FC<Props> = ({ open, onClose }) => {
                   className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-4 border border-indigo-100 dark:border-indigo-800"
                 >
                   <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-2">
-                    Preview — {previewData.hardSkills.length} hard skills + {previewData.softSkills.length} soft skills serão carregadas:
+                    Preview - {previewData.hardSkills.length} hard skills + {previewData.softSkills.length} soft skills serão carregadas:
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 italic mb-2">{previewData.expectativa}</p>
                   <div className="flex flex-wrap gap-1">
