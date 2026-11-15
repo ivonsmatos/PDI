@@ -7,6 +7,7 @@ import { computeMetricas } from '../lib/healthScore';
 import { gerarTrilha, contarProgressoTrilha } from '../lib/trilha';
 import { STATUS_LABEL, STATUS_COLOR } from '../lib/constants';
 import { useToastStore } from '../store/useToastStore';
+import { encontrarVinculosSugeridos } from '../lib/reconcileObjetivos';
 import {
   Map, CheckSquare, TrendingUp, Target,
   Rocket, AlertTriangle, Calendar, ArrowRight, CheckCircle2,
@@ -36,9 +37,15 @@ const NEXT_STATUS_MAP: Record<PlanoStatus, PlanoStatus> = {
 export const Dashboard: React.FC = () => {
   const {
     usuario, objetivos, planoDeAcao, inventario, campoDeForcas,
-    planoAcaoStatus, trilhaProgresso, setPlanoItemStatus,
+    planoAcaoStatus, trilhaProgresso, setPlanoItemStatus, updatePlanoAcaoItem,
     diario, historico, publicProfileId,
   } = usePdiStore();
+  const { addToast } = useToastStore();
+
+  const sugestoesVinculo = useMemo(
+    () => encontrarVinculosSugeridos(objetivos, planoDeAcao),
+    [objetivos, planoDeAcao]
+  );
 
   const [showScoreDrill, setShowScoreDrill] = useState(false);
 
@@ -164,6 +171,30 @@ export const Dashboard: React.FC = () => {
           Aqui está um resumo do seu desenvolvimento hoje.
         </p>
       </motion.div>
+
+      {/* Banner de reconciliação automática de vínculos ação <-> objetivo */}
+      {sugestoesVinculo.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#539CBD]/15 border border-[#017AA1]/30"
+        >
+          <div className="text-xs text-slate-800 dark:text-slate-100">
+            <strong className="text-[#017AA1]">Vínculos desatualizados detectados:</strong>{' '}
+            Encontramos {sugestoesVinculo.length} ação(ões) que correspondem a objetivos sem ações vinculadas. Corrija em 1 clique para atualizar o progresso por objetivo e a saúde do plano.
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              sugestoesVinculo.forEach(s => updatePlanoAcaoItem(s.acaoId, { objetivoId: s.objetivoSugeridoId }));
+              addToast(`${sugestoesVinculo.length} vínculo(s) atualizado(s) e saúde do plano recalculada!`, 'success');
+            }}
+            className="shrink-0 px-3.5 py-2 rounded-xl bg-[#017AA1] hover:bg-[#016384] text-white text-xs font-bold transition-colors"
+          >
+            Corrigir vínculos agora ({sugestoesVinculo.length})
+          </button>
+        </motion.div>
+      )}
 
       {/* Banner de plano incompleto */}
       {itensIncompletos.length > 0 && (

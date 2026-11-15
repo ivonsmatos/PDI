@@ -11,6 +11,7 @@ import {
 } from '../data/careerMetadata';
 import { AreaRecommenderModal } from '../components/AreaRecommenderModal';
 import { trackEvent } from '../lib/analytics';
+import { useToastStore } from '../store/useToastStore';
 
 const atributosEmpregabilidade = [
   'Capacidade de estabelecer network',
@@ -35,6 +36,7 @@ const nivelOptions = [
 
 export const Passo2AutoAvaliacao: React.FC = () => {
   const { inventario, setStoreItem, usuario, updateUsuario } = usePdiStore();
+  const { addToast } = useToastStore();
   const [activeTab, setActiveTab] = useState<'soft' | 'hard'>('soft');
   const [recommenderOpen, setRecommenderOpen] = useState(false);
   const [naoListada, setNaoListada] = useState(Boolean(usuario.areaPersonalizada));
@@ -122,15 +124,17 @@ export const Passo2AutoAvaliacao: React.FC = () => {
     const existing = index >= 0 ? newHards[index] : { skill, nivelAtual: 0, nivelDesejado: 0 };
 
     if (type === 'nivelDesejado' && existing.nivelAtual > 0 && value < existing.nivelAtual) {
-      const ok = window.confirm(
-        `O nível-alvo (${value}) é menor que o seu nível de proficiência atual (${existing.nivelAtual}). Houve mudança de objetivo ou rebaixamento intencional?`
+      addToast(
+        `O nível-alvo (${value}) não pode ser menor que o seu nível atual (${existing.nivelAtual}).`,
+        'warning'
       );
-      if (!ok) return;
+      return;
     }
 
     const updated = { ...existing, [type]: value };
     if (type === 'nivelAtual' && updated.nivelDesejado > 0 && updated.nivelDesejado < value) {
       updated.nivelDesejado = value;
+      addToast(`Nível-alvo de "${skill}" ajustado para ${value} para acompanhar o nível atual.`, 'info');
     }
 
     if (index >= 0) {
@@ -247,18 +251,41 @@ export const Passo2AutoAvaliacao: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-[#017AA1] w-32">Nível-Alvo:</span>
               <div className="flex gap-1 flex-grow">
-                {[1, 2, 3, 4, 5].map(v => (
-                  <button
-                    key={`meta-${v}`}
-                    type="button"
-                    onClick={() => handleHardSkillChange(skillName, 'nivelDesejado', v)}
-                    className={`flex-1 h-8 rounded-md text-xs font-bold transition-all ${desejado >= v ? 'bg-[#51266E] text-white shadow-inner' : 'bg-gray-100 text-gray-400 hover:bg-[#51266E]/10'}`}
-                  >
-                    {v}
-                  </button>
-                ))}
+                {[1, 2, 3, 4, 5].map(v => {
+                  const belowCurrent = atual > 0 && v < atual;
+                  return (
+                    <button
+                      key={`meta-${v}`}
+                      type="button"
+                      disabled={belowCurrent}
+                      title={belowCurrent ? `Nível-alvo não pode ser menor que o atual (${atual})` : `Definir nível-alvo ${v}`}
+                      onClick={() => handleHardSkillChange(skillName, 'nivelDesejado', v)}
+                      className={`flex-1 h-8 rounded-md text-xs font-bold transition-all ${
+                        belowCurrent
+                          ? 'bg-gray-100 text-gray-300 cursor-not-allowed opacity-60'
+                          : desejado >= v
+                            ? 'bg-[#51266E] text-white shadow-inner'
+                            : 'bg-gray-100 text-gray-400 hover:bg-[#51266E]/10'
+                      }`}
+                    >
+                      {v}
+                    </button>
+                  );
+                })}
               </div>
             </div>
+            {desejado > 0 && atual > 0 && desejado < atual && (
+              <div className="flex items-center justify-between gap-2 text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-2.5 py-1.5">
+                <span>Meta ({desejado}/5) está abaixo do nível atual ({atual}/5).</span>
+                <button
+                  type="button"
+                  onClick={() => handleHardSkillChange(skillName, 'nivelDesejado', atual)}
+                  className="font-bold underline shrink-0"
+                >
+                  Corrigir para {atual}/5
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

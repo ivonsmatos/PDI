@@ -4,6 +4,7 @@ import { usePdiStore } from '../store/usePdiStore';
 import type { PlanoStatus } from '../store/usePdiStore';
 import { useToastStore } from '../store/useToastStore';
 import { STATUS_LABEL } from '../lib/constants';
+import { encontrarVinculosSugeridos } from '../lib/reconcileObjetivos';
 import {
   Clock, Loader2, CheckCircle2, ChevronDown, Ban,
   CalendarClock, Trash2, ExternalLink, History,
@@ -149,13 +150,28 @@ export const PlanoBoard: React.FC = () => {
         const objIds = new Set(objetivos.map(o => o.id));
         const orfasCount = planoDeAcao.filter(a => !objIds.has(a.objetivoId)).length;
         const semAcaoCount = objetivos.filter(o => !planoDeAcao.some(a => a.objetivoId === o.id)).length;
+        const sugestoes = encontrarVinculosSugeridos(objetivos, planoDeAcao);
         if (orfasCount === 0 && semAcaoCount === 0) return null;
         return (
-          <div className="mb-5 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700 p-3.5 text-xs text-amber-900 dark:text-amber-200">
-            <strong>Atenção à associação entre ações e objetivos:</strong>{' '}
-            {orfasCount > 0 && `${orfasCount} ação(ões) sem objetivo válido vinculado. `}
-            {semAcaoCount > 0 && `${semAcaoCount} objetivo(s) sem nenhuma ação vinculada. `}
-            Use o seletor <em>&quot;Objetivo vinculado&quot;</em> nos cartões abaixo para corrigir e atualizar a Saúde do Plano.
+          <div className="mb-5 rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700 p-3.5 text-xs text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <strong>Atenção à associação entre ações e objetivos:</strong>{' '}
+              {orfasCount > 0 && `${orfasCount} ação(ões) sem objetivo válido vinculado. `}
+              {semAcaoCount > 0 && `${semAcaoCount} objetivo(s) sem nenhuma ação vinculada. `}
+              Use o seletor <em>&quot;Objetivo vinculado&quot;</em> nos cartões abaixo para corrigir e atualizar a Saúde do Plano.
+            </div>
+            {sugestoes.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  sugestoes.forEach(s => updatePlanoAcaoItem(s.acaoId, { objetivoId: s.objetivoSugeridoId }));
+                  addToast(`${sugestoes.length} vínculo(s) corrigido(s) automaticamente!`, 'success');
+                }}
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-[#017AA1] hover:bg-[#016384] text-white font-bold text-xs transition-colors"
+              >
+                Corrigir vínculos automaticamente ({sugestoes.length})
+              </button>
+            )}
           </div>
         );
       })()}
