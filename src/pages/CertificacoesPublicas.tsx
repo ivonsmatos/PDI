@@ -114,7 +114,7 @@ export const CertificacoesPublicas: React.FC = () => {
                           href={cert.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#159A9C] hover:opacity-80"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#017AA1] hover:opacity-80"
                         >
                           Abrir fonte oficial <ExternalLink className="w-3.5 h-3.5" />
                         </a>
@@ -136,16 +136,16 @@ export const CertificacoesPublicas: React.FC = () => {
           ))}
         </div>
 
-        <section className="bg-[#159A9C] text-white rounded-3xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <section className="bg-gradient-to-r from-[#51266E] to-[#017AA1] text-white rounded-3xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
             <h2 className="text-xl font-extrabold">Quer receber recomendações filtradas pelos seus gaps?</h2>
-            <p className="text-[#DEEFE7] text-sm mt-1">
+            <p className="text-[#BAB1BD] text-sm mt-1">
               No Meu PDI, sua trilha cruza automaticamente suas lacunas de competência com estes recursos oficiais. Gratuito para uso individual.
             </p>
           </div>
           <Link
             to="/login"
-            className="shrink-0 inline-flex items-center gap-2 bg-white text-[#159A9C] font-bold px-5 py-3 rounded-xl hover:bg-[#DEEFE7] transition-colors"
+            className="shrink-0 inline-flex items-center gap-2 bg-white text-[#51266E] font-bold px-5 py-3 rounded-xl hover:bg-slate-100 transition-colors"
           >
             Criar meu PDI grátis <ArrowRight className="w-4 h-4" />
           </Link>

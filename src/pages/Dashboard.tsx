@@ -474,7 +474,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-500" /> Maiores Gaps de Competência
             </h3>
-            <Link to="/app/comparador" className="text-xs text-[#159A9C] hover:underline flex items-center gap-1">
+            <Link to="/app/comparador" className="text-xs text-[#017AA1] hover:underline flex items-center gap-1">
               Comparar <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -496,7 +496,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <div className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#159A9C] rounded-full"
+                      className="h-full bg-[#017AA1] rounded-full"
                       style={{ width: `${Math.round((s.nivelAtual / Math.max(1, s.nivelDesejado)) * 100)}%` }}
                     />
                   </div>
@@ -569,7 +569,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-violet-500" /> Diário de Progresso
             </h3>
-            <Link to="/app/diario" className="text-xs text-[#159A9C] hover:underline">Abrir</Link>
+            <Link to="/app/diario" className="text-xs text-[#017AA1] hover:underline">Abrir</Link>
           </div>
           <p className="text-2xl font-black text-slate-800 dark:text-slate-100">
             {diario.length} <span className="text-xs font-medium text-slate-400">registro(s)</span>
@@ -590,7 +590,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
               <History className="w-4 h-4 text-emerald-500" /> Ciclos & Campo de Forças
             </h3>
-            <Link to="/app/evolucao" className="text-xs text-[#159A9C] hover:underline">Evolução</Link>
+            <Link to="/app/evolucao" className="text-xs text-[#017AA1] hover:underline">Evolução</Link>
           </div>
           <div className="flex items-baseline gap-2">
             <p className="text-2xl font-black text-slate-800 dark:text-slate-100">
@@ -613,10 +613,10 @@ export const Dashboard: React.FC = () => {
         >
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-2">
-              {publicProfileId ? <Globe className="w-4 h-4 text-[#159A9C]" /> : <Lock className="w-4 h-4 text-slate-400" />}
+              {publicProfileId ? <Globe className="w-4 h-4 text-[#017AA1]" /> : <Lock className="w-4 h-4 text-slate-400" />}
               Perfil Público
             </h3>
-            <Link to="/app/config" className="text-xs text-[#159A9C] hover:underline">Configurar</Link>
+            <Link to="/app/config" className="text-xs text-[#017AA1] hover:underline">Configurar</Link>
           </div>
           <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
             {publicProfileId ? 'Ativo e compartilhável' : 'Privado por padrão'}
@@ -624,7 +624,7 @@ export const Dashboard: React.FC = () => {
           {publicProfileId ? (
             <Link
               to={`/p/${publicProfileId}`}
-              className="inline-flex items-center gap-1 text-xs text-[#159A9C] hover:underline mt-1.5"
+              className="inline-flex items-center gap-1 text-xs text-[#017AA1] hover:underline mt-1.5"
             >
               Abrir /p/{publicProfileId} <ArrowRight className="w-3 h-3" />
             </Link>

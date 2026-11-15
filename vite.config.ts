@@ -16,7 +16,7 @@ export default defineConfig({
         lang: 'pt-BR',
         start_url: '/app',
         background_color: '#ffffff',
-        theme_color: '#159A9C',
+        theme_color: '#017AA1',
         icons: [
           {
             src: 'pwa-192x192.png',

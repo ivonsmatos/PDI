@@ -178,7 +178,7 @@ export const Curriculo: React.FC = () => {
       <div ref={printRef} style={{ fontFamily: 'Inter, system-ui, sans-serif', backgroundColor: '#fff', color: '#0f172a', padding: '40px', maxWidth: '760px', margin: '0 auto' }}>
 
         {/* Cabeçalho */}
-        <div style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)', borderRadius: '16px', padding: '32px 36px', marginBottom: '20px', color: '#fff' }}>
+        <div style={{ background: 'linear-gradient(135deg, #51266E 0%, #017AA1 100%)', borderRadius: '16px', padding: '32px 36px', marginBottom: '20px', color: '#fff' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
             <div>
               <div style={{ fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c7d2fe', fontWeight: 700, marginBottom: '6px' }}>
@@ -421,7 +421,7 @@ export const Curriculo: React.FC = () => {
                       </p>
                     )}
                     {a.evidenciaUrl?.trim() && (
-                      <p style={{ fontSize: '10px', color: '#159A9C', margin: '3px 0 0', wordBreak: 'break-all' }}>
+                      <p style={{ fontSize: '10px', color: '#017AA1', margin: '3px 0 0', wordBreak: 'break-all' }}>
                         <strong>Evidência:</strong> {a.evidenciaUrl}
                       </p>
                     )}
@@ -440,7 +440,7 @@ export const Curriculo: React.FC = () => {
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {destaquesDiario.map(entry => (
-                <div key={entry.id} style={{ backgroundColor: '#f8fafc', borderRadius: '10px', padding: '10px 14px', borderLeft: '3px solid #159A9C' }}>
+                <div key={entry.id} style={{ backgroundColor: '#f8fafc', borderRadius: '10px', padding: '10px 14px', borderLeft: '3px solid #017AA1' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', gap: '8px' }}>
                     <span style={{ fontSize: '9.5px', fontWeight: 700, color: '#64748b' }}>
                       {new Date(entry.data).toLocaleDateString('pt-BR')}
@@ -448,7 +448,7 @@ export const Curriculo: React.FC = () => {
                     {entry.tags && entry.tags.length > 0 && (
                       <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                         {entry.tags.map(tag => (
-                          <span key={tag} style={{ fontSize: '9px', fontWeight: 600, backgroundColor: '#DEEFE7', color: '#159A9C', padding: '1px 6px', borderRadius: '99px' }}>
+                          <span key={tag} style={{ fontSize: '9px', fontWeight: 600, backgroundColor: '#e6f4f8', color: '#017AA1', padding: '1px 6px', borderRadius: '99px' }}>
                             #{tag}
                           </span>
                         ))}

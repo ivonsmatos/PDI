@@ -175,9 +175,9 @@ export const LandingPage: React.FC = () => {
             <a href="#funcionalidades" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Funcionalidades</a>
             <Link to="/para-rh" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Para RH</Link>
             <Link to="/o-que-e-pdi" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>O que é PDI</Link>
-            <Link to="/certificacoes-gratuitas" className={`transition-colors ${scrolled ? 'hover:text-[#159A9C]' : 'hover:text-white'}`}>Cursos e recursos</Link>
-            <Link to="/exemplo" className={`transition-colors ${scrolled ? 'hover:text-[#159A9C]' : 'hover:text-white'}`}>Exemplo</Link>
-            <a href="#depoimentos" className={`transition-colors ${scrolled ? 'hover:text-[#159A9C]' : 'hover:text-white'}`}>Cenários</a>
+            <Link to="/certificacoes-gratuitas" className={`transition-colors ${scrolled ? 'hover:text-[#017AA1]' : 'hover:text-white'}`}>Cursos e recursos</Link>
+            <Link to="/exemplo" className={`transition-colors ${scrolled ? 'hover:text-[#017AA1]' : 'hover:text-white'}`}>Exemplo</Link>
+            <a href="#depoimentos" className={`transition-colors ${scrolled ? 'hover:text-[#017AA1]' : 'hover:text-white'}`}>Cenários</a>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <Link to="/login" className={`text-sm font-semibold transition-colors px-4 py-2 ${
@@ -220,25 +220,25 @@ export const LandingPage: React.FC = () => {
       </nav>
 
       {/* ── Hero ────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-950 overflow-hidden pt-16">
+      <section className="relative min-h-screen flex items-center bg-gradient-to-br from-slate-950 via-[#51266E] to-[#017AA1] overflow-hidden pt-16">
         {/* Orbs decorativos */}
-        <div className="absolute -top-48 -right-48 w-[700px] h-[700px] bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-48 -left-24 w-[500px] h-[500px] bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent pointer-events-none" />
+        <div className="absolute -top-48 -right-48 w-[700px] h-[700px] bg-[#51266E]/35 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-48 -left-24 w-[500px] h-[500px] bg-[#539CBD]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-[#BAB1BD]/25 to-transparent pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
           {/* Texto */}
           <div>
-            <div className="inline-flex items-center gap-2.5 bg-[#159A9C]/20 border border-[#159A9C]/40 rounded-full px-4 py-1.5 mb-8">
+            <div className="inline-flex items-center gap-2.5 bg-[#017AA1]/25 border border-[#539CBD]/45 rounded-full px-4 py-1.5 mb-8">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-semibold text-[#DEEFE7] tracking-wide">Gratuito para uso individual · Sem cartão · LGPD</span>
+              <span className="text-xs font-semibold text-white/90 tracking-wide">Gratuito para uso individual · Sem cartão · LGPD</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl xl:text-7xl font-black text-white leading-[1.05] mb-7">
               Seu PDI.<br />
-              <span className="bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">Estruturado.</span>{' '}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Vivo.</span>
+              <span className="bg-gradient-to-r from-[#BAB1BD] to-[#539CBD] bg-clip-text text-transparent">Estruturado.</span>{' '}
+              <span className="bg-gradient-to-r from-[#539CBD] to-cyan-300 bg-clip-text text-transparent">Vivo.</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-slate-300 leading-relaxed mb-10 max-w-lg">
@@ -256,7 +256,7 @@ export const LandingPage: React.FC = () => {
               </Link>
               <Link
                 to="/exemplo"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#DEEFE7]/15 hover:bg-[#DEEFE7]/25 text-[#DEEFE7] font-semibold rounded-2xl border border-[#DEEFE7]/30 transition-all text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C]"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-2xl border border-[#539CBD]/40 transition-all text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#539CBD]"
               >
                 Ver um PDI preenchido
               </Link>
@@ -364,7 +364,7 @@ export const LandingPage: React.FC = () => {
               { icon: <Zap className="w-4 h-4 text-amber-500" />,    text: 'Plano Individual Gratuito' },
               { icon: <Award className="w-4 h-4 text-emerald-600" />, text: `${TOTAL_CERTIFICACOES} Recursos Curados` },
               { icon: <Shield className="w-4 h-4 text-emerald-500" />, text: 'Privacidade e LGPD' },
-              { icon: <BarChart3 className="w-4 h-4 text-indigo-500" />, text: '26 Áreas Profissionais' },
+              { icon: <BarChart3 className="w-4 h-4 text-[#51266E]" />, text: '40 Áreas Profissionais' },
               { icon: <TrendingUp className="w-4 h-4 text-blue-500" />,  text: '6 Níveis de Carreira' },
               { icon: <Bell className="w-4 h-4 text-violet-500" />,   text: 'Notificações sob Controle' },
             ].map((item, i) => (
@@ -692,9 +692,9 @@ export const LandingPage: React.FC = () => {
                 ))}
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#DEEFE7]/60 border border-[#159A9C]/25">
+              <div className="p-5 rounded-2xl bg-[#539CBD]/15 border border-[#017AA1]/25">
                 <p className="text-sm text-slate-800 leading-relaxed">
-                  <span className="font-bold text-[#159A9C]">Dica para headhunters:</span> Recomende o Meu PDI para seus candidatos antes de apresentá-los ao cliente. Candidatos com PDI estruturado podem chegar mais preparados às entrevistas e tornar sua evolução mais demonstrável.
+                  <span className="font-bold text-[#017AA1]">Dica para headhunters:</span> Recomende o Meu PDI para seus candidatos antes de apresentá-los ao cliente. Candidatos com PDI estruturado podem chegar mais preparados às entrevistas e tornar sua evolução mais demonstrável.
                 </p>
               </div>
             </div>
@@ -724,7 +724,7 @@ export const LandingPage: React.FC = () => {
                       <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#DEEFE7] text-[#159A9C]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#BAB1BD]/30 text-[#51266E]">
                     Cenário ilustrativo
                   </span>
                 </div>

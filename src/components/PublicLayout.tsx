@@ -11,23 +11,23 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded-lg">
+          <Link to="/" className="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#017AA1] rounded-lg">
             <img src="/meu-pdi-logo.png" alt="Meu PDI" className="h-9 w-auto object-contain" />
           </Link>
           <nav aria-label="Navegação pública" className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
-            <Link to="/o-que-e-pdi" className="hover:text-[#159A9C] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded">O que é PDI</Link>
-            <Link to="/exemplo" className="hover:text-[#159A9C] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded">Exemplo</Link>
-            <Link to="/para-rh" className="hover:text-[#159A9C] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded">Para RH e Gestores</Link>
-            <Link to="/certificacoes-gratuitas" className="hover:text-[#159A9C] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded">Cursos e recursos</Link>
-            <Link to="/privacidade" className="hover:text-[#159A9C] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded">Privacidade</Link>
+            <Link to="/o-que-e-pdi" className="hover:text-[#017AA1] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#017AA1] rounded">O que é PDI</Link>
+            <Link to="/exemplo" className="hover:text-[#017AA1] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#017AA1] rounded">Exemplo</Link>
+            <Link to="/para-rh" className="hover:text-[#017AA1] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#017AA1] rounded">Para RH e Gestores</Link>
+            <Link to="/certificacoes-gratuitas" className="hover:text-[#017AA1] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#017AA1] rounded">Cursos e recursos</Link>
+            <Link to="/privacidade" className="hover:text-[#017AA1] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#017AA1] rounded">Privacidade</Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159A9C] rounded px-1">
+            <Link to="/login" className="text-sm font-semibold text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#017AA1] rounded px-1">
               Entrar
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center gap-1.5 bg-[#159A9C] hover:bg-[#117e80] text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#159A9C]"
+              className="inline-flex items-center gap-1.5 bg-[#017AA1] hover:bg-[#016384] text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#017AA1]"
             >
               Criar PDI grátis <ArrowRight className="w-4 h-4" />
             </Link>

@@ -18,7 +18,7 @@ const NIVEL_NOMES: Record<string, string> = {
   gestor: 'Gestor',
 };
 
-const COLORS = ['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+const COLORS = ['#51266E', '#017AA1', '#539CBD', '#6C8D94', '#BAB1BD', '#10b981'];
 
 type PeriodPreset =
   | 'all'
@@ -353,7 +353,7 @@ export const AdminDashboard: React.FC = () => {
       {/* Filtros */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex flex-wrap items-end gap-3">
         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mr-1 self-center">
-          <Filter className="w-3.5 h-3.5 text-[#159A9C]" /> Filtros
+          <Filter className="w-3.5 h-3.5 text-[#017AA1]" /> Filtros
         </div>
 
         <label className="flex flex-col gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
@@ -361,7 +361,7 @@ export const AdminDashboard: React.FC = () => {
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value as PeriodPreset)}
-            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#017AA1]"
           >
             {PERIOD_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -377,7 +377,7 @@ export const AdminDashboard: React.FC = () => {
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+                className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#017AA1]"
               />
             </label>
             <label className="flex flex-col gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
@@ -386,7 +386,7 @@ export const AdminDashboard: React.FC = () => {
                 type="date"
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
-                className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+                className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#017AA1]"
               />
             </label>
           </>
@@ -397,7 +397,7 @@ export const AdminDashboard: React.FC = () => {
           <select
             value={areaFilter}
             onChange={(e) => setAreaFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#017AA1]"
           >
             <option value="all">Todas as áreas</option>
             {availableAreas.map(a => (
@@ -411,7 +411,7 @@ export const AdminDashboard: React.FC = () => {
           <select
             value={nivelFilter}
             onChange={(e) => setNivelFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#159A9C]"
+            className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 text-xs font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#017AA1]"
           >
             <option value="all">Todos os níveis</option>
             {availableNiveis.map(n => (
@@ -493,7 +493,7 @@ export const AdminDashboard: React.FC = () => {
               {stats.total > 0 ? `${Math.round((stats.ativos7d / stats.total) * 100)}% dos usuários voltaram nos últimos 7 dias` : 'Sem dados ainda'}
             </p>
           </div>
-          <Users className="w-8 h-8 text-[#159A9C] shrink-0" />
+          <Users className="w-8 h-8 text-[#017AA1] shrink-0" />
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm flex items-center justify-between gap-4">
