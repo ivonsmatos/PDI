@@ -47,6 +47,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
             <Link to="/" className="hover:text-white transition-colors">Início</Link>
             <Link to="/o-que-e-pdi" className="hover:text-white transition-colors">O que é PDI</Link>
             <Link to="/como-fazer-um-pdi" className="hover:text-white transition-colors">Como fazer um PDI</Link>
+            <Link to="/pdi-e-curriculo" className="hover:text-white transition-colors">PDI vs. Currículo</Link>
+            <Link to="/hard-skills-e-soft-skills" className="hover:text-white transition-colors">Hard e Soft Skills</Link>
+            <Link to="/pdi-ou-pdp" className="hover:text-white transition-colors">PDI ou PDP</Link>
+            <Link to="/glossario" className="hover:text-white transition-colors">Glossário</Link>
             <Link to="/exemplo" className="hover:text-white transition-colors">Exemplo</Link>
             <Link to="/para-rh" className="hover:text-white transition-colors">Para RH</Link>
             <Link to="/certificacoes-gratuitas" className="hover:text-white transition-colors">Cursos curados</Link>

@@ -33,8 +33,15 @@ export const OQueEPdi: React.FC = () => {
           headline: 'O que é PDI? Guia prático para criar seu Plano de Desenvolvimento Individual',
           inLanguage: 'pt-BR',
           datePublished: '2026-11-08',
-          dateModified: '2026-11-08',
-          author: { '@type': 'Organization', name: 'Meu PDI' },
+          dateModified: '2026-11-17',
+          author: { '@type': 'Organization', name: 'Equipe Editorial Meu PDI' },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://meupdi.app.br/' },
+            { '@type': 'ListItem', position: 2, name: 'O que é PDI', item: 'https://meupdi.app.br/o-que-e-pdi' },
+          ],
         },
         {
           '@type': 'FAQPage',
@@ -125,6 +132,29 @@ export const OQueEPdi: React.FC = () => {
           >
             Criar meu PDI grátis <ArrowRight className="w-4 h-4" />
           </Link>
+        </section>
+
+        <section className="border-t border-slate-200 pt-6 space-y-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Próximas leituras recomendadas</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { label: 'Como fazer um PDI em 5 passos', to: '/como-fazer-um-pdi' },
+              { label: 'PDI não é currículo: qual é a diferença?', to: '/pdi-e-curriculo' },
+              { label: 'PDI ou PDP: qual termo usar?', to: '/pdi-ou-pdp' },
+              { label: 'Ver exemplo de PDI preenchido', to: '/exemplo' },
+              { label: 'Hard skills e soft skills: como avaliar', to: '/hard-skills-e-soft-skills' },
+              { label: 'PDI para RH e gestores', to: '/para-rh' },
+            ].map(l => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-[#017AA1] text-sm font-semibold text-slate-800 hover:text-[#017AA1] flex items-center justify-between transition-colors"
+              >
+                <span>{l.label}</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
+              </Link>
+            ))}
+          </div>
         </section>
       </article>
     </PublicLayout>

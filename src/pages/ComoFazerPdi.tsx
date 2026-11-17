@@ -139,6 +139,27 @@ export const ComoFazerPdi: React.FC = () => {
             Criar meu PDI grátis <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
+
+        <section className="border-t border-slate-200 pt-6 space-y-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500">Aprofunde cada etapa do seu PDI</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { label: 'Hard skills e soft skills: como avaliar seu nível', to: '/hard-skills-e-soft-skills' },
+              { label: 'PDI não é currículo: qual é a diferença?', to: '/pdi-e-curriculo' },
+              { label: 'Cursos e credenciais gratuitas por área', to: '/certificacoes-gratuitas' },
+              { label: 'Ver exemplo interativo de PDI', to: '/exemplo' },
+            ].map(l => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-[#017AA1] text-sm font-semibold text-slate-800 hover:text-[#017AA1] flex items-center justify-between transition-colors"
+              >
+                <span>{l.label}</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
+              </Link>
+            ))}
+          </div>
+        </section>
       </article>
     </PublicLayout>
   );

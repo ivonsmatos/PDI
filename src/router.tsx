@@ -13,6 +13,7 @@ const ParaRh               = lazy(() => import('./pages/ParaRh').then(m => ({ de
 const CertificacoesPublicas = lazy(() => import('./pages/CertificacoesPublicas').then(m => ({ default: m.CertificacoesPublicas })));
 const Sobre                = lazy(() => import('./pages/Sobre').then(m => ({ default: m.Sobre })));
 const Privacidade          = lazy(() => import('./pages/Privacidade').then(m => ({ default: m.Privacidade })));
+const EditorialArticlePage = lazy(() => import('./pages/EditorialArticlePage').then(m => ({ default: m.EditorialArticlePage })));
 const NotFound             = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 const Dashboard     = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Trilha        = lazy(() => import('./pages/Trilha').then(m => ({ default: m.Trilha })));
@@ -73,6 +74,22 @@ const router = createBrowserRouter([
   {
     path: '/privacidade',
     element: lazyPage(<Privacidade />),
+  },
+  {
+    path: '/pdi-e-curriculo',
+    element: lazyPage(<EditorialArticlePage slugKey="pdi-e-curriculo" />),
+  },
+  {
+    path: '/hard-skills-e-soft-skills',
+    element: lazyPage(<EditorialArticlePage slugKey="hard-skills-e-soft-skills" />),
+  },
+  {
+    path: '/pdi-ou-pdp',
+    element: lazyPage(<EditorialArticlePage slugKey="pdi-ou-pdp" />),
+  },
+  {
+    path: '/glossario',
+    element: lazyPage(<EditorialArticlePage slugKey="glossario" />),
   },
   {
     path: '/p/:encoded',
