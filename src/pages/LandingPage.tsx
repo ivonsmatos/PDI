@@ -908,6 +908,9 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-500">
               <Link to="/o-que-e-pdi" className="hover:text-white transition-colors">O que é PDI</Link>
+              <Link to="/como-fazer-um-pdi" className="hover:text-white transition-colors">Como fazer um PDI</Link>
+              <Link to="/exemplo" className="hover:text-white transition-colors">Exemplo</Link>
+              <Link to="/guias" className="hover:text-white transition-colors">Guias</Link>
               <Link to="/para-rh" className="hover:text-white transition-colors">Para RH</Link>
               <Link to="/certificacoes-gratuitas" className="hover:text-white transition-colors">Cursos curados</Link>
               <Link to="/privacidade" className="hover:text-white transition-colors">Privacidade & LGPD</Link>
