@@ -68,7 +68,7 @@ export const EditorialArticlePage: React.FC<Props> = ({ slugKey }) => {
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 flex-wrap">
           <Link to="/" className="hover:text-[#017AA1]">Início</Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <Link to="/o-que-e-pdi" className="hover:text-[#017AA1]">Guias de PDI</Link>
+          <Link to="/guias" className="hover:text-[#017AA1]">Guias de PDI</Link>
           <ChevronRight className="w-3.5 h-3.5" />
           <span className="text-slate-700 font-semibold truncate">{article.kicker}</span>
         </nav>
