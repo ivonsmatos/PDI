@@ -56,8 +56,8 @@ export const EDITORIAL_ARTICLES: Record<string, EditorialArticle> = {
       'O PDI (Plano de Desenvolvimento Individual) organiza o que você precisa aprender, entregar e comprovar nos próximos meses. Já o currículo resume experiências, formações e resultados que você já construiu. No Meu PDI, o currículo de competências nasce como consequência do desenvolvimento, e não o contrário.',
     intro:
       'Muita gente confunde o Plano de Desenvolvimento Individual com um currículo ampliado ou um portfólio pronto para vagas. Essa confusão faz o plano perder utilidade: em vez de orientar escolhas reais de crescimento, ele vira uma vitrine estática. Separar os dois papéis torna seu ciclo mais objetivo e fortalece o que você mostra ao mercado.',
-    publishedAt: '2026-11-17',
-    updatedAt: '2026-11-17',
+    publishedAt: '2026-11-06',
+    updatedAt: '2026-11-06',
     author: 'Equipe Editorial Meu PDI',
     reviewer: 'Revisão de Produto e Carreira - Meu PDI',
     sections: [
@@ -151,8 +151,8 @@ export const EDITORIAL_ARTICLES: Record<string, EditorialArticle> = {
       'Hard skills são conhecimentos técnicos mensuráveis de uma área, enquanto soft skills são comportamentos de comunicação, decisão e colaboração. Avaliar seu nível exige comparar o que você entrega com a expectativa da sua senioridade e registrar evidências concretas, evitando notas baseadas apenas em autopercepção.',
     intro:
       'Muitos planos de desenvolvimento falham logo na largada porque a autoavaliação é vaga. Dizer "tenho 4/5 em liderança" ou "preciso melhorar comunicação" não orienta o que estudar nem o que praticar amanhã. Quando você cruza competências técnicas e comportamentais por nível de carreira, o gap fica claro.',
-    publishedAt: '2026-11-17',
-    updatedAt: '2026-11-17',
+    publishedAt: '2026-11-10',
+    updatedAt: '2026-11-10',
     author: 'Equipe Editorial Meu PDI',
     reviewer: 'Revisão de Produto e Carreira - Meu PDI',
     sections: [
@@ -243,8 +243,8 @@ export const EDITORIAL_ARTICLES: Record<string, EditorialArticle> = {
       'PDI significa Plano de Desenvolvimento Individual e PDP significa Plano de Desenvolvimento Profissional ou Pessoal. Na prática, muitas empresas usam os termos como sinônimos, mas o PDI costuma enfatizar a jornada completa de carreira do profissional, enquanto o PDP é frequentemente ligado às metas de desempenho do ciclo corporativo atual.',
     intro:
       'Se você trabalha com RH, liderança ou está preenchendo um formulário de avaliação na sua empresa, provavelmente já encontrou as duas siglas. Entender a nuance entre PDI e PDP evita ruídos entre metas de curto prazo do negócio e ambições de longo prazo do profissional.',
-    publishedAt: '2026-11-17',
-    updatedAt: '2026-11-17',
+    publishedAt: '2026-11-13',
+    updatedAt: '2026-11-13',
     author: 'Equipe Editorial Meu PDI',
     reviewer: 'Revisão de Produto e Carreira - Meu PDI',
     sections: [
