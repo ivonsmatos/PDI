@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { TOTAL_CERTIFICACOES } from '../data/certificacoesGratuitas';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { GuiaNavDropdown, GUIA_MENU_GROUPS } from '../components/GuiaNavDropdown';
+import { PublicFooter } from '../components/PublicFooter';
 
 /* ── Dados ──────────────────────────────────────────────────── */
 const FEATURES = [
@@ -172,16 +174,16 @@ export const LandingPage: React.FC = () => {
           <div className={`hidden md:flex items-center gap-7 text-sm font-medium transition-colors ${
             scrolled ? 'text-slate-600' : 'text-white/80'
           }`}>
-            <a href="#funcionalidades" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Funcionalidades</a>
-            <Link to="/para-rh" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>Para RH</Link>
-            <Link to="/o-que-e-pdi" className={`transition-colors ${scrolled ? 'hover:text-indigo-600' : 'hover:text-white'}`}>O que é PDI</Link>
+            <a href="#funcionalidades" className={`transition-colors ${scrolled ? 'hover:text-[#017AA1]' : 'hover:text-white'}`}>Funcionalidades</a>
+            <GuiaNavDropdown lightText={!scrolled} />
+            <Link to="/para-rh" className={`transition-colors ${scrolled ? 'hover:text-[#017AA1]' : 'hover:text-white'}`}>Para RH</Link>
             <Link to="/certificacoes-gratuitas" className={`transition-colors ${scrolled ? 'hover:text-[#017AA1]' : 'hover:text-white'}`}>Cursos e recursos</Link>
             <Link to="/exemplo" className={`transition-colors ${scrolled ? 'hover:text-[#017AA1]' : 'hover:text-white'}`}>Exemplo</Link>
             <a href="#depoimentos" className={`transition-colors ${scrolled ? 'hover:text-[#017AA1]' : 'hover:text-white'}`}>Cenários</a>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <Link to="/login" className={`text-sm font-semibold transition-colors px-4 py-2 ${
-              scrolled ? 'text-slate-600 hover:text-indigo-600' : 'text-white/80 hover:text-white'
+              scrolled ? 'text-slate-600 hover:text-[#017AA1]' : 'text-white/80 hover:text-white'
             }`}>
               Entrar
             </Link>
@@ -189,8 +191,8 @@ export const LandingPage: React.FC = () => {
               to="/login"
               className={`text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg ${
                 scrolled
-                  ? 'text-white bg-indigo-600 hover:bg-indigo-700'
-                  : 'text-indigo-700 bg-white hover:bg-indigo-50'
+                  ? 'text-white bg-[#017AA1] hover:bg-[#016384]'
+                  : 'text-[#51266E] bg-white hover:bg-slate-100'
               }`}
             >
               Começar grátis →
@@ -205,14 +207,38 @@ export const LandingPage: React.FC = () => {
         </div>
         {/* Mobile menu */}
         {mobileMenu && (
-          <div className="md:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 px-4 py-4 space-y-3">
+          <div className="md:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 px-4 py-4 space-y-3 max-h-[82vh] overflow-y-auto">
             <a href="#funcionalidades" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Funcionalidades</a>
+            <div className="border-y border-white/10 py-2 space-y-2">
+              <p className="text-xs font-extrabold uppercase tracking-wider text-[#539CBD]">Guia</p>
+              {GUIA_MENU_GROUPS.map(g => (
+                <div key={g.titulo} className="pl-2 space-y-1">
+                  <p className="text-[11px] font-bold text-white/60">{g.titulo}</p>
+                  {g.itens.slice(0, 4).map(item => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setMobileMenu(false)}
+                      className="block py-1 text-xs text-white/85 hover:text-white"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+              <Link
+                to="/guias"
+                onClick={() => setMobileMenu(false)}
+                className="block pl-2 pt-1 text-xs font-bold text-[#539CBD]"
+              >
+                Ver todos os guias →
+              </Link>
+            </div>
             <Link to="/para-rh" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Para RH</Link>
-            <Link to="/o-que-e-pdi" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">O que é PDI</Link>
             <Link to="/certificacoes-gratuitas" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Cursos e recursos</Link>
             <Link to="/exemplo" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Exemplo</Link>
             <a href="#depoimentos" onClick={() => setMobileMenu(false)} className="block py-2 text-white/80 font-medium text-sm">Cenários</a>
-            <Link to="/login" onClick={() => setMobileMenu(false)} className="block mt-2 text-center py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm">
+            <Link to="/login" onClick={() => setMobileMenu(false)} className="block mt-2 text-center py-3 bg-[#017AA1] text-white font-bold rounded-xl text-sm">
               Criar conta grátis
             </Link>
           </div>
@@ -897,42 +923,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ── Footer ───────────────────────────────────────────── */}
-      <footer className="bg-slate-950 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
-            <div>
-              <span className="text-xl font-black bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">
-                Meu PDI
-              </span>
-              <p className="text-slate-500 text-sm mt-1">Plano de Desenvolvimento Individual gratuito</p>
-            </div>
-            <div className="flex flex-wrap gap-6 text-sm text-slate-500">
-              <Link to="/o-que-e-pdi" className="hover:text-white transition-colors">O que é PDI</Link>
-              <Link to="/como-fazer-um-pdi" className="hover:text-white transition-colors">Como fazer um PDI</Link>
-              <Link to="/exemplo" className="hover:text-white transition-colors">Exemplo</Link>
-              <Link to="/guias" className="hover:text-white transition-colors">Guias</Link>
-              <Link to="/para-rh" className="hover:text-white transition-colors">Para RH</Link>
-              <Link to="/certificacoes-gratuitas" className="hover:text-white transition-colors">Cursos curados</Link>
-              <Link to="/privacidade" className="hover:text-white transition-colors">Privacidade & LGPD</Link>
-              <a href="mailto:contato@meupdi.app.br" className="hover:text-white transition-colors">Contato</a>
-            </div>
-          </div>
-          <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
-            <span>© 2026 Meu PDI · Todos os dados protegidos pela LGPD · Nenhum dado vendido ou compartilhado com terceiros</span>
-            <span className="shrink-0">
-              Desenvolvido por{' '}
-              <a
-                href="https://scaledata.com.br"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-indigo-400 font-semibold transition-colors"
-              >
-                Scaledata
-              </a>
-            </span>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
 
       <style>{`
         @keyframes float {
